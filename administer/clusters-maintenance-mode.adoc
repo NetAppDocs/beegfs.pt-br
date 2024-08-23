@@ -1,0 +1,53 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-maintenance-mode.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, maintenance 
+summary: Impedir que o cluster de HA reaja acidentalmente às alterações pretendidas no ambiente. 
+---
+= Coloque o cluster no modo de manutenção
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Impedir que o cluster de HA reaja acidentalmente às alterações pretendidas no ambiente.
+
+
+
+== Visão geral
+
+Colocar o cluster no modo de manutenção desativa todo o monitoramento de recursos e impede que o pacemaker mova ou gerencie recursos no cluster. Todos os recursos permanecerão em execução em seus nós originais, independentemente de haver uma condição de falha temporária que os impeça de serem acessíveis. Os cenários em que isso é recomendado/útil incluem:
+
+* Manutenção de rede que pode interromper temporariamente as conexões entre nós de arquivo e serviços BeeGFS.
+* Atualizações do nó de bloco.
+* File Node sistema operacional, kernel ou outras atualizações de pacote.
+
+
+Geralmente, a única razão para colocar manualmente o cluster no modo de manutenção é impedir que ele reaja a alterações externas no ambiente. Se um nó individual no cluster exigir reparo físico, não use o modo de manutenção e simplesmente coloque esse nó em espera seguindo o procedimento acima. Observe que a reexecução do Ansible coloca o cluster automaticamente em modo de manutenção, facilitando a manutenção de software, incluindo atualizações e alterações de configuração.
+
+
+
+== Passos
+
+Para verificar se o cluster está no modo de manutenção, execute:
+
+[source, console]
+----
+pcs property show maintenance-mode
+----
+Isso retornará FALSE quando o cluster estiver operando normalmente. Para ativar a execução do modo de manutenção:
+
+[source, console]
+----
+pcs property set maintenance-mode=true
+----
+Você pode verificar executando o status dos PCs e garantindo que todos os recursos mostrem "(unmanaged)". Para retirar o cluster do modo de manutenção, execute:
+
+[source, console]
+----
+pcs property set maintenance-mode=false
+----

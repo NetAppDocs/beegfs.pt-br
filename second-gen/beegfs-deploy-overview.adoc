@@ -1,0 +1,81 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-overview.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: É possível implantar o BeeGFS no NetApp para nós de arquivos e blocos validados usando a segunda geração do design de componentes básicos do BeeGFS da NetApp. 
+---
+= Visão geral da implantação
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+É possível implantar o BeeGFS no NetApp para nós de arquivos e blocos validados usando a segunda geração do design de componentes básicos do BeeGFS da NetApp.
+
+
+
+== Coleções e funções do Ansible
+
+Com o Ansible, você implanta a solução BeeGFS no NetApp, que é um mecanismo popular de automação DE TI usado para automatizar as implantações de aplicações. O Ansible usa uma série de arquivos coletivamente conhecidos como um inventário, que modela o sistema de arquivos BeeGFS que você deseja implantar.
+
+O Ansible permite que empresas como o NetApp expandam a funcionalidade incorporada usando coleções no Ansible Galaxy ( https://galaxy.ansible.com/netapp_eseries/santricity["Coleção BeeGFS da NetApp e-Series"^]consulte ). As coleções incluem módulos que executam alguma função ou tarefa específica (como criar um volume e-Series) e incluem funções que podem chamar vários módulos e outras funções. Essa abordagem automatizada reduz o tempo necessário para implantar o sistema de arquivos BeeGFS e o cluster de HA subjacente. Além disso, simplifica a adição de componentes básicos para expandir os sistemas de arquivos existentes.
+
+Para obter mais detalhes, link:beegfs-deploy-learn-ansible.html["Saiba mais sobre o inventário do Ansible"]consulte .
+
+
+NOTE: Como várias etapas estão envolvidas na implantação da solução BeeGFS no NetApp, o NetApp não oferece suporte para a implantação manual da solução.
+
+
+
+== Perfis de configuração para blocos de construção BeeGFS
+
+Os procedimentos de implantação abrangem os seguintes perfis de configuração:
+
+* Um componente básico que inclui serviços de gerenciamento, metadados e storage.
+* Um segundo componente básico que inclui metadados e serviços de storage.
+* Um terceiro componente básico que inclui apenas serviços de storage.
+
+
+Esses perfis demonstram a gama completa de perfis de configuração recomendados para os blocos de construção BeeGFS do NetApp. Para cada implantação, o número de componentes básicos de storage e metadados ou componentes básicos apenas de serviços de storage pode variar nos procedimentos, dependendo dos requisitos de capacidade e desempenho.
+
+
+
+== Visão geral das etapas de implantação
+
+A implantação envolve as seguintes tarefas de alto nível:
+
+.Implantação de hardware
+. Monte fisicamente cada bloco de construção.
+. Hardware de rack e cabo. Para obter procedimentos detalhados, link:beegfs-deploy-hardware.html["Implantar hardware"]consulte .
+
+
+.Implantação de software
+. link:beegfs-deploy-setup-nodes.html["Configurar nós de arquivo e bloco"].
++
+** Configurar IPs BMC em nós de arquivo
+** Instale um sistema operacional suportado e configure a rede de gerenciamento em nós de arquivos
+** Configurar IPs de gerenciamento em nós de bloco
+
+
+. link:beegfs-deploy-setting-up-an-ansible-control-node.html["Configure um nó de controle do Ansible"].
+. link:beegfs-deploy-file-node-tuning.html["Ajuste as configurações do sistema para obter desempenho"].
+. link:beegfs-deploy-create-inventory.html["Crie o inventário do Ansible"].
+. link:beegfs-deploy-define-inventory.html["Definir o inventário do Ansible para os componentes básicos do BeeGFS"].
+. link:beegfs-deploy-playbook.html["Implante o BeeGFS com o Ansible"].
+. link:beegfs-deploy-configure-clients.html["Configurar clientes BeeGFS"].
+
+
+
+NOTE: Os procedimentos de implantação incluem vários exemplos em que o texto precisa ser copiado para um arquivo. Preste muita atenção a quaisquer comentários inline indicados por carateres "///" para qualquer coisa que deve ou pode ser modificada para uma implantação específica. Por exemplo:
+`beegfs_ha_ntp_server_pools:  # THIS IS AN EXAMPLE OF A COMMENT!
+  - "pool 0.pool.ntp.org iburst maxsources 3"
+  - "pool 1.pool.ntp.org iburst maxsources 3"`
+
+Arquiteturas derivadas com variações nas recomendações de implantação:
+
+* link:beegfs-design-high-capacity-building-block.html["Bloco de construção de alta capacidade"]
+

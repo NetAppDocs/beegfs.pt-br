@@ -1,0 +1,63 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-overview.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration 
+summary: Saiba como administrar clusters de HA do BeeGFS após a implantação. 
+---
+= Visão geral, conceitos-chave e terminologia
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Saiba como administrar clusters de HA do BeeGFS após a implantação.
+
+
+
+== Visão geral
+
+Esta seção destina-se aos administradores de cluster que precisam gerenciar clusters de HA do BeeGFS após a implantação. Mesmo aqueles que estão familiarizados com os clusters de HA do Linux devem ler cuidadosamente este guia, pois há várias diferenças em como gerenciar o cluster, especialmente em relação à reconfiguração devido ao uso do Ansible.
+
+
+
+== Conceitos-chave
+
+Embora alguns desses conceitos sejam introduzidos na página principallink:../get-started/beegfs-terms.html["termos e conceitos"], é útil reintroduzi-los no contexto de um cluster BeeGFS HA:
+
+**Nó de cluster:** Um servidor executando serviços de pacemaker e Corosync e participando do cluster HA.
+
+**Nó de arquivo:** Um nó de cluster usado para executar um ou mais serviços de gerenciamento, metadados ou storage do BeeGFS.
+
+**Nó de bloco:** Um sistema de storage do NetApp e-Series que fornece storage de bloco para nós de arquivos. Esses nós não participam do cluster BeeGFS HA, pois fornecem suas próprias funcionalidades de HA autônomas. Cada nó consiste em duas controladoras de storage que fornecem alta disponibilidade na camada de bloco.
+
+**Serviço BeeGFS:** Um serviço de gerenciamento, metadados ou storage do BeeGFS. Cada nó de arquivo executará um ou mais serviços que usarão volumes no nó de bloco para armazenar seus dados.
+
+**Bloco básico:** Uma implantação padronizada de nós de arquivo BeeGFS, nós de bloco de e-Series e serviços BeeGFS executados neles, o que simplifica o dimensionamento de um sistema de arquivos/cluster BeeGFS HA seguindo uma arquitetura verificada pelo NetApp. Clusters de HA personalizados também são compatíveis, mas geralmente seguem uma abordagem de componentes básicos semelhante para simplificar o dimensionamento.
+
+**Cluster do BeeGFS HA:** Um número dimensionável de nós de arquivo usados para executar serviços do BeeGFS com o respaldo de nós de bloco para armazenar dados do BeeGFS de maneira altamente disponível. Desenvolvido com base em componentes de código aberto comprovados pela indústria, a Pacemaker e o Corosync, usando o Ansible para embalagem e implantação.
+
+**Serviços de cluster:** refere-se aos serviços de pacemaker e Corosync executados em cada nó que participa do cluster. Observação é possível que um nó não execute nenhum serviço BeeGFS e apenas participe do cluster como nó "tiebreaker", caso haja apenas a necessidade de dois nós de arquivo.
+
+**Recursos de cluster:** para cada serviço BeeGFS executado no cluster, você verá um recurso de monitoramento BeeGFS e um grupo de recursos contendo recursos para destino(s) BeeGFS, endereço(s) IP (IPs flutuantes) e o próprio serviço BeeGFS.
+
+**Ansible:** Uma ferramenta para provisionamento de software, gerenciamento de configurações e implantação de aplicações, habilitando a infraestrutura como código. É como os clusters do BeeGFS são empacotados para simplificar o processo de implantação, reconfiguração e atualização do BeeGFS no NetApp.
+
+**PCs:** Uma interface de linha de comando disponível a partir de qualquer um dos nós de arquivo no cluster usado para consultar e controlar o estado de nós e recursos no cluster.
+
+
+
+== Terminologia comum
+
+**Failover:** cada serviço BeeGFS tem um nó de arquivo preferido em que será executado, a menos que esse nó falhe. Quando um serviço BeeGFS está sendo executado no nó de arquivo secundário/não preferencial, diz-se que está em failover.
+
+**Failback:** o ato de mover os serviços BeeGFS de um nó de arquivo não preferencial de volta para o nó preferido.
+
+**Par de HA:** dois nós de arquivos que podem acessar o mesmo conjunto de nós de bloco às vezes são referidos como um par de HA. Este é um termo comum usado em todo o NetApp para se referir a dois controladores de storage ou nós que podem "assumir o controle" uns dos outros.
+
+**Modo de manutenção:** desativa todo o monitoramento de recursos e impede que o pacemaker mova ou gerencie recursos no cluster (consulte também a seção em link:clusters-maintenance-mode.html["modo de manutenção"^]).
+
+**Cluster de HA:** um ou mais nós de arquivos executando serviços BeeGFS que podem fazer o failover entre vários nós no cluster para criar um sistema de arquivos BeeGFS altamente disponível. Normalmente, os nós de arquivos são configurados em pares de HA que podem executar um subconjunto dos serviços BeeGFS no cluster.

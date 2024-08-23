@@ -1,0 +1,402 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-create-inventory.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Para definir a configuração de nós de arquivo e bloco, crie um inventário do Ansible que represente o sistema de arquivos BeeGFS que você deseja implantar. 
+---
+= Crie o inventário do Ansible
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Para definir a configuração de nós de arquivo e bloco, crie um inventário do Ansible que represente o sistema de arquivos BeeGFS que você deseja implantar. O inventário inclui hosts, grupos e variáveis descrevendo o sistema de arquivos BeeGFS desejado.
+
+
+
+== Passo 1: Defina a configuração para todos os blocos de construção
+
+Defina a configuração que se aplica a todos os blocos de construção, independentemente do perfil de configuração que você possa aplicar a eles individualmente.
+
+.Antes de começar
+* Escolha um esquema de endereçamento de sub-rede para sua implantação. Devido aos benefícios listados no link:beegfs-design-software-architecture.html#beegfs-network-configuration["arquitetura de software"], recomenda-se usar um único esquema de endereçamento de sub-rede.
+
+
+.Passos
+. No nó de controle do Ansible, identifique um diretório que você deseja usar para armazenar os arquivos de estratégia e inventário do Ansible.
++
+Salvo indicação em contrário, todos os arquivos e diretórios criados nesta etapa e as etapas a seguir são criados em relação a este diretório.
+
+. Crie os seguintes subdiretórios:
++
+`host_vars`
+
++
+`group_vars`
+
++
+`packages`
+
+
+
+
+
+== Etapa 2: Defina a configuração para nós individuais de arquivo e bloco
+
+Defina a configuração que se aplica a nós de arquivo individuais e nós de bloco de construção individuais.
+
+. Em `host_vars/`, crie um arquivo para cada nó de arquivo BeeGFS nomeado `<HOSTNAME>.yml` com o seguinte conteúdo, prestando especial atenção às notas sobre o conteúdo a serem preenchidas para IPs de cluster BeeGFS e nomes de host que terminam em números ímpares versus pares.
++
+Inicialmente, os nomes da interface do nó de arquivo correspondem ao que está listado aqui (como ib0 ou ibs1f0). Esses nomes personalizados são configurados no <<Etapa 4: Defina a configuração que deve ser aplicada a todos os nós de arquivo>>.
+
++
+....
+ansible_host: “<MANAGEMENT_IP>”
+eseries_ipoib_interfaces:  # Used to configure BeeGFS cluster IP addresses.
+  - name: i1b
+    address: 100.127.100. <NUMBER_FROM_HOSTNAME>/16
+  - name: i4b
+    address: 100.127.100. <NUMBER_FROM_HOSTNAME>/16
+beegfs_ha_cluster_node_ips:
+  - <MANAGEMENT_IP>
+  - <i1b_BEEGFS_CLUSTER_IP>
+  - <i4b_BEEGFS_CLUSTER_IP>
+# NVMe over InfiniBand storage communication protocol information
+# For odd numbered file nodes (i.e., h01, h03, ..):
+eseries_nvme_ib_interfaces:
+  - name: i1a
+    address: 192.168.1.10/24
+    configure: true
+  - name: i2a
+    address: 192.168.3.10/24
+    configure: true
+  - name: i3a
+    address: 192.168.5.10/24
+    configure: true
+  - name: i4a
+    address: 192.168.7.10/24
+    configure: true
+# For even numbered file nodes (i.e., h02, h04, ..):
+# NVMe over InfiniBand storage communication protocol information
+eseries_nvme_ib_interfaces:
+  - name: i1a
+    address: 192.168.2.10/24
+    configure: true
+  - name: i2a
+    address: 192.168.4.10/24
+    configure: true
+  - name: i3a
+    address: 192.168.6.10/24
+    configure: true
+  - name: i4a
+    address: 192.168.8.10/24
+    configure: true
+....
++
+
+NOTE: Se você já implantou o cluster BeeGFS, será necessário interromper o cluster antes de adicionar ou alterar endereços IP configurados estaticamente, incluindo IPs e IPs do cluster usados para NVMe/IB. Isso é necessário para que essas alterações entrem em vigor corretamente e não interrompam as operações do cluster.
+
+. Em `host_vars/`, crie um arquivo para cada nó de bloco BeeGFS nomeado `<HOSTNAME>.yml` e o preencha com o seguinte conteúdo.
++
+Preste atenção especial às notas sobre o conteúdo a ser preenchido para nomes de storage arrays que terminam em números ímpares versus pares.
+
++
+Para cada nó de bloco, crie um arquivo e especifique o `<MANAGEMENT_IP>` para um dos dois controladores (geralmente A).
+
++
+....
+eseries_system_name: <STORAGE_ARRAY_NAME>
+eseries_system_api_url: https://<MANAGEMENT_IP>:8443/devmgr/v2/
+eseries_initiator_protocol: nvme_ib
+# For odd numbered block nodes (i.e., a01, a03, ..):
+eseries_controller_nvme_ib_port:
+  controller_a:
+    - 192.168.1.101
+    - 192.168.2.101
+    - 192.168.1.100
+    - 192.168.2.100
+  controller_b:
+    - 192.168.3.101
+    - 192.168.4.101
+    - 192.168.3.100
+    - 192.168.4.100
+# For even numbered block nodes (i.e., a02, a04, ..):
+eseries_controller_nvme_ib_port:
+  controller_a:
+    - 192.168.5.101
+    - 192.168.6.101
+    - 192.168.5.100
+    - 192.168.6.100
+  controller_b:
+    - 192.168.7.101
+    - 192.168.8.101
+    - 192.168.7.100
+    - 192.168.8.100
+....
+
+
+
+
+== Etapa 3: Defina a configuração que deve ser aplicada a todos os nós de arquivo e bloco
+
+Você pode definir a configuração comum a um grupo de hosts em em `group_vars` um nome de arquivo que corresponde ao grupo. Isso impede a repetição de uma configuração compartilhada em vários locais.
+
+.Sobre esta tarefa
+Os hosts podem estar em mais de um grupo e, em tempo de execução, o Ansible escolhe quais variáveis se aplicam a um host específico com base em suas regras de precedência de variáveis. (Para obter mais informações sobre essas regras, consulte a documentação do Ansible para https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html["Usando variáveis"^].)
+
+As atribuições de host para grupo são definidas no arquivo de inventário real do Ansible, que é criado no final deste procedimento.
+
+.Passo
+No Ansible, qualquer configuração que você deseja aplicar a todos os hosts pode ser definida em um grupo `All` chamado . Crie o arquivo `group_vars/all.yml` com o seguinte conteúdo:
+
+....
+ansible_python_interpreter: /usr/bin/python3
+beegfs_ha_ntp_server_pools:  # Modify the NTP server addressess if desired.
+  - "pool 0.pool.ntp.org iburst maxsources 3"
+  - "pool 1.pool.ntp.org iburst maxsources 3"
+....
+
+
+== Etapa 4: Defina a configuração que deve ser aplicada a todos os nós de arquivo
+
+A configuração compartilhada para nós de arquivo é definida em um grupo `ha_cluster` chamado . As etapas nesta seção compilam a configuração que deve ser incluída no `group_vars/ha_cluster.yml` arquivo.
+
+.Passos
+. Na parte superior do arquivo, defina os padrões, incluindo a senha a ser usada como `sudo` usuário nos nós de arquivo.
++
+....
+### ha_cluster Ansible group inventory file.
+# Place all default/common variables for BeeGFS HA cluster resources below.
+### Cluster node defaults
+ansible_ssh_user: root
+ansible_become_password: <PASSWORD>
+eseries_ipoib_default_hook_templates:
+  - 99-multihoming.j2   # This is required for single subnet deployments, where static IPs containing multiple IB ports are in the same IPoIB subnet. i.e: cluster IPs, multirail, single subnet, etc.
+# If the following options are specified, then Ansible will automatically reboot nodes when necessary for changes to take effect:
+eseries_common_allow_host_reboot: true
+eseries_common_reboot_test_command: "! systemctl status eseries_nvme_ib.service || systemctl --state=exited | grep eseries_nvme_ib.service"
+eseries_ib_opensm_options:
+  virt_enabled: "2"
+  virt_max_ports_in_process: "0"
+....
++
+
+NOTE: Particularmente para ambientes de produção, não armazene senhas em texto simples. Em vez disso, use o Ansible Vault ( https://docs.ansible.com/ansible/latest/user_guide/vault.html["Criptografia de conteúdo com o Ansible Vault"^]consulte ) ou a `--ask-become-pass` opção ao executar o manual de estratégia. Se o `ansible_ssh_user` já estiver `root` , você poderá omitir opcionalmente o `ansible_become_password`.
+
+. Opcionalmente, configure um nome para o cluster de high-availability (HA) e especifique um utilizador para comunicação intra-cluster.
++
+Se você estiver modificando o esquema de endereçamento IP privado, também deverá atualizar o padrão `beegfs_ha_mgmtd_floating_ip`. Isso deve corresponder ao que você configurar mais tarde para o grupo de recursos do BeeGFS Management.
+
++
+Especifique um ou mais e-mails que devem receber alertas para eventos de cluster usando `beegfs_ha_alert_email_list`o .
+
++
+....
+### Cluster information
+beegfs_ha_firewall_configure: True
+eseries_beegfs_ha_disable_selinux: True
+eseries_selinux_state: disabled
+# The following variables should be adjusted depending on the desired configuration:
+beegfs_ha_cluster_name: hacluster                  # BeeGFS HA cluster name.
+beegfs_ha_cluster_username: hacluster              # BeeGFS HA cluster username.
+beegfs_ha_cluster_password: hapassword             # BeeGFS HA cluster username's password.
+beegfs_ha_cluster_password_sha512_salt: randomSalt # BeeGFS HA cluster username's password salt.
+beegfs_ha_mgmtd_floating_ip: 100.127.101.0         # BeeGFS management service IP address.
+# Email Alerts Configuration
+beegfs_ha_enable_alerts: True
+beegfs_ha_alert_email_list: ["email@example.com"]  # E-mail recipient list for notifications when BeeGFS HA resources change or fail.  Often a distribution list for the team responsible for managing the cluster.
+beegfs_ha_alert_conf_ha_group_options:
+      mydomain: “example.com”
+# The mydomain parameter specifies the local internet domain name. This is optional when the cluster nodes have fully qualified hostnames (i.e. host.example.com).
+# Adjusting the following parameters is optional:
+beegfs_ha_alert_timestamp_format: "%Y-%m-%d %H:%M:%S.%N" #%H:%M:%S.%N
+beegfs_ha_alert_verbosity: 3
+#  1) high-level node activity
+#  3) high-level node activity + fencing action information + resources (filter on X-monitor)
+#  5) high-level node activity + fencing action information + resources
+....
++
+
+NOTE: Embora pareça redundante, `beegfs_ha_mgmtd_floating_ip` é importante quando você escala o sistema de arquivos BeeGFS além de um único cluster de HA. Os clusters de HA subsequentes são implantados sem um serviço de gerenciamento BeeGFS adicional e apontam para o serviço de gerenciamento fornecido pelo primeiro cluster.
+
+. Configurar um agente de vedação. (Para obter mais detalhes, https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_high_availability_clusters/assembly_configuring-fencing-configuring-and-managing-high-availability-clusters["Configure o esgrima em um cluster Red Hat High Availability"^] consulte .) A saída a seguir mostra exemplos para a configuração de agentes de vedação comuns. Escolha uma destas opções.
++
+Para esta etapa, esteja ciente de que:
+
++
+** Por padrão, o esgrima está habilitado, mas você precisa configurar um _agente_ de esgrima.
+** O `<HOSTNAME>` especificado no `pcmk_host_map` ou `pcmk_host_list` deve corresponder ao nome do host no inventário do Ansible.
+** A execução do cluster BeeGFS sem cercas não é suportada, especialmente na produção. Isso é em grande parte para garantir quando os serviços BeeGFS, incluindo quaisquer dependências de recursos, como dispositivos de bloco, fazem failover devido a um problema, não há risco de acesso simultâneo por vários nós que resultam em corrupção do sistema de arquivos ou outro comportamento indesejável ou inesperado. Se o esgrima tiver de ser desativado, consulte as notas gerais no guia de introdução da função BeeGFS HA e defina `beegfs_ha_cluster_crm_config_options["stonith-enabled"]` como false no `ha_cluster.yml`.
+** Há vários dispositivos de esgrima no nível do nó disponíveis e a função BeeGFS HA pode configurar qualquer agente de esgrima disponível no repositório de pacotes Red Hat HA. Quando possível, use um agente de vedação que funcione através da fonte de alimentação ininterrupta (UPS) ou da unidade de distribuição de energia em rack (rPDU), porque alguns agentes de vedação, como o controlador de gerenciamento de placa base (BMC) ou outros dispositivos de iluminação integrados no servidor, podem não responder à solicitação de vedação sob certos cenários de falha.
++
+....
+### Fencing configuration:
+# OPTION 1: To enable fencing using APC Power Distribution Units (PDUs):
+beegfs_ha_fencing_agents:
+ fence_apc:
+   - ipaddr: <PDU_IP_ADDRESS>
+     login: <PDU_USERNAME>
+     passwd: <PDU_PASSWORD>
+     pcmk_host_map: "<HOSTNAME>:<PDU_PORT>,<PDU_PORT>;<HOSTNAME>:<PDU_PORT>,<PDU_PORT>"
+# OPTION 2: To enable fencing using the Redfish APIs provided by the Lenovo XCC (and other BMCs):
+redfish: &redfish
+  username: <BMC_USERNAME>
+  password: <BMC_PASSWORD>
+  ssl_insecure: 1 # If a valid SSL certificate is not available specify “1”.
+beegfs_ha_fencing_agents:
+  fence_redfish:
+    - pcmk_host_list: <HOSTNAME>
+      ip: <BMC_IP>
+      <<: *redfish
+    - pcmk_host_list: <HOSTNAME>
+      ip: <BMC_IP>
+      <<: *redfish
+# For details on configuring other fencing agents see https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_high_availability_clusters/assembly_configuring-fencing-configuring-and-managing-high-availability-clusters.
+....
+
+
+. Ative o ajuste de desempenho recomendado no sistema operacional Linux.
++
+Embora muitos usuários encontrem as configurações padrão para os parâmetros de desempenho geralmente funcionem bem, você pode opcionalmente alterar as configurações padrão para uma determinada carga de trabalho. Como tal, essas recomendações são incluídas na função BeeGFS, mas não são habilitadas por padrão para garantir que os usuários estejam cientes do ajuste aplicado ao sistema de arquivos.
+
++
+Para ativar o ajuste de desempenho, especifique:
+
++
+....
+### Performance Configuration:
+beegfs_ha_enable_performance_tuning: True
+....
+. (Opcional) você pode ajustar os parâmetros de ajuste de desempenho no sistema operacional Linux conforme necessário.
++
+Para obter uma lista abrangente dos parâmetros de ajuste disponíveis que você pode ajustar, consulte a seção padrões de ajuste de desempenho da função de HA BeeGFS em https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_ha_7_4/defaults/main.yml["Site do e-Series BeeGFS GitHub"^]. os valores padrão podem ser substituídos para todos os nós do cluster neste arquivo ou `host_vars` para um nó individual.
+
+. Para permitir a conetividade 200GBK/HDR completa entre nós de bloco e arquivo, use o pacote Open Subnet Manager (OpenSM) da NVIDIA Open Fabrics Enterprise Distribution (MLNX_OFED). A versão MLNX_OFED na lista link:beegfs-technology-requirements.html#file-node-requirements["requisitos de nó de arquivo"]vem junto com os pacotes OpenSM recomendados. Embora a implantação usando Ansible seja compatível, primeiro você precisa instalar o driver MLNX_OFED em todos os nós de arquivo.
++
+.. Preencha os seguintes parâmetros em `group_vars/ha_cluster.yml` (ajuste pacotes conforme necessário):
++
+....
+### OpenSM package and configuration information
+eseries_ib_opensm_options:
+  virt_enabled: "2"
+  virt_max_ports_in_process: "0"
+....
+
+
+. Configure a `udev` regra para garantir o mapeamento consistente de identificadores de porta InfiniBand lógicos para dispositivos PCIe subjacentes.
++
+A `udev` regra deve ser exclusiva da topologia PCIe de cada plataforma de servidor usada como nó de arquivo BeeGFS.
+
++
+Use os seguintes valores para nós de arquivo verificados:
+
++
+....
+### Ensure Consistent Logical IB Port Numbering
+# OPTION 1: Lenovo SR665 V3 PCIe address-to-logical IB port mapping:
+eseries_ipoib_udev_rules:
+  "0000:01:00.0": i1a
+  "0000:01:00.1": i1b
+  "0000:41:00.0": i2a
+  "0000:41:00.1": i2b
+  "0000:81:00.0": i3a
+  "0000:81:00.1": i3b
+  "0000:a1:00.0": i4a
+  "0000:a1:00.1": i4b
+
+# OPTION 2: Lenovo SR665 PCIe address-to-logical IB port mapping:
+eseries_ipoib_udev_rules:
+  "0000:41:00.0": i1a
+  "0000:41:00.1": i1b
+  "0000:01:00.0": i2a
+  "0000:01:00.1": i2b
+  "0000:a1:00.0": i3a
+  "0000:a1:00.1": i3b
+  "0000:81:00.0": i4a
+  "0000:81:00.1": i4b
+....
+. (Opcional) Atualize o algoritmo de seleção de destino de metadados.
++
+....
+beegfs_ha_beegfs_meta_conf_ha_group_options:
+  tuneTargetChooser: randomrobin
+....
++
+
+NOTE: No teste de verificação, `randomrobin` o era normalmente usado para garantir que os arquivos de teste fossem distribuídos uniformemente por todos os destinos de storage do BeeGFS durante o benchmark de desempenho (para obter mais informações sobre benchmarking, consulte o site BeeGFS para https://doc.beegfs.io/latest/advanced_topics/benchmark.html["Benchmarking de um sistema BeeGFS"^]). Com o uso do mundo real, isso pode fazer com que alvos com números mais baixos preencham mais rápido do que alvos com números mais altos. Omitir e `randomrobin` apenas usar o valor padrão `randomized` foi mostrado para fornecer bom desempenho enquanto ainda utiliza todos os alvos disponíveis.
+
+
+
+
+
+== Etapa 5: Defina a configuração para o nó de bloco comum
+
+A configuração compartilhada para nós de bloco é definida em um grupo `eseries_storage_systems` chamado . As etapas nesta seção compilam a configuração que deve ser incluída no `group_vars/ eseries_storage_systems.yml` arquivo.
+
+.Passos
+. Defina a conexão Ansible como local, forneça a senha do sistema e especifique se os certificados SSL devem ser verificados. (Normalmente, o Ansible usa SSH para se conectar a hosts gerenciados. No entanto, no caso dos sistemas de storage do NetApp e-Series usados como nós de bloco, os módulos usam a API REST para comunicação.) Na parte superior do arquivo, adicione o seguinte:
++
+....
+### eseries_storage_systems Ansible group inventory file.
+# Place all default/common variables for NetApp E-Series Storage Systems here:
+ansible_connection: local
+eseries_system_password: <PASSWORD>
+eseries_validate_certs: false
+....
++
+
+NOTE: Listar senhas em texto simples não é recomendado. Use o cofre do Ansible ou forneça o `eseries_system_password` ao executar o Ansible `--extra-vars` usando o .
+
+. Para garantir o desempenho ideal, instale as versões listadas para nós de bloco link:beegfs-technology-requirements.html["Requisitos técnicos"]no .
++
+Transfira os ficheiros correspondentes a partir do https://mysupport.netapp.com/site/products/all/details/eseries-santricityos/downloads-tab["Site de suporte da NetApp"^]. Você pode atualizá-los manualmente ou incluí-los `packages/` no diretório do nó de controle do Ansible e preencher os seguintes parâmetros `eseries_storage_systems.yml` para atualizar usando o Ansible:
+
++
+....
+# Firmware, NVSRAM, and Drive Firmware (modify the filenames as needed):
+eseries_firmware_firmware: "packages/RCB_11.80GA_6000_64cc0ee3.dlp"
+eseries_firmware_nvsram: "packages/N6000-880834-D08.dlp"
+....
+. Transfira e instale o firmware de unidade mais recente disponível para as unidades instaladas nos nós de bloco a partir do https://mysupport.netapp.com/site/downloads/firmware/e-series-disk-firmware["Site de suporte da NetApp"^]. Você pode atualizá-los manualmente ou incluí-los `packages/` no diretório do nó de controle do Ansible e preencher os seguintes parâmetros `eseries_storage_systems.yml` para atualizar usando o Ansible:
++
+....
+eseries_drive_firmware_firmware_list:
+  - "packages/<FILENAME>.dlp"
+eseries_drive_firmware_upgrade_drives_online: true
+....
++
+
+NOTE: A configuração `eseries_drive_firmware_upgrade_drives_online` para `false` acelerará a atualização, mas não deverá ser feita depois que o BeeGFS for implantado. Isso ocorre porque essa configuração requer a interrupção de todas as I/o para as unidades antes da atualização para evitar erros de aplicativo. Embora a execução de uma atualização de firmware de unidade online antes de configurar volumes ainda seja rápida, recomendamos que você sempre defina esse valor para `true` evitar problemas mais tarde.
+
+. Para otimizar o desempenho, faça as seguintes alterações na configuração global:
++
+....
+# Global Configuration Defaults
+eseries_system_cache_block_size: 32768
+eseries_system_cache_flush_threshold: 80
+eseries_system_default_host_type: linux dm-mp
+eseries_system_autoload_balance: disabled
+eseries_system_host_connectivity_reporting: disabled
+eseries_system_controller_shelf_id: 99 # Required.
+....
+. Para garantir o provisionamento e o comportamento ideais de volume, especifique os seguintes parâmetros:
++
+....
+# Storage Provisioning Defaults
+eseries_volume_size_unit: pct
+eseries_volume_read_cache_enable: true
+eseries_volume_read_ahead_enable: false
+eseries_volume_write_cache_enable: true
+eseries_volume_write_cache_mirror_enable: true
+eseries_volume_cache_without_batteries: false
+eseries_storage_pool_usable_drives: "99:0,99:23,99:1,99:22,99:2,99:21,99:3,99:20,99:4,99:19,99:5,99:18,99:6,99:17,99:7,99:16,99:8,99:15,99:9,99:14,99:10,99:13,99:11,99:12"
+....
++
+
+NOTE: O valor especificado para `eseries_storage_pool_usable_drives` é específico para nós de bloco do NetApp EF600 e controla a ordem pela qual as unidades são atribuídas a novos grupos de volumes. Esse pedido garante que a e/S para cada grupo seja distribuída uniformemente pelos canais de unidade de back-end.
+
+

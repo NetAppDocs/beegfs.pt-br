@@ -1,0 +1,56 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-stop-start-cluster.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, stop, start 
+summary: Parar e iniciar o cluster HA com simplicidade. 
+---
+= Pare e inicie o cluster
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Parar e iniciar o cluster HA com simplicidade.
+
+
+
+== Visão geral
+
+Esta seção descreve como encerrar e reiniciar o cluster BeeGFS com simplicidade. Exemplos de cenários onde isso pode ser necessário incluem manutenção elétrica ou migração entre data centers ou racks.
+
+
+
+== Passos
+
+Se, por algum motivo, você precisar parar todo o cluster BeeGFS e encerrar todos os serviços serão executados:
+
+[source, console]
+----
+pcs cluster stop --all
+----
+Também é possível parar o cluster em nós individuais (que farão failover automático de serviços para outro nó), embora seja recomendável colocar primeiro o nó em standby (consulte link:clusters-failover-failback.html["failover"^]a seção):
+
+[source, console]
+----
+pcs cluster stop <HOSTNAME>
+----
+Para iniciar os serviços e recursos do cluster em todos os nós executados:
+
+[source, console]
+----
+pcs cluster start --all
+----
+Ou inicie serviços em um nó específico com:
+
+[source, console]
+----
+pcs cluster start <HOSTNAME>
+----
+Nesse momento, execute `pcs status` e verifique se o cluster e os serviços BeeGFS começam em todos os nós, e os serviços estão sendo executados nos nós que você espera.
+
+
+TIP: Dependendo do tamanho do cluster, ele pode levar algum tempo (segundos a minutos) para que todo o cluster pare, ou mostrar iniciado em `pcs status`. se `pcs cluster <COMMAND>` travar por mais de cinco minutos, antes de executar "Ctrl C" para cancelar o comando, faça login em cada nó do cluster e use `pcs status` para ver se os serviços de cluster (Corosync/Pacemaker) ainda estão em execução nesse nó. De qualquer nó em que o cluster ainda esteja ativo, você pode verificar quais recursos estão bloqueando o cluster. Aborde manualmente o problema e o comando deve ser concluído ou pode ser executado novamente para parar quaisquer serviços restantes.

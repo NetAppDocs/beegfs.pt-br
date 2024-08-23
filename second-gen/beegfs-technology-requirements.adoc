@@ -1,0 +1,237 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-technology-requirements.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Para implementar a solução BeeGFS no NetApp, verifique se seu ambiente atende aos requisitos de tecnologia. 
+---
+= Requisitos técnicos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Para implementar a solução BeeGFS no NetApp, garanta que seu ambiente atenda aos requisitos de tecnologia descritos neste documento.
+
+
+
+== Requisitos de hardware
+
+Antes de começar, certifique-se de que seu hardware atenda às seguintes especificações para um único design de componente básico de segunda geração da solução BeeGFS on NetApp. Os componentes exatos para uma determinada implantação podem variar com base nos requisitos do cliente.
+
+[cols="10%,20%,70%"]
+|===
+| Quantidade | Componente de hardware | Requisitos 
+
+
+ a| 
+2
+ a| 
+Nós de arquivo BeeGFS
+ a| 
+Cada nó de arquivo deve atender ou exceder as especificações dos nós de arquivo recomendados para obter a performance esperada.
+
+* Opções de nó de arquivo recomendadas:*
+
+* *Lenovo ThinkSystem SR665 V3*
++
+** * Processadores:* 2x AMD EPYC 9124 16C 3,0 GHz (configurado como duas zonas NUMA).
+** *Memória:* 256GBGB (16x 16GB TruDDR5 4800MHzGB RDIMM-A)
+** *Expansão PCIe:* quatro slots PCIe Gen5 x16 (dois por zona NUMA)
+** *Diversos:*
++
+*** Duas unidades em RAID 1 para os (1TB 7,2K SATA ou superior)
+*** Porta de 1GbE GbE para gerenciamento de SO na banda
+*** 1GbE BMC com API Redfish para gerenciamento de servidores fora da banda
+*** Fontes de alimentação duplas hot swap e ventoinhas de desempenho
+
+
+
+
+* *Lenovo ThinkSystem SR665*
++
+** * Processadores:* 2x AMD EPYC 7343 16C 3,2 GHz (configurado como duas zonas NUMA).
+** *Memória:* 256GBGB (16x 16GB TruDDR4 3200MHzGB RDIMM-A)
+** *Expansão PCIe:* quatro slots PCIe Gen4 x16 (dois por zona NUMA)
+** *Diversos:*
++
+*** Duas unidades em RAID 1 para os (1TB 7,2K SATA ou superior)
+*** Porta de 1GbE GbE para gerenciamento de SO na banda
+*** 1GbE BMC com API Redfish para gerenciamento de servidores fora da banda
+*** Fontes de alimentação duplas hot swap e ventoinhas de desempenho
+
+
+
+
+
+
+
+
+| 2 | Nós de bloco do e-Series (array de EF600 U)  a| 
+*Memória:* 256GB GB (128GB GB por controlador). *Adaptador:* 200GB/HDR de 2 portas (NVMe/IB). *Drives:* configurado para corresponder aos metadados e à capacidade de armazenamento desejados.
+
+
+
+| 8 | Adaptadores de placa de host InfiniBand (para nós de arquivo).  a| 
+Os adaptadores de placa de host variam de acordo com o modelo de servidor usado para o nó de arquivo. As recomendações para nós de arquivos verificados incluem:
+
+* *Servidor Lenovo ThinkSystem SR665 V3:*
++
+** MCX755106AS-Heat ConnectX-7, NDR200, QSFP112, 2 portas, PCIe Gen5 x16, adaptador InfiniBand
+
+
+* *Servidor Lenovo ThinkSystem SR665:*
++
+** MCX653106A-HDAT ConnectX-6, HDR, QSFP-56, 2 portas, PCIe Gen4 x16, adaptador InfiniBand
+
+
+
+
+
+
+| 1 | Switch de rede de armazenamento  a| 
+O switch de rede de storage deve ter capacidade para velocidades InfiniBand de 200GB GB/s. Os modelos de interrutores recomendados incluem:
+
+* *NVIDIA QM9700 Quantum 2 NDR switch InfiniBand*
+* *NVIDIA MQM8700 Quantum HDR InfiniBand switch*
+
+
+|===
+
+
+=== Requisitos de cabeamento
+
+*Conexões diretas de nós de bloco para nós de arquivo.*
+
+[cols="10%,70%,20%"]
+|===
+| Quantidade | Número de peça | Comprimento 
+
+
+| 8 | MCP1650-H001E30 (cabo de cobre passivo NVIDIA, QSFP56, 200GBm/s) | 1 m 
+|===
+*Conexões de nós de arquivo para o switch de rede de storage.* Selecione a opção de cabo apropriada na tabela a seguir de acordo com o switch de armazenamento InfiniBand. O comprimento recomendado do cabo é de 2m mm; no entanto, isso pode variar de acordo com o ambiente do cliente.
+
+[cols="20%,10%,15%,55%"]
+|===
+| Modelo do interrutor | Quantidade | Tipo de cabo | Número de peça 
+
+
+| NVIDIA QM9700 | 4 | Fibra ativa | MFA7U10-H002 (cabo de fibra ativa NVIDIA, InfiniBand de 400GB GB/s a 2x 200GB GB/s, OSFP a 2x QSFP56 GB) 
+
+
+| NVIDIA QM9700 | 4 | Cobre passivo | MCP7Y60-H002 (cabo de cobre passivo NVIDIA, InfiniBand de 400GB GB/s a 2x 200GB GB/s, OSFP a 2x QSFP56 GB) 
+
+
+| NVIDIA MQM8700 | 8 | Fibra ativa | MFS1S00-H003E (cabo de fibra ativa NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
+
+
+| NVIDIA MQM8700 | 8 | Cobre passivo | MCP1650-H002E26 (cabo de cobre passivo NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
+|===
+
+
+== Requisitos de software
+
+Para performance e confiabilidade previsíveis, as versões da solução BeeGFS on NetApp são testadas com versões específicas dos componentes de software necessárias para implementar a solução.
+
+
+
+=== Requisitos de nó de arquivo
+
+[cols="20%,80%"]
+|===
+| Software | Versão 
+
+
+ a| 
+RedHat Enterprise Linux
+ a| 
+Servidor RedHat 9,3 físico com alta disponibilidade (soquete 2).
+
+
+IMPORTANT: Os nós de arquivo exigem uma assinatura válida do RedHat Enterprise Linux Server e o Red Hat Enterprise Linux High Availability Add-on.
+
+
+
+| Kernel do Linux | 5.14.0-362.24.1.el9_3.x86_64 
+
+
+| Drivers InfiniBand / RDMA | MLNX_OFED_LINUX-23,10-3,2.2,0-LTS 
+
+
+ a| 
+Firmware HCA
+ a| 
+* Firmware HCA * ConnectX-7 FW: 28.39.1002 e PXE: 3.7.0201 e UEFI: 14.32.0012
+
+* Firmware HCA * ConnectX-6 FW: 20.31.1014 e PXE: 3.6.0403 e UEFI: 14.24.0013
+
+|===
+
+
+=== Requisitos de nó de bloco de EF600 U.
+
+[cols="20%,80%"]
+|===
+| Software | Versão 
+
+
+| Sistema operacional SANtricity | 11.80.0 
+
+
+| NVSRAM | N6000-880834-D08.dlp 
+
+
+| Firmware da unidade | Mais recente disponível para os modelos de acionamento em uso. 
+|===
+
+
+=== Requisitos de implantação de software
+
+A tabela a seguir lista os requisitos de software implantados automaticamente como parte da implantação do BeeGFS baseada em Ansible.
+
+[cols="20%,80%"]
+|===
+| Software | Versão 
+
+
+| BeeGFS | 7.4.4 
+
+
+| Corosync | 3,1.5-4 
+
+
+| Pacemaker | 2,1.4-5 
+
+
+| OpenSM  a| 
+opensm-5.17.2 (de MLNX_OFED_Linux-23,10-3,2.2,0-LTS)
+
+|===
+
+
+=== Requisitos de nó de controle do Ansible
+
+A solução BeeGFS no NetApp é implantada e gerenciada a partir de um nó de controle do Ansible. Para obter mais informações, consulte https://docs.ansible.com/ansible/latest/network/getting_started/basic_concepts.html["Documentação do Ansible"^] .
+
+Os requisitos de software listados nas tabelas a seguir são específicos da versão da coleção Ansible do NetApp BeeGFS listada abaixo.
+
+[cols="30%,70%"]
+|===
+| Software | Versão 
+
+
+| Ansible | 6.x quando instalado através do pip: Ansible-6.0.0 e Ansible-core > 2.13.0 
+
+
+| Python | 3,9 (ou posterior) 
+
+
+| Pacotes Python adicionais | Criptografia-43,0.0, netaddr-1,3.0, ipaddr-2.2.0 
+
+
+| Coleção BeeGFS do NetApp e-Series | 3.2.0 
+|===

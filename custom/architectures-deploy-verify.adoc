@@ -1,0 +1,58 @@
+---
+sidebar: sidebar 
+permalink: custom/architectures-deploy-verify.html 
+keywords: BeeGFS on NetApp, NetApp Custom Architectures, EF600 
+summary: Verifique a implantação do sistema de arquivos antes de colocar o sistema em produção. 
+---
+= Verifique a implantação do BeeGFS
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Verifique a implantação do sistema de arquivos antes de colocar o sistema em produção.
+
+
+
+== Visão geral
+
+Antes de colocar o sistema de arquivos BeeGFS em produção, execute algumas verificações.
+
+
+
+=== Passos
+
+. Faça login em qualquer cliente e execute o seguinte para garantir que todos os nós esperados estejam presentes/acessíveis, e não haja inconsistências ou outros problemas relatados:
++
+[source, bash]
+----
+beegfs-fsck --checkfs
+----
+. Encerre todo o cluster e reinicie-o. A partir de qualquer nó de arquivo, execute o seguinte:
++
+[source, bash]
+----
+pcs cluster stop --all # Stop the cluster on all file nodes.
+pcs cluster start --all  # Start the cluster on all file nodes.
+pcs status # Verify all nodes and services are started and no failures are reported (the command may need to be reran a few times to allow time for all services to start).
+----
+. Coloque cada nó em standby e verifique se os serviços do BeeGFS são capazes de fazer failover para nós secundários. Para fazer esse login em qualquer um dos nós de arquivo e executar o seguinte:
++
+[source, bash]
+----
+pcs status # Verify the cluster is healthy at the start.
+pcs node standby <FILE NODE HOSTNAME> # Place the node under test in standby.
+pcs status # Verify services are started on a secondary node and no failures are reported.
+pcs node unstandby <FILE NODE HOSTNAME> # Take the node under test out of standby.
+pcs status # Verify the file node is back online and no failures are reported.
+pcs resource relocate run # Move all services back to their preferred nodes.
+pcs status # Verify services have moved back to the preferred node.
+----
+. Use ferramentas de benchmarking de desempenho, como IOR e MDTest, para verificar se o desempenho do sistema de arquivos atende às expetativa. Exemplos de testes e parâmetros comuns usados com o BeeGFS podem ser encontrados na link:../second-gen/beegfs-design-solution-verification.html["Verificação de design"^]seção do BeeGFS na arquitetura verificada do NetApp.
+
+
+Testes adicionais devem ser realizados com base nos critérios de aceitação definidos para um determinado local/instalação.

@@ -1,0 +1,561 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-define-inventory.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Depois de definir a estrutura geral de inventário do Ansible, defina a configuração para cada componente básico no sistema de arquivos BeeGFS. 
+---
+= Definir o inventário do Ansible para os componentes básicos do BeeGFS
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Depois de definir a estrutura geral de inventário do Ansible, defina a configuração para cada componente básico no sistema de arquivos BeeGFS.
+
+Essas instruções de implantação demonstram como implantar um sistema de arquivos que consiste em um componente básico, incluindo gerenciamento, metadados e serviços de storage, um segundo componente básico com metadados e serviços de storage e um terceiro componente básico apenas de storage.
+
+Essas etapas destinam-se a mostrar toda a gama de perfis de configuração típicos que você pode usar para configurar os componentes básicos do NetApp BeeGFS para atender aos requisitos do sistema de arquivos BeeGFS geral.
+
+
+NOTE: Nesta e nas seções subsequentes, ajuste conforme necessário para criar o inventário que representa o sistema de arquivos BeeGFS que você deseja implantar. Em especial, use nomes de host do Ansible que representam cada bloco ou nó de arquivo e o esquema de endereçamento IP desejado para a rede de storage. Assim, ela pode ser dimensionada para o número de nós de arquivos BeeGFS e clientes.
+
+
+
+== Etapa 1: Crie o arquivo de inventário do Ansible
+
+.Passos
+. Crie um novo `inventory.yml` arquivo e, em seguida, insira os seguintes parâmetros, substituindo os hosts em `eseries_storage_systems` conforme necessário para representar os nós de bloco em sua implantação. Os nomes devem corresponder ao nome utilizado para `host_vars/<FILENAME>.yml`.
++
+....
+# BeeGFS HA (High Availability) cluster inventory.
+all:
+  children:
+    # Ansible group representing all block nodes:
+    eseries_storage_systems:
+      hosts:
+        netapp_01:
+        netapp_02:
+        netapp_03:
+        netapp_04:
+        netapp_05:
+        netapp_06:
+    # Ansible group representing all file nodes:
+    ha_cluster:
+      children:
+....
++
+Nas seções subsequentes, você criará grupos adicionais do Ansible `ha_cluster` que representam os serviços BeeGFS que deseja executar no cluster.
+
+
+
+
+
+== Etapa 2: Configurar o inventário para um componente básico de gerenciamento, metadados e armazenamento
+
+O primeiro componente básico do cluster ou componente básico deve incluir o serviço de gerenciamento do BeeGFS, além de serviços de metadados e storage:
+
+.Passos
+. No `inventory.yml`, preencha os seguintes parâmetros em `ha_cluster: children`:
++
+....
+      # beegfs_01/beegfs_02 HA Pair (mgmt/meta/storage building block):
+        mgmt:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        meta_01:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        stor_01:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        meta_02:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        stor_02:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        meta_03:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        stor_03:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        meta_04:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        stor_04:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+        meta_05:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        stor_05:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        meta_06:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        stor_06:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        meta_07:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        stor_07:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        meta_08:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+        stor_08:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+....
+. Crie o arquivo `group_vars/mgmt.yml` e inclua o seguinte:
++
+....
+# mgmt - BeeGFS HA Management Resource Group
+# OPTIONAL: Override default BeeGFS management configuration:
+# beegfs_ha_beegfs_mgmtd_conf_resource_group_options:
+#  <beegfs-mgmt.conf:key>:<beegfs-mgmt.conf:value>
+floating_ips:
+  - i1b: 100.127.101.0/16
+  - i2b: 100.127.102.0/16
+beegfs_service: management
+beegfs_targets:
+  netapp_01:
+    eseries_storage_pool_configuration:
+      - name: beegfs_m1_m2_m5_m6
+        raid_level: raid1
+        criteria_drive_count: 4
+        common_volume_configuration:
+          segment_size_kb:  128
+        volumes:
+          - size: 1
+            owning_controller: A
+....
+. Em `group_vars/`, crie arquivos para grupos de recursos `meta_01` `meta_08` usando o modelo a seguir e preencha os valores de espaço reservado para cada serviço que faz referência à tabela abaixo:
++
+....
+# meta_0X - BeeGFS HA Metadata Resource Group
+beegfs_ha_beegfs_meta_conf_resource_group_options:
+  connMetaPortTCP: <PORT>
+  connMetaPortUDP: <PORT>
+  tuneBindToNumaZone: <NUMA ZONE>
+floating_ips:
+  - <PREFERRED PORT:IP/SUBNET> # Example: i1b:192.168.120.1/16
+  - <SECONDARY PORT:IP/SUBNET>
+beegfs_service: metadata
+beegfs_targets:
+  <BLOCK NODE>:
+    eseries_storage_pool_configuration:
+      - name: <STORAGE POOL>
+        raid_level: raid1
+        criteria_drive_count: 4
+        common_volume_configuration:
+          segment_size_kb:  128
+        volumes:
+          - size: 21.25 # SEE NOTE BELOW!
+            owning_controller: <OWNING CONTROLLER>
+....
++
+
+NOTE: O tamanho do volume é especificado como uma porcentagem do conjunto de armazenamento geral (também conhecido como um grupo de volumes). A NetApp recomenda fortemente que você deixe alguma capacidade livre em cada pool para permitir espaço para provisionamento excessivo de SSD (para obter mais informações, https://www.netapp.com/pdf.html?item=/media/17009-tr4800pdf.pdf["Introdução ao array NetApp EF600"^]consulte ). O pool de armazenamento, `beegfs_m1_m2_m5_m6`, também aloca 1% da capacidade do pool para o serviço de gerenciamento. Assim, para volumes de metadados no pool de armazenamento, `beegfs_m1_m2_m5_m6`, quando 1,92TB ou 3,84TB unidades forem usadas, defina esse valor como `21.25`; para unidades 7,65TB, defina esse valor como `22.25`; e para unidades 15,3TB, defina esse valor como `23.75`.
+
++
+|===
+| Nome do ficheiro | Porta | IPs flutuantes | Zona NUMA | Nó de bloco | Pool de storage | Controlador proprietário 
+
+
+| meta_01.yml | 8015 | i1b:100.127.101.1/16 i2b:100.127.102.1/16 | 0 | netapp_01 | beegfs_m1_m2_m5_m6 | A 
+
+
+| meta_02.yml | 8025 | i2b:100.127.102.2/16 i1b:100.127.101.2/16 | 0 | netapp_01 | beegfs_m1_m2_m5_m6 | B 
+
+
+| meta_03.yml | 8035 | i3b:100.127.101.3/16 i4b:100.127.102.3/16 | 1 | netapp_02 | beegfs_m3_m4_m7_m8 | A 
+
+
+| meta_04.yml | 8045 | i4b:100.127.102.4/16 i3b:100.127.101.4/16 | 1 | netapp_02 | beegfs_m3_m4_m7_m8 | B 
+
+
+| meta_05.yml | 8055 | i1b:100.127.101.5/16 i2b:100.127.102.5/16 | 0 | netapp_01 | beegfs_m1_m2_m5_m6 | A 
+
+
+| meta_06.yml | 8065 | i2b:100.127.102.6/16 i1b:100.127.101.6/16 | 0 | netapp_01 | beegfs_m1_m2_m5_m6 | B 
+
+
+| meta_07.yml | 8075 | i3b:100.127.101.7/16 i4b:100.127.102.7/16 | 1 | netapp_02 | beegfs_m3_m4_m7_m8 | A 
+
+
+| meta_08.yml | 8085 | i4b:100.127.102.8/16 i3b:100.127.101.8/16 | 1 | netapp_02 | beegfs_m3_m4_m7_m8 | B 
+|===
+. Em `group_vars/`, crie arquivos para grupos de recursos `stor_01` `stor_08` usando o modelo a seguir e preencha os valores de espaço reservado para cada serviço que referencie o exemplo:
++
+....
+# stor_0X - BeeGFS HA Storage Resource Groupbeegfs_ha_beegfs_storage_conf_resource_group_options:
+  connStoragePortTCP: <PORT>
+  connStoragePortUDP: <PORT>
+  tuneBindToNumaZone: <NUMA ZONE>
+floating_ips:
+  - <PREFERRED PORT:IP/SUBNET>
+  - <SECONDARY PORT:IP/SUBNET>
+beegfs_service: storage
+beegfs_targets:
+  <BLOCK NODE>:
+    eseries_storage_pool_configuration:
+      - name: <STORAGE POOL>
+        raid_level: raid6
+        criteria_drive_count: 10
+        common_volume_configuration:
+          segment_size_kb: 512        volumes:
+          - size: 21.50 # See note below!             owning_controller: <OWNING CONTROLLER>
+          - size: 21.50            owning_controller: <OWNING CONTROLLER>
+....
++
+
+NOTE: Para obter o tamanho correto a ser usado, link:beegfs-deploy-recommended-volume-percentages.html["Porcentagens recomendadas de provisionamento de pool de storage"]consulte .
+
++
+|===
+| Nome do ficheiro | Porta | IPs flutuantes | Zona NUMA | Nó de bloco | Pool de storage | Controlador proprietário 
+
+
+| stor_01.yml | 8013 | i1b:100.127.103.1/16 i2b:100.127.104.1/16 | 0 | netapp_01 | beegfs_s1_s2 | A 
+
+
+| stor_02.yml | 8023 | i2b:100.127.104.2/16 i1b:100.127.103.2/16 | 0 | netapp_01 | beegfs_s1_s2 | B 
+
+
+| stor_03.yml | 8033 | i3b:100.127.103.3/16 i4b:100.127.104.3/16 | 1 | netapp_02 | beegfs_s3_s4 | A 
+
+
+| stor_04.yml | 8043 | i4b:100.127.104.4/16 i3b:100.127.103.4/16 | 1 | netapp_02 | beegfs_s3_s4 | B 
+
+
+| stor_05.yml | 8053 | i1b:100.127.103.5/16 i2b:100.127.104.5/16 | 0 | netapp_01 | beegfs_s5_s6 | A 
+
+
+| stor_06.yml | 8063 | i2b:100.127.104.6/16 i1b:100.127.103.6/16 | 0 | netapp_01 | beegfs_s5_s6 | B 
+
+
+| stor_07.yml | 8073 | i3b:100.127.103.7/16 i4b:100.127.104.7/16 | 1 | netapp_02 | beegfs_s7_s8 | A 
+
+
+| stor_08.yml | 8083 | i4b:100.127.104.8/16 i3b:100.127.103.8/16 | 1 | netapp_02 | beegfs_s7_s8 | B 
+|===
+
+
+
+
+== Passo 3: Configure o inventário para um bloco de construção de metadados e armazenamento
+
+Estas etapas descrevem como configurar um inventário do Ansible para um componente básico de storage e metadados do BeeGFS.
+
+.Passos
+. No `inventory.yml`, preencha os seguintes parâmetros sob a configuração existente:
++
+....
+        meta_09:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        stor_09:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        meta_10:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        stor_10:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        meta_11:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        stor_11:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        meta_12:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        stor_12:
+          hosts:
+            beegfs_03:
+            beegfs_04:
+        meta_13:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        stor_13:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        meta_14:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        stor_14:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        meta_15:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        stor_15:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        meta_16:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+        stor_16:
+          hosts:
+            beegfs_04:
+            beegfs_03:
+....
+. Em `group_vars/`, crie arquivos para grupos de recursos `meta_09` `meta_16` usando o modelo a seguir e preencha os valores de espaço reservado para cada serviço que referencie o exemplo:
++
+....
+# meta_0X - BeeGFS HA Metadata Resource Group
+beegfs_ha_beegfs_meta_conf_resource_group_options:
+  connMetaPortTCP: <PORT>
+  connMetaPortUDP: <PORT>
+  tuneBindToNumaZone: <NUMA ZONE>
+floating_ips:
+  - <PREFERRED PORT:IP/SUBNET>
+  - <SECONDARY PORT:IP/SUBNET>
+beegfs_service: metadata
+beegfs_targets:
+  <BLOCK NODE>:
+    eseries_storage_pool_configuration:
+      - name: <STORAGE POOL>
+        raid_level: raid1
+        criteria_drive_count: 4
+        common_volume_configuration:
+          segment_size_kb: 128
+        volumes:
+          - size: 21.5 # SEE NOTE BELOW!
+            owning_controller: <OWNING CONTROLLER>
+....
++
+
+NOTE: Para obter o tamanho correto a ser usado, link:beegfs-deploy-recommended-volume-percentages.html["Porcentagens recomendadas de provisionamento de pool de storage"]consulte .
+
++
+|===
+| Nome do ficheiro | Porta | IPs flutuantes | Zona NUMA | Nó de bloco | Pool de storage | Controlador proprietário 
+
+
+| meta_09.yml | 8015 | i1b:100.127.101.9/16 i2b:100.127.102.9/16 | 0 | netapp_03 | beegfs_m9_m10_m13_m14 | A 
+
+
+| meta_10.yml | 8025 | i2b:100.127.102.10/16 i1b:100.127.101.10/16 | 0 | netapp_03 | beegfs_m9_m10_m13_m14 | B 
+
+
+| meta_11.yml | 8035 | i3b:100.127.101.11/16 i4b:100.127.102.11/16 | 1 | netapp_04 | beegfs_m11_m12_m15_m16 | A 
+
+
+| meta_12.yml | 8045 | i4b:100.127.102.12/16 i3b:100.127.101.12/16 | 1 | netapp_04 | beegfs_m11_m12_m15_m16 | B 
+
+
+| meta_13.yml | 8055 | i1b:100.127.101.13/16 i2b:100.127.102.13/16 | 0 | netapp_03 | beegfs_m9_m10_m13_m14 | A 
+
+
+| meta_14.yml | 8065 | i2b:100.127.102.14/16 i1b:100.127.101.14/16 | 0 | netapp_03 | beegfs_m9_m10_m13_m14 | B 
+
+
+| meta_15.yml | 8075 | i3b:100.127.101.15/16 i4b:100.127.102.15/16 | 1 | netapp_04 | beegfs_m11_m12_m15_m16 | A 
+
+
+| meta_16.yml | 8085 | i4b:100.127.102.16/16 i3b:100.127.101.16/16 | 1 | netapp_04 | beegfs_m11_m12_m15_m16 | B 
+|===
+. Em `group_vars/,` criar arquivos para grupos de recursos `stor_09` `stor_16` usando o modelo a seguir e preencha os valores de espaço reservado para cada serviço que referencie o exemplo:
++
+....
+# stor_0X - BeeGFS HA Storage Resource Group
+beegfs_ha_beegfs_storage_conf_resource_group_options:
+  connStoragePortTCP: <PORT>
+  connStoragePortUDP: <PORT>
+  tuneBindToNumaZone: <NUMA ZONE>
+floating_ips:
+  - <PREFERRED PORT:IP/SUBNET>
+  - <SECONDARY PORT:IP/SUBNET>
+beegfs_service: storage
+beegfs_targets:
+  <BLOCK NODE>:
+    eseries_storage_pool_configuration:
+      - name: <STORAGE POOL>
+        raid_level: raid6
+        criteria_drive_count: 10
+        common_volume_configuration:
+          segment_size_kb: 512        volumes:
+          - size: 21.50 # See note below!
+            owning_controller: <OWNING CONTROLLER>
+          - size: 21.50            owning_controller: <OWNING CONTROLLER>
+....
++
+
+NOTE: Para obter o tamanho correto a ser usado, link:beegfs-deploy-recommended-volume-percentages.html["Porcentagens recomendadas de provisionamento de pool de storage"]consulte ..
+
++
+|===
+| Nome do ficheiro | Porta | IPs flutuantes | Zona NUMA | Nó de bloco | Pool de storage | Controlador proprietário 
+
+
+| stor_09.yml | 8013 | i1b:100.127.103.9/16 i2b:100.127.104.9/16 | 0 | netapp_03 | beegfs_s9_s10 | A 
+
+
+| stor_10.yml | 8023 | i2b:100.127.104.10/16 i1b:100.127.103.10/16 | 0 | netapp_03 | beegfs_s9_s10 | B 
+
+
+| stor_11.yml | 8033 | i3b:100.127.103.11/16 i4b:100.127.104.11/16 | 1 | netapp_04 | beegfs_s11_s12 | A 
+
+
+| stor_12.yml | 8043 | i4b:100.127.104.12/16 i3b:100.127.103.12/16 | 1 | netapp_04 | beegfs_s11_s12 | B 
+
+
+| stor_13.yml | 8053 | i1b:100.127.103.13/16 i2b:100.127.104.13/16 | 0 | netapp_03 | beegfs_s13_s14 | A 
+
+
+| stor_14.yml | 8063 | i2b:100.127.104.14/16 i1b:100.127.103.14/16 | 0 | netapp_03 | beegfs_s13_s14 | B 
+
+
+| stor_15.yml | 8073 | i3b:100.127.103.15/16 i4b:100.127.104.15/16 | 1 | netapp_04 | beegfs_s15_s16 | A 
+
+
+| stor_16.yml | 8083 | i4b:100.127.104.16/16 i3b:100.127.103.16/16 | 1 | netapp_04 | beegfs_s15_s16 | B 
+|===
+
+
+
+
+== Etapa 4: Configure o inventário para um componente básico somente de armazenamento
+
+Estas etapas descrevem como configurar um inventário do Ansible para um componente básico somente de storage do BeeGFS. A principal diferença entre configurar a configuração de metadados e armazenamento versus um componente básico somente de armazenamento é a omissão de todos os grupos de recursos de metadados e a alteração de `criteria_drive_count` 10 para 12 para cada pool de armazenamento.
+
+.Passos
+. No `inventory.yml`, preencha os seguintes parâmetros sob a configuração existente:
++
+....
+      # beegfs_05/beegfs_06 HA Pair (storage only building block):
+        stor_17:
+          hosts:
+            beegfs_05:
+            beegfs_06:
+        stor_18:
+          hosts:
+            beegfs_05:
+            beegfs_06:
+        stor_19:
+          hosts:
+            beegfs_05:
+            beegfs_06:
+        stor_20:
+          hosts:
+            beegfs_05:
+            beegfs_06:
+        stor_21:
+          hosts:
+            beegfs_06:
+            beegfs_05:
+        stor_22:
+          hosts:
+            beegfs_06:
+            beegfs_05:
+        stor_23:
+          hosts:
+            beegfs_06:
+            beegfs_05:
+        stor_24:
+          hosts:
+            beegfs_06:
+            beegfs_05:
+....
+. Em `group_vars/`, crie arquivos para grupos de recursos `stor_17` `stor_24` usando o modelo a seguir e preencha os valores de espaço reservado para cada serviço que referencie o exemplo:
++
+....
+# stor_0X - BeeGFS HA Storage Resource Group
+beegfs_ha_beegfs_storage_conf_resource_group_options:
+  connStoragePortTCP: <PORT>
+  connStoragePortUDP: <PORT>
+  tuneBindToNumaZone: <NUMA ZONE>
+floating_ips:
+  - <PREFERRED PORT:IP/SUBNET>
+  - <SECONDARY PORT:IP/SUBNET>
+beegfs_service: storage
+beegfs_targets:
+  <BLOCK NODE>:
+    eseries_storage_pool_configuration:
+      - name: <STORAGE POOL>
+        raid_level: raid6
+        criteria_drive_count: 12
+        common_volume_configuration:
+          segment_size_kb: 512
+        volumes:
+          - size: 21.50 # See note below!
+            owning_controller: <OWNING CONTROLLER>
+          - size: 21.50
+            owning_controller: <OWNING CONTROLLER>
+....
++
+
+NOTE: Para obter o tamanho correto a ser usado, link:beegfs-deploy-recommended-volume-percentages.html["Porcentagens recomendadas de provisionamento de pool de storage"]consulte .
+
++
+|===
+| Nome do ficheiro | Porta | IPs flutuantes | Zona NUMA | Nó de bloco | Pool de storage | Controlador proprietário 
+
+
+| stor_17.yml | 8013 | i1b:100.127.103.17/16 i2b:100.127.104.17/16 | 0 | netapp_05 | beegfs_s17_s18 | A 
+
+
+| stor_18.yml | 8023 | i2b:100.127.104.18/16 i1b:100.127.103.18/16 | 0 | netapp_05 | beegfs_s17_s18 | B 
+
+
+| stor_19.yml | 8033 | i3b:100.127.103.19/16 i4b:100.127.104.19/16 | 1 | netapp_06 | beegfs_s19_s20 | A 
+
+
+| stor_20.yml | 8043 | i4b:100.127.104.20/16 i3b:100.127.103.20/16 | 1 | netapp_06 | beegfs_s19_s20 | B 
+
+
+| stor_21.yml | 8053 | i1b:100.127.103.21/16 i2b:100.127.104.21/16 | 0 | netapp_05 | beegfs_s21_s22 | A 
+
+
+| stor_22.yml | 8063 | i2b:100.127.104.22/16 i1b:100.127.103.22/16 | 0 | netapp_05 | beegfs_s21_s22 | B 
+
+
+| stor_23.yml | 8073 | i3b:100.127.103.23/16 i4b:100.127.104.23/16 | 1 | netapp_06 | beegfs_s23_s24 | A 
+
+
+| stor_24.yml | 8083 | i4b:100.127.104.24/16 i3b:100.127.103.24/16 | 1 | netapp_06 | beegfs_s23_s24 | B 
+|===
+

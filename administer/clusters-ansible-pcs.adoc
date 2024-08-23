@@ -1,0 +1,25 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-ansible-pcs.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, pcs, Ansible 
+summary: Quando você deve usar o Ansible versus a ferramenta de linha de comando PCs para gerenciar o cluster de HA? 
+---
+= Quando usar o Ansible versus a ferramenta PCs
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Quando você deve usar o Ansible versus a ferramenta de linha de comando PCs para gerenciar o cluster de HA?
+
+Todas as tarefas de implantação e reconfiguração de cluster devem ser concluídas usando o Ansible a partir de um nó de controle externo do Ansible. Alterações temporárias no estado do cluster (por exemplo, colocar nós dentro e fora de espera) normalmente serão realizadas fazendo login em um nó do cluster (de preferência um que não esteja degradado ou prestes a ser submetido a manutenção) e usando a ferramenta de linha de comando PCs.
+
+Usar o Ansible, modificar qualquer configuração do cluster, incluindo recursos, restrições, propriedades e serviços do BeeGFS. Manter uma cópia atualizada do inventário e do manual de estratégia do Ansible (idealmente no controle de origem para controlar alterações) faz parte da manutenção do cluster. Quando você precisar fazer alterações na configuração, atualize o inventário e execute novamente o manual de estratégia do Ansible que importa a função de HA do BeeGFS.
+
+A função de HA tratará da colocação do cluster no modo de manutenção e depois fará as alterações necessárias antes de reiniciar os serviços do BeeGFS ou do cluster para aplicar a nova configuração. Como as reinicializações completas de nós geralmente não são necessárias fora da implantação inicial, a reinstalação do Ansible geralmente é considerada um procedimento "seguro", mas é sempre recomendada durante períodos de manutenção ou horas extras, caso os serviços do BeeGFS precisem ser reiniciados. Essas reinicializações geralmente não devem causar erros de aplicativo, mas podem prejudicar o desempenho (o que alguns aplicativos podem lidar melhor que outros).
+
+A reexecução do Ansible também é uma opção quando você deseja retornar todo o cluster a um estado totalmente ideal e pode, em alguns casos, ser capaz de recuperar o estado do cluster com mais facilidade do que o uso de PCs. Especialmente durante uma emergência em que o cluster está inativo por algum motivo, uma vez que todos os nós estão voltando a executar o Ansible pode recuperar o cluster de forma mais rápida e confiável do que tentar usar PCs.

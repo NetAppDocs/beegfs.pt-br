@@ -1,0 +1,88 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-design-solution-sizing-guidelines.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: A solução BeeGFS inclui recomendações para o dimensionamento da performance e da capacidade com base nos testes de verificação. 
+---
+= Diretrizes de dimensionamento
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A solução BeeGFS inclui recomendações para o dimensionamento da performance e da capacidade com base nos testes de verificação.
+
+Com uma arquitetura de componentes básicos, o objetivo é criar uma solução simples de dimensionar adicionando vários componentes básicos para atender aos requisitos de um sistema BeeGFS específico. Usando as diretrizes abaixo, você pode estimar a quantidade e os tipos de componentes básicos do BeeGFS necessários para atender aos requisitos do seu ambiente.
+
+Tenha em mente que essas estimativas são o melhor desempenho. Aplicativos de benchmarking sintéticos são escritos e utilizados para otimizar o uso de sistemas de arquivos subjacentes de maneiras que aplicativos do mundo real podem não.
+
+
+
+== Dimensionamento da performance
+
+A tabela a seguir fornece o dimensionamento de desempenho recomendado.
+
+|===
+| Perfil de configuração | 1MiB leituras | 1MiB grava 
+
+
+| Metadados e armazenamento | 62GiBps | 21GiBps 
+
+
+| Apenas armazenamento | 64GiBps | 21GiBps 
+|===
+As estimativas de dimensionamento da capacidade dos metadados baseiam-se na "regra geral" de que 500GB TB de capacidade é suficiente para cerca de 150 milhões de arquivos no BeeGFS. (Para obter mais informações, consulte a documentação do BeeGFS para https://doc.beegfs.io/latest/system_design/system_requirements.html["Requisitos do sistema"^].)
+
+O uso de recursos como listas de controle de acesso e o número de diretórios e arquivos por diretório também afetam a rapidez com que o espaço de metadados é consumido. As estimativas de capacidade de armazenamento são responsáveis pela capacidade utilizável da unidade, juntamente com a sobrecarga RAID 6 e XFS.
+
+
+
+== Dimensionamento da capacidade para componentes básicos de storage e metadados
+
+A tabela a seguir fornece o dimensionamento de capacidade recomendado para metadados, além de componentes básicos de storage.
+
+|===
+| Grupos de volume de metadados de tamanho da unidade (2 RAID 1 2) | Capacidade de metadados (número de arquivos) | Grupos de volume de armazenamento de tamanho da unidade (8 RAID 2 6) | Capacidade de armazenamento (conteúdo do arquivo) 
+
+
+| 1,92 TB | 1.938.577.200 | 1,92 TB | 51,77 TB 
+
+
+| 3,84 TB | 3.880.388.400 | 3,84 TB | 103,55 TB 
+
+
+| 7,68 TB | 8.125.278.000 | 7,68 TB | 216,74 TB 
+
+
+| 15,3 TB | 17.269.854.000 | 15,3 TB | 460,60 TB 
+|===
+
+NOTE: Ao dimensionar metadados e componentes básicos de storage, você pode reduzir custos usando unidades menores para grupos de volumes de metadados em vez de grupos de volumes de storage.
+
+
+
+== Dimensionamento da capacidade para componentes básicos somente de storage
+
+A tabela a seguir fornece o dimensionamento da capacidade de regra geral para componentes básicos somente de storage.
+
+|===
+| Grupos de volume de armazenamento de tamanho da unidade (10 RAID 2 6) | Capacidade de armazenamento (conteúdo do arquivo) 
+
+
+| 1,92 TB | 59,89 TB 
+
+
+| 3,84 TB | 119,80 TB 
+
+
+| 7,68 TB | 251,89 TB 
+
+
+| 15,3 TB | 538,55 TB 
+|===
+
+NOTE: A sobrecarga de desempenho e capacidade de incluir o serviço de gerenciamento no componente básico básico (primeiro) são mínimas, a menos que o bloqueio global de arquivos esteja habilitado.

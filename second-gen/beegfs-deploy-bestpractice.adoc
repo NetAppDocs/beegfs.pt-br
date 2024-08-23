@@ -1,0 +1,194 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-bestpractice.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Siga as diretrizes de práticas recomendadas ao implantar a solução BeeGFS no NetApp. 
+---
+= Reveja as práticas recomendadas
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Siga as diretrizes de práticas recomendadas ao implantar a solução BeeGFS no NetApp.
+
+
+
+== Convenções padrão
+
+Ao montar e criar fisicamente o arquivo de inventário do Ansible, siga estas convenções padrão (para obter mais informações, link:beegfs-deploy-create-inventory.html["Crie o inventário do Ansible"]consulte ).
+
+* Os nomes de host de nó de arquivo são numerados sequencialmente (H01-HN) com números menores na parte superior do rack e números mais altos na parte inferior.
++
+Por exemplo, a convenção de nomenclatura `[location][row][rack]hN` é semelhante a: `beegfs_01`.
+
+* Cada nó de bloco é composto por duas controladoras de storage, cada uma com seu próprio nome de host.
++
+O nome de um storage array é usado para referir-se a todo o sistema de storage de bloco como parte de um inventário do Ansible. Os nomes dos storage arrays devem ser numerados sequencialmente (A01 - an), e os nomes dos hosts para controladores individuais são derivados dessa convenção de nomenclatura.
+
++
+Por exemplo, um nó de bloco chamado `ictad22a01` normalmente pode ter nomes de host configurados para cada controlador, como `ictad22a01-a` e `ictad22a01-b`, mas ser referido em um inventário do Ansible como `netapp_01`.
+
+* Nós de arquivo e bloco dentro do mesmo bloco de construção compartilham o mesmo esquema de numeração e são adjacentes um ao outro no rack com ambos os nós de arquivo na parte superior e ambos os nós de bloco diretamente abaixo deles.
++
+Por exemplo, no primeiro componente básico, os nós de arquivo H01 e H02 são conetados diretamente aos nós de bloco A01 e A02. De cima para baixo, os nomes de host são H01, H02, A01 e A02.
+
+* Os blocos de construção são instalados em ordem sequencial com base nos nomes de host, de modo que os nomes de host de número inferior estejam na parte superior do rack e os nomes de host de número superior estejam na parte inferior.
++
+O objetivo é minimizar o comprimento do cabo que corre até a parte superior dos switches de rack e definir uma prática de implantação padrão para simplificar a solução de problemas. Para datacenters onde isso não é permitido devido a preocupações em torno da estabilidade do rack, o inverso é certamente permitido, preenchendo o rack de baixo para cima.
+
+
+
+
+
+== Configuração de rede de storage InfiniBand
+
+Metade das portas InfiniBand em cada nó de arquivo é usada para se conectar diretamente aos nós de bloco. A outra metade está conetada aos switches InfiniBand e é usada para a conetividade cliente-servidor BeeGFS. Ao determinar o tamanho das sub-redes IPoIB usadas para clientes e servidores BeeGFS, você deve considerar o crescimento esperado do cluster de computação/GPU e do sistema de arquivos BeeGFS. Se você tiver que se desviar dos intervalos de IP recomendados, lembre-se de que cada conexão direta em um único bloco de construção tem uma sub-rede exclusiva e não há sobreposição com sub-redes usadas para conetividade cliente-servidor.
+
+
+
+=== Ligações diretas
+
+Os nós de arquivo e bloco em cada bloco de construção sempre usam os IPs na tabela a seguir para suas conexões diretas.
+
+
+NOTE: Este esquema de endereçamento segue a seguinte regra: O terceiro octeto é sempre ímpar ou par, o que depende se o nó do arquivo é ímpar ou par.
+
+|===
+| Nó de arquivo | Porta de IB | Endereço IP | Nó de bloco | Porta de IB | IP físico | IP virtual 
+
+
+| Bola de Futsal (H1) | i1a | 192.168.1.10 | Bola de Futsal (C1) | 2a | 192.168.1.100 | 192.168.1.101 
+
+
+| Bola de Futsal (H1) | i2a | 192.168.3.10 | Bola de Futsal (C1) | 2a | 192.168.3.100 | 192.168.3.101 
+
+
+| Bola de Futsal (H1) | i3a | 192.168.5.10 | Kit de meia (C2) | 2a | 192.168.5.100 | 192.168.5.101 
+
+
+| Bola de Futsal (H1) | i4a | 192.168.7.10 | Kit de meia (C2) | 2a | 192.168.7.100 | 192.168.7.101 
+
+
+| Kit de meia (H2) | i1a | 192.168.2.10 | Bola de Futsal (C1) | 2b | 192.168.2.100 | 192.168.2.101 
+
+
+| Kit de meia (H2) | i2a | 192.168.4.10 | Bola de Futsal (C1) | 2b | 192.168.4.100 | 192.168.4.101 
+
+
+| Kit de meia (H2) | i3a | 192.168.6.10 | Kit de meia (C2) | 2b | 192.168.6.100 | 192.168.6.101 
+
+
+| Kit de meia (H2) | i4a | 192.168.8.10 | Kit de meia (C2) | 2b | 192.168.8.100 | 192.168.8.101 
+|===
+
+
+=== Esquemas de endereçamento IPoIB cliente-servidor BeeGFS
+
+Cada nó de arquivo executa vários serviços de servidor do BeeGFS (gerenciamento, metadados ou storage). Para permitir que cada serviço faça failover independentemente para o outro nó de arquivo, cada um é configurado com endereços IP exclusivos que podem flutuar entre ambos os nós (às vezes chamado de interface lógica ou LIF).
+
+Embora não seja obrigatório, essa implantação presume que os seguintes intervalos de sub-rede IPoIB estão em uso para essas conexões e define um esquema de endereçamento padrão que aplica as seguintes regras:
+
+* O segundo octeto é sempre ímpar ou par, com base se a porta InfiniBand do nó de arquivo é ímpar ou par.
+* Os IPs de cluster do BeeGFS são sempre `xxx. 127.100.yyy` ou `xxx.128.100.yyy`.
+
+
+
+NOTE: Além da interface usada para o gerenciamento de SO na banda, interfaces adicionais podem ser usadas pelo Corosync para batimento cardíaco de cluster e sincronização. Isso garante que a perda de uma única interface não derrube todo o cluster.
+
+* O serviço BeeGFS Management está sempre em `xxx.yyy.101.0` ou `xxx.yyy.102.0`.
+* Os serviços de metadados BeeGFS estão sempre em `xxx.yyy.101.zzz` ou `xxx.yyy.102.zzz`.
+* Os serviços do BeeGFS Storage estão sempre na `xxx.yyy.103.zzz` ou `xxx.yyy.104.zzz`.
+* Os endereços no `100.xxx.1.1` intervalo até `100.xxx.99.255` são reservados para os clientes.
+
+
+
+
+==== Esquema de endereçamento de sub-rede única IPoIB
+
+Este guia de implantação utilizará um único esquema de sub-rede, dadas as vantagens listadas link:beegfs-design-software-architecture.html#beegfs-network-configuration["arquitetura de software"]no .
+
+.Sub-rede: 100.127.0.0/16
+A tabela a seguir fornece o intervalo para uma única sub-rede: 100.127.0.0/16.
+
+|===
+| Finalidade | Porta InfiniBand | Endereço IP ou intervalo 
+
+
+| IP do cluster do BeeGFS | i1b ou i4b | 100.127.100.1 - 100.127.100.255 
+
+
+.2+| Gestão BeeGFS | i1b | 100.127.101.0 
+
+
+| i2b | 100.127.102.0 
+
+
+.2+| Metadados BeeGFS | i1b ou i3b | 100.127.101.1 - 100.127.101.255 
+
+
+| i2b ou i4b | 100.127.102.1 - 100.127.102.255 
+
+
+.2+| Storage BeeGFS | i1b ou i3b | 100.127.103.1 - 100.127.103.255 
+
+
+| i2b ou i4b | 100.127.104.1 - 100.127.104.255 
+
+
+| Clientes BeeGFS | (varia de acordo com o cliente) | 100.127.1.1 - 100.127.99.255 
+|===
+
+
+==== Esquema de endereçamento de sub-rede IPoIB dois
+
+Um esquema de endereçamento de duas sub-redes não é mais recomendado, mas ainda pode ser implementado. Consulte as tabelas abaixo para obter um esquema recomendado de duas sub-redes.
+
+.Sub-rede A: 100.127.0.0/16
+A tabela a seguir fornece o intervalo para a sub-rede A: 100.127.0.0/16.
+
+|===
+| Finalidade | Porta InfiniBand | Endereço IP ou intervalo 
+
+
+| IP do cluster do BeeGFS | i1b | 100.127.100.1 - 100.127.100.255 
+
+
+| Gestão BeeGFS | i1b | 100.127.101.0 
+
+
+| Metadados BeeGFS | i1b ou i3b | 100.127.101.1 - 100.127.101.255 
+
+
+| Storage BeeGFS | i1b ou i3b | 100.127.103.1 - 100.127.103.255 
+
+
+| Clientes BeeGFS | (varia de acordo com o cliente) | 100.127.1.1 - 100.127.99.255 
+|===
+.Sub-rede B: 100.128.0.0/16
+A tabela a seguir fornece o intervalo para a sub-rede B: 100.128.0.0/16.
+
+|===
+| Finalidade | Porta InfiniBand | Endereço IP ou intervalo 
+
+
+| IP do cluster do BeeGFS | i4b | 100.128.100.1 - 100.128.100.255 
+
+
+| Gestão BeeGFS | i2b | 100.128.102.0 
+
+
+| Metadados BeeGFS | i2b ou i4b | 100.128.102.1 - 100.128.102.255 
+
+
+| Storage BeeGFS | i2b ou i4b | 100.128.104.1 - 100.128.104.255 
+
+
+| Clientes BeeGFS | (varia de acordo com o cliente) | 100.128.1.1 - 100.128.99.255 
+|===
+
+NOTE: Nem todos os IPs nos intervalos acima são usados nesta arquitetura verificada do NetApp. Eles demonstram como os endereços IP podem ser pré-alocados para permitir uma fácil expansão do sistema de arquivos usando um esquema de endereçamento IP consistente. Nesse esquema, os nós de arquivo BeeGFS e as IDs de serviço correspondem ao quarto octeto de um intervalo bem conhecido de IPs. O sistema de arquivos certamente pode ser dimensionado além de 255 nós ou serviços, se necessário.

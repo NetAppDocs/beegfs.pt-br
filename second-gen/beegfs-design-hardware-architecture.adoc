@@ -1,0 +1,66 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-design-hardware-architecture.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: A configuração de hardware do BeeGFS no NetApp inclui nós de arquivo e cabeamento de rede. 
+---
+= Configuração de hardware
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A configuração de hardware do BeeGFS no NetApp inclui nós de arquivo e cabeamento de rede.
+
+
+
+== Configuração do nó do arquivo
+
+Os nós de arquivo têm dois soquetes de CPU configurados como zonas NUMA separadas, que incluem acesso local a um número igual de slots PCIe e memória.
+
+Os adaptadores InfiniBand devem ser preenchidos nos risers ou slots PCI apropriados, de modo que a carga de trabalho seja equilibrada sobre as faixas PCIe e os canais de memória disponíveis. Você equilibra o workload com o isolamento total do trabalho de serviços individuais do BeeGFS para um nó específico. O objetivo é alcançar um desempenho semelhante de cada nó de arquivo como se fossem dois servidores de soquete único independentes.
+
+A figura a seguir mostra a configuração do nó de arquivo NUMA.
+
+image:beegfs-design-image5-small.png["Configuração NUMA"]
+
+Os processos BeeGFS são fixados a uma zona NUMA específica para garantir que as interfaces usadas estejam na mesma zona. Esta configuração evita a necessidade de acesso remoto através da ligação entre sockets. A conexão entre soquetes às vezes é conhecida como QPI ou link GMI2; mesmo em arquiteturas de processador modernas, eles podem ser um gargalo ao usar redes de alta velocidade como HDR InfiniBand.
+
+
+
+== Configuração de cabeamento de rede
+
+Em um componente básico, cada nó de arquivo é conetado a dois nós de bloco usando um total de quatro conexões InfiniBand redundantes. Além disso, cada nó de arquivo tem quatro conexões redundantes com a rede de storage InfiniBand.
+
+Na figura a seguir, observe que:
+
+* Todas as portas de nós de arquivo descritas em verde são usadas para se conectar à malha de storage. Todas as outras portas de nós de arquivo são as conexões diretas aos nós de bloco.
+* Duas portas InfiniBand em uma zona NUMA específica se conetam aos controladores A e B do mesmo nó de bloco.
+* As portas no nó NUMA 0 sempre se conetam ao primeiro nó de bloco.
+* As portas no nó NUMA 1 conetam-se ao segundo nó de bloco.
+
+
+image:beegfs-design-image6.png["Cabeamento de rede"]
+
+
+NOTE: Ao usar cabos divisores para conetar o switch de armazenamento a nós de arquivo, um cabo deve ramificar e conetar-se às portas delineadas em verde claro. Outro cabo deve ramificar e conetar-se às portas delineadas em verde escuro. Além disso, para redes de armazenamento com switches redundantes, as portas delineadas em verde claro devem se conetar a um switch, enquanto as portas em verde escuro devem se conetar a outro switch.
+
+A configuração de cabeamento ilustrada na figura permite que cada serviço BeeGFS:
+
+* Execute na mesma zona NUMA, independentemente do nó de arquivo que está executando o serviço BeeGFS.
+* Ter caminhos secundários ideais para a rede de storage de front-end e para os nós de bloco de back-end, independentemente de onde ocorra uma falha.
+* Minimize os efeitos de desempenho se um nó de arquivo ou controlador em um nó de bloco exigir manutenção.
+
+
+.Cabeamento para aproveitar a largura de banda
+Para utilizar a largura de banda bidirecional PCIe completa, verifique se uma porta em cada adaptador InfiniBand se conecta à malha de storage e se a outra porta se conecta a um nó de bloco.
+
+A figura a seguir mostra o projeto de cabeamento usado para aproveitar a largura de banda bidirecional PCIe completa.
+
+image:beegfs-design-image7.png["Largura de banda bidirecional HCA"]
+
+Para cada serviço BeeGFS, use o mesmo adaptador para conetar a porta preferida usada para o tráfego do cliente com o caminho para a controladora de nós de bloco que é o principal proprietário desses volumes de serviços. Para obter mais informações, link:beegfs-design-software-architecture.html["Configuração de software"]consulte .

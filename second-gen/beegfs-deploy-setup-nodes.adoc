@@ -1,0 +1,75 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-setup-nodes.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: 'Configure a rede no controlador de gerenciamento de placa base (BMC) de cada servidor e configure a porta de gerenciamento em cada controlador.' 
+---
+= Configurar nós de arquivo e nós de bloco
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Embora a maioria das tarefas de configuração de software seja automatizada com as coleções do Ansible fornecidas pela NetApp, é necessário configurar a rede na controladora de gerenciamento de placa base (BMC) de cada servidor e configurar a porta de gerenciamento em cada controladora.
+
+
+
+== Configurar nós de arquivo
+
+. Configure a rede no controlador de gerenciamento de placa base (BMC) de cada servidor.
++
+Para saber como configurar a rede para os nós de arquivo validados do Lenovo SR665 V3, consulte o https://pubs.lenovo.com/sr665-v3/["Documentação do Lenovo ThinkSystem"^].
+
++
+
+NOTE: Um controlador de gerenciamento de placa base (BMC), às vezes chamado de processador de serviço, é o nome genérico para o recurso de gerenciamento fora da banda incorporado em várias plataformas de servidor que podem fornecer acesso remoto, mesmo que o sistema operacional não esteja instalado ou acessível. Normalmente, os fornecedores comercializam essa funcionalidade com sua própria marca. Por exemplo, no Lenovo SR665, o BMC é chamado de _controlador XClarity (XCC)_.
+
+. Configure as definições do sistema para obter o máximo desempenho.
++
+Você configura as configurações do sistema usando a configuração UEFI (anteriormente conhecida como BIOS) ou usando as APIs do Redfish fornecidas por muitos BMCs. As configurações do sistema variam de acordo com o modelo de servidor usado como nó de arquivo.
+
++
+Para saber como configurar as configurações do sistema para os nós de arquivo validados do Lenovo SR665, link:beegfs-deploy-file-node-tuning.html["Ajuste as configurações do sistema para obter desempenho"]consulte .
+
+. Instale o Red Hat 9,3 e configure o nome do host e a porta de rede usados para gerenciar o sistema operacional, incluindo a conetividade SSH do nó de controle do Ansible.
++
+Não configure IPs em nenhuma das portas InfiniBand no momento.
+
++
+
+NOTE: Embora não sejam estritamente necessárias, as seções subsequentes presumem que os nomes de host são numerados sequencialmente (como H1-HN) e referem-se a tarefas que devem ser concluídas em hosts ímpares versus mesmo numerados.
+
+. Use o RedHat Subscription Manager para Registrar e assinar o sistema para permitir a instalação dos pacotes necessários dos repositórios oficiais da Red Hat e limitar as atualizações da versão suportada do Red Hat: `subscription-manager release --set=9.3`. Para obter instruções, consulte https://access.redhat.com/solutions/253273["Como Registrar e assinar um sistema RHEL"^] e  https://access.redhat.com/solutions/2761031["Como limitar as atualizações"^].
+. Ative o repositório Red Hat que contém os pacotes necessários para alta disponibilidade.
++
+....
+subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpms --add=enabled:1
+....
+. Atualize todo o firmware HCA para a versão recomendada em link:beegfs-technology-requirements.html["Requisitos de tecnologia"].
++
+Esta atualização pode ser feita baixando e executando uma versão da ferramenta mlxup que agrupa o firmware recomendado. Pode transferir esta ferramenta a partir de https://network.nvidia.com/support/firmware/mlxup-mft/["Mlxup - Utilitário de atualização e consulta"^] (link:https://docs.nvidia.com/networking/display/mlxupfwutility["manual do utilizador"^] ).
+
+
+
+
+
+== Configurar nós de bloco
+
+Configure os nós de bloco EF600 configurando a porta de gerenciamento em cada controlador.
+
+. Configure a porta de gerenciamento em cada controlador EF600.
++
+Para obter instruções sobre como configurar portas, vá para o https://docs.netapp.com/us-en/e-series/maintenance-ef600/hpp-overview-supertask-concept.html["E-Series Documentation Center"^].
+
+. Opcionalmente, defina o nome do storage array para cada sistema.
++
+Definir um nome pode facilitar a consulta a cada sistema nas seções subsequentes. Para obter instruções sobre como definir o nome do array, vá para https://docs.netapp.com/us-en/e-series/maintenance-ef600/hpp-overview-supertask-concept.html["E-Series Documentation Center"^] .
+
+
+
+
+NOTE: Embora não sejam estritamente necessários, os tópicos subsequentes presumem que os nomes de matrizes de armazenamento são numerados sequencialmente (como C1 - CN) e referem-se às etapas que devem ser concluídas em sistemas ímpares versus pares.

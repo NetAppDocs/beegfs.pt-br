@@ -1,0 +1,39 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-scale-building-blocks.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Configure a Pacemaker e o Corosync para escalar além de cinco blocos de construção. 
+---
+= Escala além de cinco componentes básicos
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Você pode configurar o Pacemaker e o Corosync para escalar além de cinco blocos de construção (10 nós de arquivo). No entanto, há desvantagens para clusters maiores e, eventualmente, a Pacemaker e a Corosync impõem um máximo de 32 nós.
+
+A NetApp testou apenas clusters de HA do BeeGFS para até 10 nós. O dimensionamento de clusters individuais além desse limite não é recomendado ou compatível. No entanto, os sistemas de arquivos BeeGFS ainda precisam ser dimensionados para além de 10 nós, e a NetApp foi responsável pela solução BeeGFS on NetApp.
+
+Com a implantação de vários clusters de HA que contêm um subconjunto dos componentes básicos em cada sistema de arquivos, é possível dimensionar o sistema de arquivos BeeGFS geral independentemente de quaisquer limites físicos ou recomendados pelos mecanismos subjacentes de clustering HA. Neste cenário, faça o seguinte:
+
+* Crie um novo inventário do Ansible que represente o(s) cluster(s) de HA adicional(s) e, em seguida, omite a configuração de outro serviço de gerenciamento. Em vez disso, aponte a `beegfs_ha_mgmtd_floating_ip` variável em cada cluster adicional `ha_cluster.yml` para o IP do primeiro serviço de gerenciamento BeeGFS.
+* Ao adicionar clusters de HA adicionais ao mesmo sistema de arquivos, verifique o seguinte:
++
+** As IDs de nó do BeeGFS são exclusivas.
+** Os nomes de arquivo correspondentes a cada serviço em `group_vars` são exclusivos em todos os clusters.
+** Os endereços IP do cliente e do servidor BeeGFS são exclusivos em todos os clusters.
+** O primeiro cluster de HA que contém o serviço de gerenciamento BeeGFS está sendo executado antes de tentar implantar ou atualizar clusters adicionais.
+
+
+* Mantenha os inventários de cada cluster de HA separadamente em sua própria árvore de diretórios.
++
+Tentar misturar arquivos de inventário para vários clusters em uma árvore de diretório pode causar problemas em como a função de HA BeeGFS agrega a configuração aplicada a um cluster específico.
+
+
+
+
+NOTE: Não é necessário que cada cluster de HA escale até cinco componentes básicos antes de criar um novo. Em muitos casos, é mais fácil gerenciar o uso de menos componentes básicos por cluster. Uma abordagem é configurar os componentes básicos em cada rack único como um cluster de HA.

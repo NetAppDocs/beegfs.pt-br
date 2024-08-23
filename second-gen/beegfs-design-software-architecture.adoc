@@ -1,0 +1,151 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-design-software-architecture.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: A configuração de software do BeeGFS no NetApp inclui componentes de rede BeeGFS, nós de arquivo de EF600 blocos, nós de arquivo BeeGFS, grupos de recursos e serviços BeeGFS. 
+---
+= Configuração de software
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A configuração de software do BeeGFS no NetApp inclui componentes de rede BeeGFS, nós de arquivo de EF600 blocos, nós de arquivo BeeGFS, grupos de recursos e serviços BeeGFS.
+
+
+
+== Configuração de rede BeeGFS
+
+A configuração de rede BeeGFS consiste nos seguintes componentes.
+
+* *IPs flutuantes* os IPs flutuantes são uma espécie de endereço IP virtual que pode ser roteado dinamicamente para qualquer servidor na mesma rede. Vários servidores podem possuir o mesmo endereço IP flutuante, mas só podem estar ativos em um servidor a qualquer momento.
++
+Cada serviço de servidor BeeGFS tem seu próprio endereço IP que pode se mover entre nós de arquivo, dependendo do local de execução do serviço de servidor BeeGFS. Esta configuração IP flutuante permite que cada serviço faça failover independentemente para o outro nó de arquivo. O cliente simplesmente precisa saber o endereço IP de um determinado serviço BeeGFS; ele não precisa saber qual nó de arquivo está executando esse serviço no momento.
+
+* *Configuração multihoming do servidor BeeGFS* para aumentar a densidade da solução, cada nó de arquivo tem várias interfaces de storage com IPs configurados na mesma sub-rede IP.
++
+Configuração adicional é necessária para garantir que essa configuração funcione como esperado com a pilha de rede Linux, porque por padrão, as solicitações para uma interface podem ser respondidas em uma interface diferente se seus IPs estiverem na mesma sub-rede. Além de outras desvantagens, esse comportamento padrão torna impossível estabelecer ou manter adequadamente conexões RDMA.
+
++
+A implantação baseada em Ansible lida com o aperto do comportamento do caminho reverso (RP) e do protocolo de resolução de endereço (ARP), além de garantir quando os IPs flutuantes são iniciados e parados; as rotas e regras IP correspondentes são criadas dinamicamente para permitir que a configuração de rede multihomed funcione corretamente.
+
+* *A configuração multitrilho do cliente BeeGFS* _Multi-rail_ refere-se à capacidade de um aplicativo usar várias conexões de rede independentes, ou "trilhos", para aumentar o desempenho.
++
+BeeGFS implementa suporte multi-trilho para permitir o uso de várias interfaces IB em uma única sub-rede IPoIB. Essa capacidade permite recursos como balanceamento dinâmico de carga entre NICs de RDMA, otimizando o uso de recursos de rede. Ele também se integra ao armazenamento GPUDirect NVIDIA (GDS), que oferece maior largura de banda do sistema e diminui a latência e a utilização na CPU do cliente.
+
++
+Esta documentação fornece instruções para configurações de sub-rede IPoIB únicas. As configurações de sub-rede IPoIB duplas são suportadas, mas não fornecem as mesmas vantagens que as configurações de sub-rede única.
+
++
+A figura a seguir mostra o balanceamento de tráfego entre várias interfaces de cliente BeeGFS.
+
+
+
+image:beegfs-design-image8.png["Balanceamento de tráfego de interface"]
+
+Como cada arquivo no BeeGFS geralmente é distribuído em vários serviços de storage, a configuração de vários trilhos permite que o cliente obtenha mais taxa de transferência do que o possível com uma única porta InfiniBand. Por exemplo, a amostra de código a seguir mostra uma configuração comum de distribuição de arquivos que permite ao cliente equilibrar o tráfego entre ambas as interfaces:
+
+E
+
+....
+root@beegfs01:/mnt/beegfs# beegfs-ctl --getentryinfo myfile
+Entry type: file
+EntryID: 11D-624759A9-65
+Metadata node: meta_01_tgt_0101 [ID: 101]
+Stripe pattern details:
++ Type: RAID0
++ Chunksize: 1M
++ Number of storage targets: desired: 4; actual: 4
++ Storage targets:
+  + 101 @ stor_01_tgt_0101 [ID: 101]
+  + 102 @ stor_01_tgt_0101 [ID: 101]
+  + 201 @ stor_02_tgt_0201 [ID: 201]
+  + 202 @ stor_02_tgt_0201 [ID: 201]
+....
+
+
+== Configuração de nó de bloco de EF600 U.
+
+Os nós de bloco são compostos por duas controladoras RAID ativas/ativas com acesso compartilhado ao mesmo conjunto de unidades. Normalmente, cada controlador possui metade dos volumes configurados no sistema, mas pode assumir o controle para o outro controlador conforme necessário.
+
+O software multipathing nos nós de arquivo determina o caminho ativo e otimizado para cada volume e se move automaticamente para o caminho alternativo no caso de uma falha de cabo, adaptador ou controlador.
+
+O diagrama a seguir mostra o layout do controlador em EF600 nós de bloco.
+
+image:beegfs-design-image9.png["Array EF600"]
+
+Para facilitar a solução de HA de disco compartilhado, os volumes são mapeados para os dois nós de arquivo, para que eles possam assumir o controle uns dos outros conforme necessário. O diagrama a seguir mostra um exemplo de como o serviço BeeGFS e a propriedade de volume preferencial são configurados para obter o máximo de performance. A interface à esquerda de cada serviço BeeGFS indica a interface preferida que os clientes e outros serviços usam para contatá-lo.
+
+image:beegfs-design-image10.png["Propriedade do volume de serviço do BeeGFS"]
+
+No exemplo anterior, clientes e serviços de servidor preferem se comunicar com o serviço de armazenamento 1 usando a interface i1b. O serviço de armazenamento 1 usa a interface i1a como o caminho preferido para se comunicar com seus volumes (storage_tgt_101, 102) no controlador A do primeiro nó de bloco. Esta configuração utiliza a largura de banda PCIe bidirecional completa disponível para o adaptador InfiniBand e consegue um melhor desempenho a partir de um adaptador InfiniBand HDR de porta dupla do que seria possível com PCIe 4,0.
+
+
+
+== Configuração do nó de arquivo BeeGFS
+
+Os nós de arquivos BeeGFS são configurados em um cluster de alta disponibilidade (HA) para facilitar o failover de serviços BeeGFS entre vários nós de arquivo.
+
+O projeto de cluster HA é baseado em dois projetos Linux HA amplamente utilizados: Corosync para associação de cluster e Pacemaker para gerenciamento de recursos de cluster. Para obter mais informações, https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/configuring_and_managing_high_availability_clusters/assembly_overview-of-high-availability-configuring-and-managing-high-availability-clusters["Treinamento da Red Hat para complementos de alta disponibilidade"^]consulte .
+
+A NetApp criou e estendeu vários agentes de recursos da estrutura de cluster aberta (OCF) para permitir que o cluster inicie e monitore de forma inteligente os recursos do BeeGFS.
+
+
+
+== Clusters de HA do BeeGFS
+
+Normalmente, quando você inicia um serviço BeeGFS (com ou sem HA), alguns recursos devem estar implementados:
+
+* Endereços IP onde o serviço é acessível, normalmente configurados pelo Network Manager.
+* Sistemas de arquivos subjacentes usados como destino para o BeeGFS armazenar dados.
++
+Estes são tipicamente definidos em `/etc/fstab` e montados pelo Systemd.
+
+* Um serviço Systemd responsável por iniciar processos BeeGFS quando os outros recursos estiverem prontos.
++
+Sem software adicional, esses recursos começam apenas em um único nó de arquivo. Portanto, se o nó de arquivo ficar offline, uma parte do sistema de arquivos BeeGFS fica inacessível.
+
+
+
+Como vários nós podem iniciar cada serviço BeeGFS, o fabricante de pacemaker precisa garantir que cada serviço e recursos dependentes estejam sendo executados apenas em um nó de cada vez. Por exemplo, se dois nós tentarem iniciar o mesmo serviço BeeGFS, há o risco de corrupção de dados se ambos tentarem gravar nos mesmos arquivos no destino subjacente. Para evitar esse cenário, a Pacemaker confia no Corosync para manter o estado geral do cluster em sincronia entre todos os nós e estabelecer quórum.
+
+Se houver uma falha no cluster, o fabricante de Paz reagirá e reiniciará os recursos do BeeGFS em outro nó. Em alguns cenários, o pacemaker pode não ser capaz de se comunicar com o nó defeituoso original para confirmar que os recursos estão parados. Para verificar se o nó está inativo antes de reiniciar os recursos do BeeGFS em outro lugar, o fabricante de pacemaker bloqueia o nó com falha, idealmente removendo energia.
+
+Muitos agentes de esgrima de código aberto estão disponíveis que permitem que o pacemaker cerque um nó com uma unidade de distribuição de energia (PDU) ou usando o controlador de gerenciamento de placa base (BMC) do servidor com APIs como o Redfish.
+
+Quando o BeeGFS está em execução em um cluster de HA, todos os serviços do BeeGFS e os recursos subjacentes são gerenciados pelo Pacemaker em grupos de recursos. Cada serviço BeeGFS e os recursos dos quais depende são configurados em um grupo de recursos, o que garante que os recursos sejam iniciados e parados na ordem correta e colocados no mesmo nó.
+
+Para cada grupo de recursos BeeGFS, o pacemaker executa um recurso de monitoramento personalizado BeeGFS, responsável por detetar condições de falha e acionar failovers de forma inteligente quando um serviço BeeGFS não estiver mais acessível em um nó específico.
+
+A figura a seguir mostra os serviços e dependências do BeeGFS controlados pelo pacemaker.
+
+image:beegfs-design-image11.png["Serviços de pacemaker-controlador"]
+
+
+NOTE: Para que vários serviços BeeGFS do mesmo tipo sejam iniciados no mesmo nó, o pacemaker é configurado para iniciar os serviços BeeGFS usando o método de configuração Multi Mode. Para obter mais informações, consulte https://doc.beegfs.io/latest/advanced_topics/multimode.html["Documentação BeeGFS no modo Multi"^] .
+
+Como os serviços BeeGFS precisam ser capazes de iniciar em vários nós, o arquivo de configuração de cada serviço (normalmente localizado em `/etc/beegfs`) é armazenado em um dos volumes do e-Series usados como destino do BeeGFS para esse serviço. Isso torna a configuração, juntamente com os dados de um serviço BeeGFS específico, acessível a todos os nós que possam precisar para executar o serviço.
+
+....
+# tree stor_01_tgt_0101/ -L 2
+stor_01_tgt_0101/
+├── data
+│   ├── benchmark
+│   ├── buddymir
+│   ├── chunks
+│   ├── format.conf
+│   ├── lock.pid
+│   ├── nodeID
+│   ├── nodeNumID
+│   ├── originalNodeID
+│   ├── targetID
+│   └── targetNumID
+└── storage_config
+    ├── beegfs-storage.conf
+    ├── connInterfacesFile.conf
+    └── connNetFilterFile.conf
+....

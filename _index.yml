@@ -1,0 +1,42 @@
+---
+indexpage:
+  title: BeeGFS no NetApp com storage e-Series
+  summary: Suporte à solução para o sistema de arquivos de cluster paralelo BeeGFS
+    que é executado no storage NetApp e-Series de alta performance e baixa latência.
+    Uma solução de HPC econômica, fácil de gerenciar e altamente disponível, com suporte
+    da NetApp.
+  keywords: beegfs e-series
+  lead: O BeeGFS no NetApp com storage e-Series é uma solução comprovada e integrada
+    com uma infraestrutura de HPC simples, confiável, dimensionável e econômica que
+    acompanha os workloads mais extremos.
+  tiles:
+  - title: Comece agora
+    links:
+    - title: Visão geral da solução
+      url: "/second-gen/beegfs-solution-overview.html"
+    - title: Visão geral da arquitetura
+      url: "/second-gen/beegfs-architecture-overview.html"
+    - title: Blog - Saiba mais sobre BeeGFS e e-Series
+      url: https://www.netapp.com/blog/solution-support-for-beegfs-and-e-series/
+    - title: Blog - BeeGFS para iniciantes
+      url: https://www.netapp.com/blog/beegfs-for-beginners/
+    - title: Blog - HA para BeeGFS
+      url: https://www.netapp.com/blog/high-availability-beegfs/
+  - title: Documentos adicionais
+    links:
+    - title: Documentação do produto NetApp
+      url: https://www.netapp.com/support-and-training/documentation/
+    - title: Documentação BeeGFS
+      url: https://doc.beegfs.io/
+    - title: TR-4915 - movimentação de dados com e-Series e BeeGFS para AI
+      url: https://www.netapp.com/pdf.html?item=/media/65882-tr-4915.pdf
+  - title: Ferramentas e suporte
+    links:
+    - title: Coleções do NetApp e-Series no Ansible Galaxy
+      url: https://galaxy.ansible.com/netapp_eseries
+    - title: Matriz de interoperabilidade do NetApp
+      url: http://mysupport.netapp.com/matrix/
+    - title: Base de dados de Conhecimento da NetApp
+      url: https://kb.netapp.com/
+    - title: Active IQ (login necessário)
+      url: https://activeiq.netapp.com/?source=aiqnsspage

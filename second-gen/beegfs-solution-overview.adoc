@@ -1,0 +1,61 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-solution-overview.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: A solução BeeGFS on NetApp combina o sistema de arquivos paralelos do BeeGFS com os sistemas de storage NetApp EF600 para uma infraestrutura confiável, dimensionável e econômica que acompanha os workloads exigentes. 
+---
+= Visão geral da solução
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A solução BeeGFS on NetApp combina o sistema de arquivos paralelos do BeeGFS com os sistemas de storage NetApp EF600 para uma infraestrutura confiável, dimensionável e econômica que acompanha os workloads exigentes.
+
+
+
+== Programa NVA
+
+A solução BeeGFS on NetApp faz parte do programa NetApp Verified Architecture (NVA), que fornece aos clientes configurações de referência e orientações de dimensionamento para workloads e casos de uso específicos. As soluções NVA são completamente testadas e projetadas para minimizar os riscos de implantação e acelerar o time-to-market.
+
+
+
+== Visão geral do design
+
+A solução BeeGFS on NetApp foi projetada como uma arquitetura de componentes básicos dimensionável, configurável para uma variedade de workloads exigentes. Seja lidando com muitos arquivos pequenos, gerenciando grandes operações de arquivos ou uma carga de trabalho híbrida, o sistema de arquivos pode ser personalizado para atender a essas necessidades. A alta disponibilidade é incorporada ao design com o uso de uma estrutura de hardware de duas camadas que permite failover independente em várias camadas de hardware e garante desempenho consistente, mesmo durante degradações parciais do sistema. O sistema de arquivos BeeGFS oferece um ambiente dimensionável e de alta performance em diferentes distribuições do Linux. Além disso, apresenta aos clientes um namespace de storage único de fácil acesso. Saiba mais no link:beegfs-architecture-overview.html["visão geral da arquitetura"].
+
+
+
+== Casos de uso
+
+Os seguintes casos de uso se aplicam à solução BeeGFS no NetApp:
+
+* Os sistemas NVIDIA DGX SuperPOD apresentam DGX com GPU A100, H100, H200 e B200.
+* Inteligência artificial (AI), incluindo aprendizado de máquina (ML), aprendizado profundo (DL), processamento de linguagem natural em larga escala (PNL) e compreensão de linguagem natural (NLU). Para obter mais informações, https://www.netapp.com/blog/beefs-for-ai-fact-vs-fiction/["BeeGFS para IA: Fato versus ficção"^]consulte .
+* Computação de alto desempenho (HPC), incluindo aplicativos acelerados por MPI (interface de passagem de mensagens) e outras técnicas de computação distribuída. Para obter mais informações, https://www.netapp.com/blog/beegfs-for-ai-ml-dl/["Por que BeeGFS vai além da HPC"^]consulte .
+* Workloads de aplicação caraterizados por:
++
+** Leitura ou escrita em arquivos maiores que 1GB
+** Leitura ou escrita no mesmo arquivo por vários clientes (10s, 100s e 1000s)
+
+
+* Conjuntos de dados com vários terabytes ou multipetabytes.
+* Ambientes que precisam de um único namespace de armazenamento otimizado para uma combinação de arquivos grandes e pequenos.
+
+
+
+
+== Benefícios
+
+Os principais benefícios do uso do BeeGFS no NetApp incluem:
+
+* Disponibilidade de designs de hardware verificados que fornecem integração total de componentes de hardware e software para garantir desempenho e confiabilidade previsíveis.
+* Implantação e gerenciamento com o Ansible para oferecer simplicidade e consistência em escala.
+* Monitoramento e observabilidade fornecidos com o e-Series Performance Analyzer e o plug-in BeeGFS. Para obter mais informações, https://www.netapp.com/blog/monitoring-netapp-eseries/["Apresentando uma estrutura para monitorar as soluções NetApp e-Series"^]consulte .
+* Alta disponibilidade com uma arquitetura de disco compartilhado que fornece durabilidade e disponibilidade de dados.
+* Suporte para gerenciamento e orquestração modernos de workloads usando contêineres e Kubernetes. Para obter mais informações, https://www.netapp.com/blog/kubernetes-meet-beegfs/["Conheça o BeeGFS: Uma história dos investimentos prontos para o futuro"^]consulte .
+

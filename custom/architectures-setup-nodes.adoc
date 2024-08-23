@@ -1,0 +1,79 @@
+---
+sidebar: sidebar 
+permalink: custom/architectures-setup-nodes.html 
+keywords: BeeGFS on NetApp, NetApp Custom Architectures, EF600 
+summary: Etapas manuais necessárias para configurar nós de arquivo e bloco antes de executar o Ansible. 
+---
+= Configurar nós de arquivo e bloco
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Etapas manuais necessárias para configurar nós de arquivo e bloco antes de executar o Ansible.
+
+
+
+== Nós de arquivo
+
+
+
+=== Configurar o controlador de gerenciamento de placa base (BMC)
+
+Um controlador de gerenciamento de placa base (BMC), às vezes chamado de processador de serviço, é o nome genérico para o recurso de gerenciamento fora da banda incorporado em várias plataformas de servidor que podem fornecer acesso remoto, mesmo que o sistema operacional não esteja instalado ou acessível. Normalmente, os fornecedores comercializam essa funcionalidade com sua própria marca. Por exemplo, no Lenovo SR665, o BMC é conhecido como o controlador XClarity (XCC) da Lenovo.
+
+Siga a documentação do fornecedor do servidor para habilitar as licenças necessárias para acessar essa funcionalidade e garantir que o BMC esteja conetado à rede e configurado adequadamente para acesso remoto.
+
+
+NOTE: Se for desejado esgrima baseada em BMC usando o Red Fish, certifique-se de que o Redfish esteja habilitado e que a interface BMC esteja acessível a partir do sistema operacional instalado no nó do arquivo. Pode ser necessária uma configuração especial no comutador de rede se o BMC e o sistema operativo partilharem a mesma interface de rede física.
+
+
+
+=== Sintonize as definições do sistema
+
+Usando a interface de configuração do sistema (BIOS/UEFI), verifique se as configurações estão definidas para maximizar o desempenho. As configurações exatas e os valores ideais variam de acordo com o modelo do servidor em uso. As orientações são fornecidas para link:../second-gen/beegfs-deploy-file-node-tuning.html["modelos de nó de arquivo verificados"^], caso contrário, consulte a documentação do fornecedor do servidor e as práticas recomendadas com base no seu modelo.
+
+
+
+=== Instale um sistema operativo
+
+Instale um sistema operacional suportado com base nos requisitos de nó de arquivo link:../second-gen/beegfs-technology-requirements.html#file-node-requirements["aqui"^]listados . Consulte as etapas adicionais abaixo com base na sua distribuição Linux.
+
+
+
+==== RedHat
+
+Use o RedHat Subscription Manager para Registrar e assinar o sistema para permitir a instalação dos pacotes necessários dos repositórios oficiais da Red Hat e limitar as atualizações da versão suportada do Red Hat: `subscription-manager release --set=<MAJOR_VERSION>.<MINOR_VERSION>`. Para obter instruções, consulte https://access.redhat.com/solutions/253273["Como Registrar e assinar um sistema RHEL"^] e  https://access.redhat.com/solutions/2761031["Como limitar as atualizações"^].
+
+Ative o repositório Red Hat que contém os pacotes necessários para alta disponibilidade:
+
+....
+subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpms --add=enabled:1
+....
+
+
+=== Configurar a rede de gestão
+
+Configure todas as interfaces de rede necessárias para permitir o gerenciamento na banda do sistema operacional. As etapas exatas dependerão da distribuição e versão específica do Linux em uso.
+
+
+NOTE: Certifique-se de que o SSH esteja ativado e que todas as interfaces de gerenciamento estejam acessíveis a partir do nó de controle do Ansible.
+
+
+
+=== Atualize o firmware HCA e HBA
+
+Certifique-se de que todos os HBAs e HCAs estão a executar versões de firmware suportadas listadas no link:https://imt.netapp.com/matrix/["Matriz de interoperabilidade do NetApp"^] e, se necessário, atualize. Recomendações adicionais para adaptadores NVIDIA ConnectX podem ser encontradas link:../second-gen/beegfs-technology-requirements.html#file-node-requirements["aqui"^].
+
+
+
+== Nós de bloco
+
+Siga as etapas para link:https://docs.netapp.com/us-en/e-series/getting-started/getup-run-concept.html["Comece a trabalhar com o e-Series"^]configurar a porta de gerenciamento em cada controlador de nó de bloco e, opcionalmente, definir o nome do storage array para cada sistema.
+
+
+NOTE: Nenhuma configuração adicional além de garantir que todos os nós de bloco estejam acessíveis a partir do nó de controle do Ansible. A configuração restante do sistema será aplicada/mantida com o Ansible.

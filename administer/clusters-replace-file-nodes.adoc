@@ -1,0 +1,78 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-replace-file-nodes.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, replace 
+summary: Substituindo um nó de arquivo se o servidor original estiver com defeito. 
+---
+= Substituir nós de arquivo
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Substituindo um nó de arquivo se o servidor original estiver com defeito.
+
+
+
+== Visão geral
+
+Esta é uma visão geral das etapas necessárias para substituir um nó de arquivo no cluster. Essas etapas presumem que o nó do arquivo falhou devido a um problema de hardware e foi substituído por um novo nó de arquivo idêntico.
+
+
+
+== Passos:
+
+. Substitua fisicamente o nó de arquivo e restaure todo o cabeamento para o nó de bloco e rede de armazenamento.
+. Reinstale o sistema operacional no nó de arquivo, incluindo a adição de assinaturas Red Hat.
+. Configurar o gerenciamento e a rede BMC no nó de arquivo.
+. Atualize o inventário do Ansible se o nome de host, IP, mapeamentos de interface PCIe para lógica ou qualquer outra coisa mudou sobre o novo nó de arquivo. Geralmente, isso não é necessário se o nó foi substituído por hardware de servidor idêntico e você estiver usando a configuração de rede original.
++
+.. Por exemplo, se o nome do host mudou, crie (ou renomeie) o arquivo de inventário do nó (`host_vars/<NEW_NODE>.yml``) e, em seguida, no arquivo de inventário do Ansible (`inventory.yml`), substitua o nome do nó antigo pelo novo nome do nó:
++
+[source, console]
+----
+all:
+    ...
+    children:
+    ha_cluster:
+        children:
+        mgmt:
+            hosts:
+            node_h1_new:   # Replaced "node_h1" with "node_h1_new"
+            node_h2:
+----
+
+
+. De um dos outros nós no cluster, remova o nó antigo: `pcs cluster node remove <HOSTNAME>`.
++
+
+IMPORTANT: NÃO PROSSIGA ANTES DE EXECUTAR ESTE PASSO.
+
+. No nó de controle do Ansible:
++
+.. Remova a chave SSH antiga com:
++
+[source, console]
+----
+`ssh-keygen -R <HOSTNAME_OR_IP>`
+----
+.. Configure o SSH sem senha para o nó Substituir por:
++
+[source, console]
+----
+ssh-copy-id <USER>@<HOSTNAME_OR_IP>
+----
+
+
+. Execute novamente o manual de estratégia do Ansible para configurar o nó e adicioná-lo ao cluster:
++
+[source, console]
+----
+ansible-playbook -i <inventory>.yml <playbook>.yml
+----
+. Neste ponto, execute `pcs status` e verifique se o nó substituído está listado e executando serviços.
+

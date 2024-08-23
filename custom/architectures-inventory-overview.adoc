@@ -1,0 +1,52 @@
+---
+sidebar: sidebar 
+permalink: custom/architectures-inventory-overview.html 
+keywords: BeeGFS on NetApp, NetApp Custom Architectures, EF600 
+summary: O inventário do Ansible é um conjunto de arquivos de configuração que definem o cluster de HA do BeeGFS desejado. 
+---
+= Visão geral do Ansible Inventory
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+O inventário do Ansible é um conjunto de arquivos de configuração que definem o cluster de HA do BeeGFS desejado.
+
+
+
+== Visão geral
+
+Recomenda-se seguir as práticas padrão do Ansible para organizar o link:https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html["inventário"], incluindo o uso do , link:https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html#organizing-host-and-group-variables["subdiretórios/ficheiros"]em vez de armazenar todo o inventário em um arquivo.
+
+O inventário do Ansible para um único cluster BeeGFS HA está organizado da seguinte forma:
+
+image:ansible-inventory-overview.png["Visão geral do Ansible Inventory"]
+
+
+NOTE: Como um único sistema de arquivos BeeGFS pode abranger vários clusters de HA, é possível que grandes instalações tenham vários inventários do Ansible. Geralmente, não é recomendável definir vários clusters de HA como um único inventário do Ansible para evitar problemas.
+
+
+
+== Passos
+
+. No nó de controle do Ansible, crie um diretório vazio que conterá o inventário do Ansible para o cluster BeeGFS que você deseja implantar.
++
+.. Se o seu sistema de arquivos eventualmente contiver vários clusters de HA, é recomendável criar primeiro um diretório para o sistema de arquivos e, em seguida, subdiretórios para o inventário que representa cada cluster de HA. Por exemplo:
++
+[listing]
+----
+beegfs_file_system_1/
+    beegfs_cluster_1/
+    beegfs_cluster_2/
+    beegfs_cluster_N/
+----
+
+
+. No diretório que contém o inventário do cluster HA que deseja implantar, crie dois diretórios `group_vars` e `host_vars` dois arquivos `inventory.yml` e `playbook.yml`.
+
+
+As seções a seguir descrevem o conteúdo de cada um desses arquivos.

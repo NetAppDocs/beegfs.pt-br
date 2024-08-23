@@ -1,0 +1,65 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-reconfigure.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, Ansible, pcs 
+summary: Use o Ansible para reconfigurar o cluster. 
+---
+= Reconfigure o cluster de HA e o BeeGFS
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Use o Ansible para reconfigurar o cluster.
+
+
+
+== Visão geral
+
+De um modo geral, a reconfiguração de qualquer aspecto do cluster BeeGFS HA deve ser feita atualizando seu inventário do Ansible e executando novamente `ansible-playbook` o comando. Isso inclui atualização de alertas, alteração da configuração de cercas permanentes ou ajuste da configuração do serviço BeeGFS. Estes são ajustados usando o `group_vars/ha_cluster.yml` arquivo e uma lista completa de opções pode ser encontrada link:../custom/architectures-inventory-common-file-node-configuration.html["Especifique a Configuração do nó de ficheiro Comum"^]na seção.
+
+Consulte abaixo para obter detalhes adicionais sobre opções de configuração selecionadas que os administradores devem estar cientes ao executar a manutenção ou a manutenção do cluster.
+
+
+
+== Como desativar e ativar o Esgrima
+
+O esgrima é ativado/exigido por padrão ao configurar o cluster. Em alguns casos, pode ser desejável desativar temporariamente o esgrima para garantir que os nós não sejam acidentalmente desligados ao executar determinadas operações de manutenção (como atualizar o sistema operacional). Embora isso possa ser desativado manualmente, há compensações que os administradores devem estar cientes.
+
+
+
+=== Opção 1: Desativar cercas usando o Ansible (recomendado).
+
+Quando a vedação é desativada usando o Ansible, a ação on-fail do monitor BeeGFS é alterada de "cerca" para "espera". Isso significa que, se o monitor BeeGFS detetar uma falha, ele tentará colocar o nó em espera e fazer o failover de todos os serviços BeeGFS. Fora da solução de problemas/testes ativos, isso geralmente é mais desejável do que a opção 2. A desvantagem é que se um recurso não parar no nó original, ele será bloqueado de começar em outro lugar (é por isso que o esgrima é normalmente necessário para clusters de produção).
+
+. No inventário do Ansible, `groups_vars/ha_cluster.yml` adicione a seguinte configuração:
++
+[source, console]
+----
+beegfs_ha_cluster_crm_config_options:
+    stonith-enabled: False
+----
+. Execute novamente o manual de estratégia do Ansible para aplicar as alterações ao cluster.
+
+
+
+
+=== Opção 2: Desativar a vedação manualmente.
+
+Em alguns casos, você pode desativar temporariamente o esgrima sem executar novamente o Ansible, talvez para facilitar a solução de problemas ou o teste do cluster.
+
+
+WARNING: Nessa configuração, se o monitor BeeGFS detetar uma falha, o cluster tentará interromper o grupo de recursos correspondente. Ele NÃO acionará um failover completo ou tentará reiniciar ou mover o grupo de recursos afetado para outro host. Para recuperar, solucione quaisquer problemas em seguida, execute `pcs resource cleanup` ou coloque manualmente o nó em espera.
+
+Passos:
+
+. Para determinar se a vedação (stonith) está globalmente ativada ou desativada, execute: `pcs property show stonith-enabled`
+. Para desativar a execução de esgrima: `pcs property set stonith-enabled=false`
+. Para ativar a execução de esgrima: `pcs property set stonith-enabled=true`
+
+
+Observação: Essa configuração será substituída na próxima vez que você executar o manual do Ansible.

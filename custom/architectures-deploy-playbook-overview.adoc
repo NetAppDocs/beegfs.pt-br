@@ -1,0 +1,82 @@
+---
+sidebar: sidebar 
+permalink: custom/architectures-deploy-playbook-overview.html 
+keywords: BeeGFS on NetApp, NetApp Custom Architectures, EF600 
+summary: Implantação e gerenciamento de clusters de HA do BeeGFS com o Ansible. 
+---
+= Visão geral do Playbook do Ansible
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Implantação e gerenciamento de clusters de HA do BeeGFS com o Ansible.
+
+
+
+== Visão geral
+
+As seções anteriores descreveram as etapas necessárias para criar um inventário do Ansible que representa um cluster de HA do BeeGFS. Esta seção apresenta a automação do Ansible desenvolvida pela NetApp para implantar e gerenciar o cluster.
+
+
+
+== Ansible: Conceitos-chave
+
+Antes de prosseguir, é útil estar familiarizado com alguns conceitos-chave do Ansible:
+
+* As tarefas a serem executadas em um inventário do Ansible são definidas no que é conhecido como *manual de estratégia*.
++
+** A maioria das tarefas no Ansible foi projetada para ser *idempotente*, o que significa que elas podem ser executadas várias vezes para verificar se a configuração/estado desejado ainda é aplicada sem quebrar coisas ou fazer atualizações desnecessárias.
+
+
+* A menor unidade de execução no Ansible é um *módulo*.
++
+** Os playbooks típicos usam vários módulos.
++
+*** Exemplos: Baixar um pacote, atualizar um arquivo de configuração, iniciar/ativar um serviço.
+
+
+** O NetApp distribui módulos para automatizar os sistemas NetApp e-Series.
+
+
+* A automação complexa é melhor empacotada como uma função.
++
+** Essencialmente um formato padrão para distribuir um manual reutilizável.
+** O NetApp distribui funções para hosts Linux e sistemas de arquivos BeeGFS.
+
+
+
+
+
+
+== Papel BeeGFS HA para Ansible: Conceitos-chave
+
+Toda a automação necessária para implantar e gerenciar cada versão do BeeGFS no NetApp funciona como uma função do Ansible e é distribuída como parte link:https://galaxy.ansible.com/netapp_eseries/beegfs["Coleção Ansible do NetApp e-Series para BeeGFS"^]do :
+
+* Essa função pode ser pensada como algures entre um *instalador* e um moderno mecanismo de implantação/gerenciamento* para o BeeGFS.
++
+** Aplica infraestrutura moderna como práticas e filosofias de código para simplificar o gerenciamento da infraestrutura de armazenamento em qualquer escala.
+** Semelhante a como o link:https://github.com/kubernetes-sigs/kubespray["Kubespray"^] projeto permite que os usuários implantem/mantenham toda uma distribuição do Kubernetes para uma infraestrutura de computação com escalabilidade horizontal.
+
+
+* Essa função é o formato *definido por software* que o NetApp usa para empacotar, distribuir e manter o BeeGFS nas soluções NetApp.
++
+** Esforce-se para criar uma experiência "semelhante a um dispositivo" sem a necessidade de distribuir uma distribuição Linux inteira ou uma imagem grande.
+** Inclui agentes de recursos de cluster compatíveis com OCF (Open Cluster Framework) da NetApp para destinos BeeGFS personalizados, endereços IP e monitoramento que fornecem integração inteligente com o fabricante de pacemaker/BeeGFS.
+
+
+* Esta função não é simplesmente "automação" de implantação e destina-se a gerenciar todo o ciclo de vida do sistema de arquivos, incluindo:
++
+** Aplicação de alterações e atualizações de configuração por serviço ou em todo o cluster.
+** Automatizar a recuperação e a recuperação de clusters após problemas de hardware serem resolvidos.
+** Simplificação do ajuste de performance com base em valores padrão definidos com base em testes abrangentes com o BeeGFS e o NetApp volumes.
+** Verificando e corrigindo o desvio de configuração.
+
+
+
+
+O NetApp também fornece uma função Ansible para link:https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_client["Clientes BeeGFS"^], que pode ser usada, como opção, para instalar o BeeGFS e montar sistemas de arquivos nos nós de computação/GPU/login.

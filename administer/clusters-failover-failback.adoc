@@ -1,0 +1,145 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-failover-failback.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, failover, failback, recovery 
+summary: Movimentação de serviços do BeeGFS entre nós de cluster. 
+---
+= Serviços de failover e failback
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Movimentação de serviços do BeeGFS entre nós de cluster.
+
+
+
+== Visão geral
+
+Os serviços BeeGFS podem fazer o failover entre nós no cluster para garantir que os clientes possam continuar acessando o sistema de arquivos em caso de falha ou que você precise executar a manutenção planejada. Esta seção descreve várias maneiras pelas quais os administradores podem curar o cluster depois de se recuperar de uma falha ou mover serviços manualmente entre nós.
+
+
+
+== Passos
+
+
+
+=== Failover e failback
+
+
+
+==== Failover (planejado)
+
+Geralmente, quando você precisa colocar um único nó de arquivo off-line para manutenção, você vai querer mover (ou drenar) todos os serviços BeeGFS desse nó. Isso pode ser feito colocando primeiro o nó em standby:
+
+`pcs node standby <HOSTNAME>`
+
+Depois de verificar o uso `pcs status` de todos os recursos terem sido reiniciados no nó de arquivo alternativo, você pode encerrar ou fazer outras alterações no nó conforme necessário.
+
+
+
+==== Failback (após um failover planejado)
+
+Quando você estiver pronto para restaurar os serviços BeeGFS para o nó preferido, primeiro execute `pcs status` e verifique na "Lista de nós" o status está em espera. Se o nó foi reinicializado, ele será exibido offline até que você coloque os serviços de cluster online:
+
+[source, console]
+----
+pcs cluster start <HOSTNAME>
+----
+Quando o nó estiver online, retire-o do modo de espera com:
+
+[source, console]
+----
+pcs cluster node unstandby <HOSTNAME>
+----
+Por último, reposicione todos os serviços BeeGFS de volta aos seus nós preferidos com:
+
+[source, console]
+----
+pcs resource relocate run
+----
+
+
+==== Failback (após um failover não planejado)
+
+Se um nó apresentar uma falha de hardware ou outra, o cluster de HA deve reagir automaticamente e mover seus serviços para um nó íntegro, fornecendo tempo para os administradores tomarem as medidas corretivas. Antes de prosseguir, consulte link:clusters-troubleshoot.html["solução de problemas"^]a seção para determinar a causa do failover e resolver quaisquer problemas pendentes. Depois que o nó estiver ligado novamente e saudável, você poderá prosseguir com o failback.
+
+Quando um nó é inicializado após uma reinicialização não planejada (ou planejada), os serviços de cluster não são configurados para serem iniciados automaticamente, então você primeiro precisará colocar o nó on-line com:
+
+[source, console]
+----
+pcs cluster start <HOSTNAME>
+----
+Em seguida, limpe todas as falhas de recursos e redefina o histórico de esgrima do nó:
+
+[source, console]
+----
+pcs resource cleanup node=<HOSTNAME>
+pcs stonith history cleanup <HOSTNAME>
+----
+Verifique se `pcs status` o nó está on-line e saudável. Por padrão, os serviços BeeGFS não irão fazer o failback automaticamente para evitar mover acidentalmente recursos de volta para um nó que não está saudável. Quando estiver pronto, retorne todos os recursos no cluster de volta aos nós preferidos com:
+
+[source, console]
+----
+pcs resource relocate run
+----
+
+
+=== Movendo serviços individuais BeeGFS para nós de arquivos alternativos
+
+
+
+==== Mova permanentemente um serviço BeeGFS para um novo nó de arquivo
+
+Se você quiser alterar permanentemente o nó de arquivo preferido para um serviço BeeGFS individual, ajuste o inventário do Ansible para que o nó preferido seja listado primeiro e execute novamente o manual de estratégia do Ansible.
+
+Por exemplo, neste arquivo de exemplo `inventory.yml`, beegfs_01 é o nó de arquivo preferido para executar o serviço de gerenciamento BeeGFS:
+
+[source, yaml]
+----
+        mgmt:
+          hosts:
+            beegfs_01:
+            beegfs_02:
+----
+Reverter a ordem faria com que os serviços de gerenciamento fossem preferidos no beegfs_02:
+
+[source, yaml]
+----
+        mgmt:
+          hosts:
+            beegfs_02:
+            beegfs_01:
+----
+
+
+==== Mova temporariamente um serviço BeeGFS para um nó de arquivo alternativo
+
+Geralmente, se um nó estiver em manutenção, você vai querer usar as [etapas de failover e failback] para afastar todos os serviços desse nó.
+
+Se, por algum motivo, você precisar mover um serviço individual para uma execução diferente do nó de arquivo:
+
+[source, console]
+----
+pcs resource move <SERVICE>-monitor <HOSTNAME>
+----
+
+WARNING: Não especifique recursos individuais ou o grupo de recursos. Sempre especifique o nome do monitor para o serviço BeeGFS que deseja realocar. Por exemplo, para mover o serviço de gerenciamento BeeGFS para beegfs_02 execute: `pcs resource move mgmt-monitor beegfs_02`. Esse processo pode ser repetido para afastar um ou mais serviços de seus nós preferidos. Verifique se o uso `pcs status` dos serviços foi relocado/iniciado no novo nó.
+
+Para mover um serviço BeeGFS de volta para o nó preferido, primeiro limpe as restrições de recursos temporários (repetindo essa etapa conforme necessário para vários serviços):
+
+[source, yaml]
+----
+pcs resource clear <SERVICE>-monitor
+----
+Então, quando estiver pronto para realmente mover o(s) serviço(s) de volta para o(s) nó(s) preferido(s) executado(s):
+
+[source, yaml]
+----
+pcs resource relocate run
+----
+Observação esse comando irá realocar quaisquer serviços que não tenham mais restrições de recursos temporários que não estejam localizados em seus nós preferidos.

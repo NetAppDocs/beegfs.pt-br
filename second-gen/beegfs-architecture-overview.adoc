@@ -1,0 +1,113 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-architecture-overview.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: A solução BeeGFS on NetApp inclui considerações de design de arquitetura usadas para determinar o equipamento, o cabeamento e as configurações específicos necessários para dar suporte a workloads validados. 
+---
+= Visão geral da arquitetura
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+A solução BeeGFS on NetApp inclui considerações de design de arquitetura usadas para determinar o equipamento, o cabeamento e as configurações específicos necessários para dar suporte a workloads validados.
+
+
+
+== Arquitetura de componentes básicos
+
+O sistema de arquivos BeeGFS pode ser implantado e dimensionado de diferentes maneiras, dependendo dos requisitos de storage. Por exemplo, os casos de uso que apresentam principalmente vários arquivos pequenos se beneficiarão do desempenho e capacidade extra dos metadados, enquanto os casos de uso com menos arquivos grandes podem favorecer mais capacidade de armazenamento e desempenho para o conteúdo real dos arquivos. Essas várias considerações afetam diferentes dimensões da implantação do sistema de arquivos paralelo, o que aumenta a complexidade ao projetar e implantar o sistema de arquivos.
+
+Para lidar com esses desafios, a NetApp projetou uma arquitetura padrão de componentes básicos usada para dimensionar cada uma dessas dimensões. Normalmente, os componentes básicos do BeeGFS são implantados em um de três perfis de configuração:
+
+* Um componente básico único, incluindo gerenciamento, metadados e serviços de storage do BeeGFS
+* Metadados do BeeGFS, além de componente básico de storage
+* Um componente básico de storage do BeeGFS
+
+
+A única alteração de hardware entre essas três opções é o uso de unidades menores para metadados do BeeGFS. Caso contrário, todas as alterações de configuração são aplicadas através do software. E, com o Ansible como mecanismo de implantação, a configuração do perfil desejado para um componente básico específico simplifica as tarefas de configuração.
+
+Para obter mais detalhes, <<Design de hardware verificado>>consulte .
+
+
+
+== Serviços de sistema de arquivos
+
+O sistema de arquivos BeeGFS inclui os seguintes serviços principais:
+
+* *Serviço de gestão.* Registra e monitora todos os outros serviços.
+* *Serviço de armazenamento.* Armazena o conteúdo do arquivo de usuário distribuído conhecido como arquivos de bloco de dados.
+* *Serviço de metadados.* Mantém o controle do layout do sistema de arquivos, diretório, atributos de arquivo e assim por diante.
+* *Serviço de atendimento ao cliente.* Monta o sistema de arquivos para acessar os dados armazenados.
+
+
+A figura a seguir mostra os componentes e as relações da solução BeeGFS usadas com os sistemas NetApp e-Series.
+
+image:beegfs-components.png["Componentes BeeGFS"]
+
+Como um sistema de arquivos paralelo, o BeeGFS distribui seus arquivos em vários nós de servidor para maximizar a performance de leitura/gravação e a escalabilidade. Os nós de servidor trabalham juntos para fornecer um único sistema de arquivos que pode ser simultaneamente montado e acessado por outros nós de servidor, comumente conhecidos como _clients_. Esses clientes podem ver e consumir o sistema de arquivos distribuídos da mesma forma que um sistema de arquivos local, como NTFS, XFS ou ext4.
+
+Os quatro principais serviços são executados em uma ampla variedade de distribuições Linux suportadas e se comunicam por qualquer rede compatível com TCP/IP ou RDMA, incluindo InfiniBand (IB), Omni-Path (OPA) e RDMA sobre Ethernet convergente (RoCE). Os serviços de servidor BeeGFS (gerenciamento, storage e metadados) são daemons de espaço do usuário, enquanto o cliente é um módulo de kernel nativo (sem patchless). Todos os componentes podem ser instalados ou atualizados sem reinicialização, e você pode executar qualquer combinação de serviços no mesmo nó.
+
+
+
+== Arquitetura HA
+
+O BeeGFS no NetApp expande a funcionalidade da edição empresarial BeeGFS ao criar uma solução totalmente integrada com o hardware da NetApp que habilita uma arquitetura de alta disponibilidade (HA) de disco compartilhado.
+
+
+NOTE: Embora a edição da comunidade BeeGFS possa ser usada gratuitamente, a edição empresarial exige a compra de um contrato de assinatura de suporte profissional de um parceiro como a NetApp. A edição corporativa permite o uso de vários recursos adicionais, incluindo resiliência, imposição de cotas e pools de armazenamento.
+
+A figura a seguir compara as arquiteturas de HA de disco compartilhado e de disco compartilhado.
+
+image:beegfs-design-image1.png["Comparação de arquitetura DE HA"]
+
+Para obter mais informações, https://www.netapp.com/blog/high-availability-beegfs/["Anúncio de alta disponibilidade para o BeeGFS com suporte da NetApp"^]consulte .
+
+
+
+== Nós verificados
+
+A solução BeeGFS on NetApp verificou os nós listados abaixo.
+
+[cols="10%,20%,70%"]
+|===
+| Nó | Hardware | Detalhes 
+
+
+| Bloco | Sistema de storage NetApp EF600 | Um storage array totalmente NVMe 2U de alta performance desenvolvido para workloads exigentes. 
+
+
+.2+| Ficheiro | Servidor Lenovo ThinkSystem SR665 V3 | Um servidor 2U de dois soquetes com PCIe 5,0, dois processadores AMD EPYC 9124. Para obter mais informações sobre o Lenovo SR665 V3, https://lenovopress.lenovo.com/lp1608-thinksystem-sr665-v3-server["Website da Lenovo"^] consulte . 
+
+
+| Servidor Lenovo ThinkSystem SR665 | Um servidor 2U de dois soquetes com PCIe 4,0, dois processadores AMD EPYC 7003. Para obter mais informações sobre o Lenovo SR665, https://lenovopress.lenovo.com/lp1269-thinksystem-sr665-server["Website da Lenovo"^] consulte . 
+|===
+
+
+== Design de hardware verificado
+
+Os componentes básicos da solução (mostrados na figura a seguir) usam os servidores de nós de arquivo verificados para a camada de arquivo BeeGFS e dois sistemas de storage EF600 como a camada de bloco.
+
+image:beegfs-design-image2-small.png["Componente básico"]
+
+A solução BeeGFS on NetApp é executada em todos os componentes básicos da implantação. O primeiro componente básico implantado deve executar os serviços de gerenciamento, metadados e storage do BeeGFS (conhecido como componente básico). Todos os componentes básicos subsequentes podem ser configurados por meio de software para estender metadados e serviços de storage ou para fornecer exclusivamente serviços de storage. Essa abordagem modular permite dimensionar o sistema de arquivos de acordo com as necessidades de um workload e, ao mesmo tempo, usar as mesmas plataformas de hardware subjacentes e o design de componentes básicos.
+
+Até cinco componentes básicos podem ser implantados para formar um cluster Linux HA autônomo. Isso otimiza o gerenciamento de recursos com a Pacemaker e mantém sincronização eficiente com o Corosync. Um ou mais clusters autônomos do BeeGFS HA são combinados para criar um sistema de arquivos BeeGFS acessível aos clientes como um namespace de storage único. No lado do hardware, um único rack de 42U U pode acomodar até cinco componentes básicos, juntamente com dois switches InfiniBand de 1U GB para a rede de dados/storage. Veja o gráfico abaixo para uma representação visual.
+
+
+NOTE: É necessário um mínimo de dois componentes básicos para estabelecer quorum no cluster de failover. Um cluster de dois nós tem limitações que podem impedir que ocorra um failover bem-sucedido. Você pode configurar um cluster de dois nós incorporando um terceiro dispositivo como um tiebreaker. No entanto, esta documentação não descreve esse design.
+
+image:beegfs-design-image3.png["Dimensionamento do cluster BeeGFS HA"]
+
+
+
+== Ansible
+
+O BeeGFS no NetApp é fornecido e implantado usando a automação do Ansible, hospedada no GitHub e no Ansible Galaxy (a coleção BeeGFS está disponível na https://galaxy.ansible.com/netapp_eseries/beegfs["Ansible Galaxy"^] e https://github.com/netappeseries/beegfs/["NetApp's e-Series GitHub"^]). Embora o Ansible seja testado principalmente com o hardware usado para montar os componentes básicos do BeeGFS, é possível configurá-lo para ser executado em praticamente qualquer servidor baseado em x86 usando uma distribuição Linux compatível.
+
+Para obter mais informações, https://www.netapp.com/blog/deploying-beegfs-eseries/["Implantando o BeeGFS com o storage e-Series"^]consulte .

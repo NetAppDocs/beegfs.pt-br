@@ -1,0 +1,70 @@
+---
+sidebar: sidebar 
+permalink: custom/architectures-inventory-map-services-to-file-nodes.html 
+keywords: BeeGFS on NetApp, NetApp Custom Architectures, EF600 
+summary: Especifique quais nós de arquivo podem executar cada serviço BeeGFS usando o arquivo inventory.yml. 
+---
+= Mapear os serviços BeeGFS para nós de arquivo
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Especifique quais nós de arquivo podem executar cada serviço BeeGFS usando o `inventory.yml` arquivo.
+
+
+
+== Visão geral
+
+Esta seção descreve como criar o `inventory.yml` arquivo. Isso inclui listar todos os nós de bloco e especificar quais nós de arquivo podem executar cada serviço BeeGFS.
+
+
+
+== Passos
+
+Crie o arquivo `inventory.yml` e preencha-o da seguinte forma:
+
+. Na parte superior do arquivo, crie a estrutura de inventário padrão do Ansible:
++
+[source, yaml]
+----
+# BeeGFS HA (High_Availability) cluster inventory.
+all:
+  children:
+----
+. Crie um grupo que contenha todos os nós de bloco participantes deste cluster HA:
++
+[source, yaml]
+----
+    # Ansible group representing all block nodes:
+    eseries_storage_systems:
+      hosts:
+        <BLOCK NODE HOSTNAME>:
+        <BLOCK NODE HOSTNAME>:
+        # Additional block nodes as needed.
+----
+. Crie um grupo que contenha todos os serviços BeeGFS no cluster e os nós de arquivo que os executarão:
++
+[source, yaml]
+----
+    # Ansible group representing all file nodes:
+    ha_cluster:
+      children:
+----
+. Para cada serviço BeeGFS no cluster, defina o(s) nó(s) de arquivo preferencial e secundário(s) que deve(m) executar esse serviço:
++
+[source, yaml]
+----
+        <SERVICE>: # Ex. "mgmt", "meta_01", or "stor_01".
+          hosts:
+            <FILE NODE HOSTNAME>:
+            <FILE NODE HOSTNAME>:
+            # Additional file nodes as needed.
+----
+
+
+Clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/inventory.yml["aqui"^] para ver um exemplo de um arquivo de inventário completo.

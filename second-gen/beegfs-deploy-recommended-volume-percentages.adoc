@@ -1,0 +1,39 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-recommended-volume-percentages.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: Ao seguir a configuração padrão de quatro volumes por pool de armazenamento para componentes básicos de segunda geração, consulte essas porcentagens recomendadas. 
+---
+= Porcentagens recomendadas de provisionamento de pool de storage
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Ao seguir a configuração padrão de quatro volumes por pool de storage para componentes básicos de segunda geração, consulte a tabela a seguir.
+
+Essa tabela fornece as porcentagens recomendadas a serem usadas como o tamanho do volume em `eseries_storage_pool_configuration` cada metadados do BeeGFS ou destino de storage:
+
+|===
+| Tamanho da unidade | Tamanho 
+
+
+| 1,92 TB | 18 
+
+
+| 3,84 TB | 21,5 
+
+
+| 7,68 TB | 22,5 
+
+
+| 15,3 TB | 24 
+|===
+
+NOTE: As orientações acima não se aplicam ao pool de storage que contém o serviço de gerenciamento, o que deve reduzir os tamanhos acima em 25% para alocar 1% do pool de storage para dados de gerenciamento.
+
+Para entender como esses valores foram determinados, https://www.netapp.com/media/17009-tr4800.pdf["TR-4800: Apêndice A: Compreender a resistência e o provisionamento de SSD"^]consulte .

@@ -1,0 +1,74 @@
+---
+sidebar: sidebar 
+permalink: second-gen/beegfs-deploy-hardware.html 
+keywords: BeeGFS on NetApp, NetApp Verified Architecture, EF600 
+summary: 'Cada componente básico consiste em dois nós de arquivo x86 validados diretamente conectados usando InfiniBand HDR (200GBK) para dois nós de bloco NetApp.' 
+---
+= Implantar hardware
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Cada componente básico consiste em dois nós de arquivo x86 validados diretamente conectados a dois nós de bloco usando cabos InfiniBand HDR (200GB).
+
+
+NOTE: É necessário um mínimo de dois componentes básicos para estabelecer quorum no cluster de failover. Um cluster de dois nós tem limitações que podem impedir que ocorra um failover bem-sucedido. Você pode configurar um cluster de dois nós incorporando um terceiro dispositivo como um tiebreaker. No entanto, esta documentação não descreve esse design.
+
+As etapas a seguir são idênticas para cada componente básico no cluster, independentemente de ser usado para executar serviços de storage e metadados do BeeGFS, ou apenas serviços de storage, a menos que seja indicado de outra forma.
+
+.Passos
+. Configure cada nó de arquivo BeeGFS com quatro adaptadores de canal de host (HCAs) usando os modelos especificados no link:beegfs-technology-requirements.html["Requisitos técnicos"]. Insira os HCAs nos slots PCIe do nó de arquivo de acordo com as especificações abaixo:
++
+** *Servidor Lenovo ThinkSystem SR665 V3:* Use slots PCIe 1, 2, 4 e 5.
+** *Servidor Lenovo ThinkSystem SR665:* Use slots PCIe 2, 3, 5 e 6.
+
+
+. Configure cada nó de bloco BeeGFS com uma placa de interface de host (HIC) 200GB de porta dupla e instale o HIC em cada uma de suas duas controladoras de storage.
++
+Agrupe os componentes básicos para que os dois nós de arquivo BeeGFS fiquem acima dos nós de bloco BeeGFS. A figura a seguir mostra a configuração correta de hardware para o componente básico BeeGFS usando servidores Lenovo ThinkSystem SR665 V3 como nós de arquivo (visão traseira).
+
++
+image:buildingblock-sr665v3.png["Componente básico"]
+
++
+
+NOTE: A configuração da fonte de alimentação para casos de uso de produção normalmente deve usar PSUs redundantes.
+
+. Se necessário, instale as unidades em cada um dos nós de bloco BeeGFS.
++
+.. Se o componente básico for usado para executar metadados e serviços de storage do BeeGFS e unidades menores forem usados para volumes de metadados, verifique se eles estão preenchidos nos slots de unidade mais externos, como mostra a figura abaixo.
+.. Para todas as configurações de componentes básicos, se um compartimento de unidade não estiver totalmente preenchido, certifique-se de que um número igual de unidades esteja preenchido nos slots 0–11 e 12–23 para obter um desempenho ideal.
++
+image:driveslots.png["EF600 slots de unidade"]
+
+
+
+. Conete os nós de bloco e arquivo usando o link:beegfs-technology-requirements.html#block-file-cables["Cabos de cobre de conexão direta InfiniBand HDR 200GB de 1m GB"], de modo que correspondam à topologia mostrada na figura a seguir.
++
+image:directattachcable-sr665v3.png["Cabeamento de conexão direta SR665V3"]
+
++
+
+NOTE: Os nós em vários componentes básicos nunca são conetados diretamente. Cada bloco de construção deve ser Tratado como uma unidade autônoma e toda a comunicação entre blocos de construção ocorre através de switches de rede.
+
+. Conete as portas InfiniBand restantes no nó de arquivo ao switch InfiniBand da rede de storage usando o link:beegfs-technology-requirements.html#file-switch-cables["Cabos InfiniBand de 2M GB"] específico do switch de storage InfiniBand.
++
+Ao usar cabos divisores para conetar o switch de armazenamento a nós de arquivo, um cabo deve se ramificar para fora do switch e se conetar às portas delineadas em verde claro. Outro cabo divisor deve ser ramificado para fora do switch e conetar-se às portas delineadas em verde escuro.
+
++
+Além disso, para redes de armazenamento com switches redundantes, as portas delineadas em verde claro devem se conetar a um switch, enquanto as portas em verde escuro devem se conetar a outro switch.
+
++
+image:networkcable-sr665v3.png["Cabeamento de rede de storage"]
+
+. Conforme necessário, monte blocos de construção adicionais seguindo as mesmas diretrizes de cabeamento.
++
+
+NOTE: O número total de componentes básicos que podem ser implantados em um único rack depende da energia e refrigeração disponíveis em cada local.
+
+

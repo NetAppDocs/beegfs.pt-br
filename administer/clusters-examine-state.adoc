@@ -1,0 +1,74 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-examine-state.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, pcs 
+summary: Use PCs para visualizar o estado do cluster. 
+---
+= Examine o estado do cluster
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Use PCs para visualizar o estado do cluster.
+
+
+
+== Visão geral
+
+Executar `pcs status` a partir de qualquer um dos nós de cluster é a maneira mais fácil de ver o estado geral do cluster e o status de cada recurso (como os serviços BeeGFS e suas dependências). Esta seção percorre o que você encontrará na saída do `pcs status` comando.
+
+
+
+== Compreender a saída de `pcs status`
+
+Execute `pcs status` em qualquer nó de cluster onde os serviços de cluster (Pacemaker e Corosync) são iniciados. A parte superior da saída irá mostrar-lhe um resumo do cluster:
+
+[source, console]
+----
+[root@beegfs_01 ~]# pcs status
+Cluster name: hacluster
+Cluster Summary:
+  * Stack: corosync
+  * Current DC: beegfs_01 (version 2.0.5-9.el8_4.3-ba59be7122) - partition with quorum
+  * Last updated: Fri Jul  1 13:37:18 2022
+  * Last change:  Fri Jul  1 13:23:34 2022 by root via cibadmin on beegfs_01
+  * 6 nodes configured
+  * 235 resource instances configured
+----
+A seção abaixo lista os nós no cluster:
+
+[source, console]
+----
+Node List:
+  * Node beegfs_06: standby
+  * Online: [ beegfs_01 beegfs_02 beegfs_04 beegfs_05 ]
+  * OFFLINE: [ beegfs_03 ]
+----
+Isso indica notavelmente todos os nós que estão em standby ou offline. Os nós em modo de espera ainda estão participando do cluster, mas marcados como não qualificados para executar recursos. Os nós que estão offline indicam que os serviços de cluster não estão sendo executados nesse nó, seja devido a ser parado manualmente ou porque o nó foi reinicializado/encerrado.
+
+
+NOTE: Quando os nós são iniciados pela primeira vez, os serviços de cluster serão interrompidos e precisam ser iniciados manualmente para evitar falhas acidentais de recursos para um nó que não seja saudável.
+
+Se os nós estiverem em standby ou offline devido a um motivo não administrativo (por exemplo, uma falha), o texto adicional será exibido ao lado do estado do nó entre parênteses. Por exemplo, se o esgrima estiver desativado e um recurso encontrar uma falha, você verá `Node <HOSTNAME>: standby (on-fail)`. Outro estado possível é `Node <HOSTNAME>: UNCLEAN (offline)`, que será visto brevemente como um nó está sendo cercado, mas persistirá se o fencing falhar, indicando que o cluster não pode confirmar o estado do nó (isso pode impedir que os recursos comecem em outros nós).
+
+A próxima seção mostra uma lista de todos os recursos no cluster e seus estados:
+
+[source, console]
+----
+Full List of Resources:
+  * mgmt-monitor	(ocf::eseries:beegfs-monitor):	 Started beegfs_01
+  * Resource Group: mgmt-group:
+    * mgmt-FS1	(ocf::eseries:beegfs-target):	 Started beegfs_01
+    * mgmt-IP1	(ocf::eseries:beegfs-ipaddr2):	 Started beegfs_01
+    * mgmt-IP2	(ocf::eseries:beegfs-ipaddr2):	 Started beegfs_01
+    * mgmt-service	(systemd:beegfs-mgmtd):	 Started beegfs_01
+[...]
+----
+Semelhante aos nós, o texto adicional será exibido ao lado do estado do recurso entre parênteses se houver algum problema com o recurso. Por exemplo, se o pacemaker solicitar uma parada de recurso e ele não for concluído dentro do tempo alocado, o pacemaker tentará cercar o nó. Se o esgrima estiver desativado ou a operação de esgrima falhar, o estado do recurso será `FAILED <HOSTNAME> (blocked)` e o pacemaker não poderá iniciá-lo em um nó diferente.
+
+Vale a pena notar que os clusters de HA do BeeGFS utilizam vários agentes de recursos OCF personalizados otimizados pelo BeeGFS. Em particular, o monitor BeeGFS é responsável por acionar um failover quando os recursos do BeeGFS em um nó específico não estiverem disponíveis.
