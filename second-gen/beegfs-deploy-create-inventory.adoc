@@ -41,6 +41,39 @@ Salvo indicação em contrário, todos os arquivos e diretórios criados nesta e
 +
 `packages`
 
+. Crie um subdiretório para senhas de cluster e proteja o arquivo criptografando-o com o Ansible Vault ( https://docs.ansible.com/ansible/latest/user_guide/vault.html["Criptografia de conteúdo com o Ansible Vault"^]consulte ):
++
+.. Crie o subdiretório . `group_vars/all`
+..  `group_vars/all`No diretório, crie um arquivo de senhas rotulado `passwords.yml`.
+.. Preencha o `passwords.yml file` com o seguinte, substituindo todos os parâmetros de nome de usuário e senha de acordo com sua configuração:
++
+....
+# Credentials for storage system's admin password
+eseries_password: <PASSWORD>
+
+# Credentials for BeeGFS file nodes
+ssh_ha_user: <USERNAME>
+ssh_ha_become_pass: <PASSWORD>
+
+# Credentials for HA cluster
+ha_cluster_username: <USERNAME>
+ha_cluster_password: <PASSWORD>
+ha_cluster_password_sha512_salt: randomSalt
+
+# Credentials for fencing agents
+# OPTION 1: If using APC Power Distribution Units (PDUs) for fencing:
+# Credentials for APC PDUs.
+apc_username: <USERNAME>
+apc_password: <PASSWORD>
+
+# OPTION 2: If using the Redfish APIs provided by the Lenovo XCC (and other BMCs) for fencing:
+# Credentials for XCC/BMC of BeeGFS file nodes
+bmc_username: <USERNAME>
+bmc_password: <PASSWORD>
+....
+.. Execute `ansible-vault encrypt passwords.yml` e defina uma senha do Vault quando solicitado.
+
+
 
 
 
@@ -172,8 +205,8 @@ A configuração compartilhada para nós de arquivo é definida em um grupo `ha_
 ### ha_cluster Ansible group inventory file.
 # Place all default/common variables for BeeGFS HA cluster resources below.
 ### Cluster node defaults
-ansible_ssh_user: root
-ansible_become_password: <PASSWORD>
+ansible_ssh_user: {{ ssh_ha_user }}
+ansible_become_password: {{ ssh_ha_become_pass }}
 eseries_ipoib_default_hook_templates:
   - 99-multihoming.j2   # This is required for single subnet deployments, where static IPs containing multiple IB ports are in the same IPoIB subnet. i.e: cluster IPs, multirail, single subnet, etc.
 # If the following options are specified, then Ansible will automatically reboot nodes when necessary for changes to take effect:
@@ -185,7 +218,7 @@ eseries_ib_opensm_options:
 ....
 +
 
-NOTE: Particularmente para ambientes de produção, não armazene senhas em texto simples. Em vez disso, use o Ansible Vault ( https://docs.ansible.com/ansible/latest/user_guide/vault.html["Criptografia de conteúdo com o Ansible Vault"^]consulte ) ou a `--ask-become-pass` opção ao executar o manual de estratégia. Se o `ansible_ssh_user` já estiver `root` , você poderá omitir opcionalmente o `ansible_become_password`.
+NOTE: Se o `ansible_ssh_user` já estiver `root` , você poderá omitir opcionalmente o `ansible_become_password` e especificar a `--ask-become-pass` opção ao executar o manual de estratégia.
 
 . Opcionalmente, configure um nome para o cluster de high-availability (HA) e especifique um utilizador para comunicação intra-cluster.
 +
@@ -202,9 +235,9 @@ eseries_beegfs_ha_disable_selinux: True
 eseries_selinux_state: disabled
 # The following variables should be adjusted depending on the desired configuration:
 beegfs_ha_cluster_name: hacluster                  # BeeGFS HA cluster name.
-beegfs_ha_cluster_username: hacluster              # BeeGFS HA cluster username.
-beegfs_ha_cluster_password: hapassword             # BeeGFS HA cluster username's password.
-beegfs_ha_cluster_password_sha512_salt: randomSalt # BeeGFS HA cluster username's password salt.
+beegfs_ha_cluster_username: "{{ ha_cluster_username }}" # Parameter for BeeGFS HA cluster username in the passwords file.
+beegfs_ha_cluster_password: "{{ ha_cluster_password }}" # Parameter for BeeGFS HA cluster username's password in the passwords file.
+beegfs_ha_cluster_password_sha512_salt: "{{ ha_cluster_password_sha512_salt }}" # Parameter for BeeGFS HA cluster username's password salt in the passwords file.
 beegfs_ha_mgmtd_floating_ip: 100.127.101.0         # BeeGFS management service IP address.
 # Email Alerts Configuration
 beegfs_ha_enable_alerts: True
@@ -239,14 +272,14 @@ Para esta etapa, esteja ciente de que:
 beegfs_ha_fencing_agents:
  fence_apc:
    - ipaddr: <PDU_IP_ADDRESS>
-     login: <PDU_USERNAME>
-     passwd: <PDU_PASSWORD>
+     login: "{{ apc_username }}" # Parameter for APC PDU username in the passwords file.
+     passwd: "{{ apc_password }}" # Parameter for APC PDU password in the passwords file.
      pcmk_host_map: "<HOSTNAME>:<PDU_PORT>,<PDU_PORT>;<HOSTNAME>:<PDU_PORT>,<PDU_PORT>"
 # OPTION 2: To enable fencing using the Redfish APIs provided by the Lenovo XCC (and other BMCs):
 redfish: &redfish
-  username: <BMC_USERNAME>
-  password: <BMC_PASSWORD>
-  ssl_insecure: 1 # If a valid SSL certificate is not available specify “1”.
+  username: "{{ bmc_username }}" # Parameter for XCC/BMC username in the passwords file.
+  password: "{{ bmc_password }}" # Parameter for XCC/BMC password in the passwords file.
+    ssl_insecure: 1 # If a valid SSL certificate is not available specify “1”.
 beegfs_ha_fencing_agents:
   fence_redfish:
     - pcmk_host_list: <HOSTNAME>
@@ -344,13 +377,9 @@ A configuração compartilhada para nós de bloco é definida em um grupo `eseri
 ### eseries_storage_systems Ansible group inventory file.
 # Place all default/common variables for NetApp E-Series Storage Systems here:
 ansible_connection: local
-eseries_system_password: <PASSWORD>
+eseries_system_password: {{ eseries_password }} # Parameter for E-Series storage array password in the passwords file.
 eseries_validate_certs: false
 ....
-+
-
-NOTE: Listar senhas em texto simples não é recomendado. Use o cofre do Ansible ou forneça o `eseries_system_password` ao executar o Ansible `--extra-vars` usando o .
-
 . Para garantir o desempenho ideal, instale as versões listadas para nós de bloco link:beegfs-technology-requirements.html["Requisitos técnicos"]no .
 +
 Transfira os ficheiros correspondentes a partir do https://mysupport.netapp.com/site/products/all/details/eseries-santricityos/downloads-tab["Site de suporte da NetApp"^]. Você pode atualizá-los manualmente ou incluí-los `packages/` no diretório do nó de controle do Ansible e preencher os seguintes parâmetros `eseries_storage_systems.yml` para atualizar usando o Ansible:

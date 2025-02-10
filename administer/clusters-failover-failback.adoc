@@ -54,7 +54,7 @@ Quando o nó estiver online, retire-o do modo de espera com:
 
 [source, console]
 ----
-pcs cluster node unstandby <HOSTNAME>
+pcs node unstandby <HOSTNAME>
 ----
 Por último, reposicione todos os serviços BeeGFS de volta aos seus nós preferidos com:
 
