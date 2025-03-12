@@ -1,0 +1,233 @@
+---
+sidebar: sidebar 
+permalink: administer/clusters-update-hca-firmware.html 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, Update, Upgrade, HCA, ConnectX, Firmware, Card, Adapter 
+summary: Etapas para atualizar o firmware do adaptador ConnectX-7 do nó do arquivo. 
+---
+= Atualize o firmware do adaptador do nó de arquivo
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+Siga estas etapas para atualizar os adaptadores ConnectX-7 do nó do arquivo para o firmware mais recente.
+
+
+
+== Visão geral
+
+A atualização do firmware do adaptador ConnectX-7 pode ser necessária para suportar um novo driver MLNX_OFED, habilitar novos recursos ou corrigir bugs. Este guia usará o utilitário do NVIDIA `mlxfwmanager` para atualizações de adaptadores devido à sua facilidade de uso e eficiência.
+
+
+
+== Considerações sobre a atualização
+
+Este guia aborda duas abordagens para atualizar o firmware do adaptador ConnectX-7: Uma atualização contínua e uma atualização de cluster de dois nós. Escolha a abordagem de atualização apropriada de acordo com o tamanho do cluster. Antes de executar atualizações de firmware, verifique se:
+
+* Um driver MLNX_OFED suportado está instalado, consulte o link:../second-gen/beegfs-technology-requirements.html["requisitos de tecnologia"^].
+* Existem backups válidos para o sistema de arquivos BeeGFS e a configuração do cluster do pacemaker.
+* O cluster está em um estado saudável.
+
+
+
+
+== Preparação da atualização de firmware
+
+Recomenda-se usar o utilitário do NVIDIA `mlxfwmanager` para atualizar o firmware do adaptador de um nó, que é fornecido com o driver MLNX_OFED da NVIDIA. Antes de iniciar as atualizações, baixe a imagem de firmware do adaptador link:https://network.nvidia.com/support/firmware/firmware-downloads/["Site de suporte da NVIDIA"^]e armazene-a em cada nó de arquivo.
+
+
+NOTE: Para adaptadores Lenovo ConnectX-7, use a `mlxfwmanager_LES` ferramenta, que está disponível na página do NVIDIAlink:https://network.nvidia.com/support/firmware/lenovo-intelligent-cluster/["Firmware OEM"^].
+
+
+
+== Abordagem de atualização progressiva
+
+Essa abordagem é recomendada para qualquer cluster de HA com mais de dois nós. Essa abordagem envolve a atualização do firmware do adaptador em um nó de arquivo de cada vez, permitindo que o cluster de HA mantenha solicitações de manutenção, embora seja recomendável evitar a manutenção de e/S durante esse período.
+
+. Confirme se o cluster está no estado ideal, com cada serviço BeeGFS sendo executado no nó preferido. link:clusters-examine-state.html["Examine o estado do cluster"^]Consulte para obter detalhes.
+. Escolha um nó de arquivo a ser atualizado e coloque-o no modo de espera, que drena (ou move) todos os serviços BeeGFS desse nó:
++
+[source, console]
+----
+pcs node standby <HOSTNAME>
+----
+. Verifique se os serviços do nó foram drenados executando:
++
+[source, console]
+----
+pcs status
+----
++
+Verifique se nenhum serviço está relatando como `Started` no nó em espera.
+
++
+
+NOTE: Dependendo do tamanho do cluster, os serviços do BeeGFS podem levar segundos ou minutos para o nó irmão. Se um serviço BeeGFS não iniciar no nó irmão, consulte o link:clusters-troubleshoot.html["Guias de solução de problemas"^].
+
+. Atualize o firmware do adaptador usando `mlxfwmanager`o .
++
+[source, console]
+----
+ mlxfwmanager -i <path/to/firmware.bin> -u
+----
++
+Observe o `PCI Device Name` para cada adaptador que recebe atualizações de firmware.
+
+. Redefina cada adaptador usando o `mlxfwreset` utilitário para aplicar o novo firmware.
++
+
+NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. link:https://docs.nvidia.com/networking/display/mftv4310/mlxfwreset+%E2%80%93+loading+firmware+on+5th+generation+devices+tool#src-3566627427_safe-id-bWx4ZndyZXNldOKAk0xvYWRpbmdGaXJtd2FyZW9uNXRoR2VuZXJhdGlvbkRldmljZXNUb29sLW1seGZ3cmVzZXRMaW1pdGF0aW9ucw["Limitações de mlxfwreset do NVIDIA"^]Consulte para obter orientação. Se for necessária uma reinicialização, execute uma reinicialização em vez de redefinir os adaptadores.
+
++
+.. Pare o serviço opensm:
++
+[source, console]
+----
+systemctl stop opensm
+----
+.. Execute o comando a seguir para cada `PCI Device Name` observado anteriormente.
++
+[source, console]
+----
+mlxfwreset -d <pci_device_name> reset -y
+----
+.. Inicie o serviço opensm:
++
+[source, console]
+----
+systemctl start opensm
+----
+
+
+. Execute `ibstat` e verifique se todos os adaptadores estão sendo executados na versão de firmware desejada:
++
+[source, console]
+----
+ibstat
+----
+. Inicie os serviços de cluster do pacemaker no nó:
++
+[source, console]
+----
+pcs cluster start <HOSTNAME>
+----
+. Retire o nó do modo de espera:
++
+[source, console]
+----
+pcs node unstandby <HOSTNAME>
+----
+. Realocar todos os serviços BeeGFS de volta para o nó preferido:
++
+[source, console]
+----
+pcs resource relocate run
+----
+
+
+Repita estas etapas para cada nó de arquivo no cluster até que todos os adaptadores tenham sido atualizados.
+
+
+
+== Abordagem de atualização de cluster de dois nós
+
+Essa abordagem é recomendada para clusters de HA com apenas dois nós. Essa abordagem é semelhante a uma atualização contínua, mas inclui etapas adicionais para evitar o tempo de inatividade do serviço quando os serviços de cluster de um nó são interrompidos.
+
+. Confirme se o cluster está no estado ideal, com cada serviço BeeGFS sendo executado no nó preferido. link:clusters-examine-state.html["Examine o estado do cluster"^]Consulte para obter detalhes.
+. Escolha um nó de arquivo a ser atualizado e coloque o nó no modo de espera, que drena (ou move) todos os serviços BeeGFS desse nó:
++
+[source, console]
+----
+pcs node standby <HOSTNAME>
+----
+. Verifique se os recursos do nó foram drenados executando:
++
+[source, console]
+----
+pcs status
+----
++
+Verifique se nenhum serviço está relatando como `Started` no nó em espera.
+
++
+
+TIP: Dependendo do tamanho do cluster, os serviços BeeGFS podem levar segundos ou minutos para serem reportados como `Started` no nó secundário. Se um serviço BeeGFS não for iniciado, consulte o link:clusters-troubleshoot.html["Guias de solução de problemas"^].
+
+. Coloque o cluster no modo de manutenção.
++
+[source, console]
+----
+pcs property set maintenance-mode=true
+----
+. Atualize o firmware do adaptador usando `mlxfwmanager`o .
++
+[source, console]
+----
+ mlxfwmanager -i <path/to/firmware.bin> -u
+----
++
+Observe o `PCI Device Name` para cada adaptador que recebe atualizações de firmware.
+
+. Redefina cada adaptador usando o `mlxfwreset` utilitário para aplicar o novo firmware.
++
+
+NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. link:https://docs.nvidia.com/networking/display/mftv4310/mlxfwreset+%E2%80%93+loading+firmware+on+5th+generation+devices+tool#src-3566627427_safe-id-bWx4ZndyZXNldOKAk0xvYWRpbmdGaXJtd2FyZW9uNXRoR2VuZXJhdGlvbkRldmljZXNUb29sLW1seGZ3cmVzZXRMaW1pdGF0aW9ucw["Limitações de mlxfwreset do NVIDIA"^]Consulte para obter orientação. Se for necessária uma reinicialização, execute uma reinicialização em vez de redefinir os adaptadores.
+
++
+.. Pare o serviço opensm:
++
+[source, console]
+----
+systemctl stop opensm
+----
+.. Execute o comando a seguir para cada `PCI Device Name` observado anteriormente.
++
+[source, console]
+----
+mlxfwreset -d <pci_device_name> reset -y
+----
+.. Inicie o serviço opensm:
++
+[source, console]
+----
+systemctl start opensm
+----
+
+
+. Execute `ibstat` e verifique se todos os adaptadores estão sendo executados na versão de firmware desejada:
++
+[source, console]
+----
+ibstat
+----
+. Inicie os serviços de cluster do pacemaker no nó:
++
+[source, console]
+----
+pcs cluster start <HOSTNAME>
+----
+. Retire o nó do modo de espera:
++
+[source, console]
+----
+pcs node unstandby <HOSTNAME>
+----
+. Retire o cluster do modo de manutenção.
++
+[source, console]
+----
+pcs property set maintenance-mode=false
+----
+. Realocar todos os serviços BeeGFS de volta para o nó preferido:
++
+[source, console]
+----
+pcs resource relocate run
+----
+
+
+Repita estas etapas para cada nó de arquivo no cluster até que todos os adaptadores tenham sido atualizados.

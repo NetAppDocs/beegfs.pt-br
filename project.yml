@@ -139,6 +139,10 @@ sidebar:
       entries:
       - title: Atualize a versão BeeGFS
         url: "/administer/clusters-update-beegfs.html"
+      - title: Atualize os pacotes Pacemaker e Corosync
+        url: "/administer/clusters-update-ha-services.html"
+      - title: Atualize o firmware do adaptador do nó de arquivo
+        url: "/administer/clusters-update-hca-firmware.html"
       - title: Atualizar o storage array do e-Series
         url: "/administer/clusters-update-storage-array.html"
     - title: Manutenção e manutenção

@@ -51,21 +51,6 @@ Cada nó de arquivo deve atender ou exceder as especificações dos nós de arqu
 
 
 
-* *Lenovo ThinkSystem SR665*
-+
-** * Processadores:* 2x AMD EPYC 7343 16C 3,2 GHz (configurado como duas zonas NUMA).
-** *Memória:* 256GBGB (16x 16GB TruDDR4 3200MHzGB RDIMM-A)
-** *Expansão PCIe:* quatro slots PCIe Gen4 x16 (dois por zona NUMA)
-** *Diversos:*
-+
-*** Duas unidades em RAID 1 para os (1TB 7,2K SATA ou superior)
-*** Porta de 1GbE GbE para gerenciamento de SO na banda
-*** 1GbE BMC com API Redfish para gerenciamento de servidores fora da banda
-*** Fontes de alimentação duplas hot swap e ventoinhas de desempenho
-
-
-
-
 
 
 
@@ -81,11 +66,6 @@ Os adaptadores de placa de host variam de acordo com o modelo de servidor usado 
 * *Servidor Lenovo ThinkSystem SR665 V3:*
 +
 ** MCX755106AS-Heat ConnectX-7, NDR200, QSFP112, 2 portas, PCIe Gen5 x16, adaptador InfiniBand
-
-
-* *Servidor Lenovo ThinkSystem SR665:*
-+
-** MCX653106A-HDAT ConnectX-6, HDR, QSFP-56, 2 portas, PCIe Gen4 x16, adaptador InfiniBand
 
 
 
@@ -115,21 +95,27 @@ O switch de rede de storage deve ter capacidade para velocidades InfiniBand de 2
 |===
 *Conexões de nós de arquivo para o switch de rede de storage.* Selecione a opção de cabo apropriada na tabela a seguir de acordo com o switch de armazenamento InfiniBand. O comprimento recomendado do cabo é de 2m mm; no entanto, isso pode variar de acordo com o ambiente do cliente.
 
-[cols="20%,10%,15%,55%"]
+[cols="20%,15%,10%,55%"]
 |===
-| Modelo do interrutor | Quantidade | Tipo de cabo | Número de peça 
+| Modelo do interrutor | Tipo de cabo | Quantidade | Número de peça 
 
 
-| NVIDIA QM9700 | 4 | Fibra ativa | MFA7U10-H002 (cabo de fibra ativa NVIDIA, InfiniBand de 400GB GB/s a 2x 200GB GB/s, OSFP a 2x QSFP56 GB) 
+.4+| NVIDIA QM9700 .3+| Fibra ativa (incluindo transcetores) | 2 | MMA4Z00-NS (multimodo, IB/ETH, 800GB GB/s 2x400Gb/s OSFP de porta dupla) 
 
 
-| NVIDIA QM9700 | 4 | Cobre passivo | MCP7Y60-H002 (cabo de cobre passivo NVIDIA, InfiniBand de 400GB GB/s a 2x 200GB GB/s, OSFP a 2x QSFP56 GB) 
+| 4 | MFP7E20-Nxxx (cabo de fibra divisor de 2 canais multimodo, 4 canais para dois) 
 
 
-| NVIDIA MQM8700 | 8 | Fibra ativa | MFS1S00-H003E (cabo de fibra ativa NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
+| 8 | MMA1Z00-NS400 (multimodo, IB/ETH, QSFP-112 de porta única de 400GB GB/s) 
 
 
-| NVIDIA MQM8700 | 8 | Cobre passivo | MCP1650-H002E26 (cabo de cobre passivo NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
+| Cobre passivo | 2 | MCP7Y40-N002 (cabo divisor de cobre passivo NVIDIA, InfiniBand de 800GB GB/s para 4x 200GB GB/s, OSFP para 4x QSFP112 GB) 
+
+
+.2+| NVIDIA MQM8700 | Fibra ativa | 8 | MFS1S00-H003E (cabo de fibra ativa NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
+
+
+| Cobre passivo | 8 | MCP1650-H002E26 (cabo de cobre passivo NVIDIA, InfiniBand de 200GB GB/s, QSFP56 GB) 
 |===
 
 
@@ -159,15 +145,12 @@ IMPORTANT: Os nós de arquivo exigem uma assinatura válida do RedHat Enterprise
 | Kernel do Linux | 5.14.0-362.24.1.el9_3.x86_64 
 
 
-| Drivers InfiniBand / RDMA | MLNX_OFED_LINUX-23,10-3,2.2,0-LTS 
-
-
  a| 
 Firmware HCA
  a| 
-* Firmware HCA * ConnectX-7 FW: 28.39.1002 e PXE: 3.7.0201 e UEFI: 14.32.0012
+* Firmware HCA * ConnectX-7 FW: 28.42.1000 e PXE: 3.7.0500 e UEFI: 14.35.0015
 
-* Firmware HCA * ConnectX-6 FW: 20.31.1014 e PXE: 3.6.0403 e UEFI: 14.24.0013
+* Firmware HCA * ConnectX-6 FW: 20.43.1014 e PXE: 3.7.0500 e UEFI: 14.36.0016
 
 |===
 
@@ -179,10 +162,10 @@ Firmware HCA
 | Software | Versão 
 
 
-| Sistema operacional SANtricity | 11.80.0 
+| Sistema operacional SANtricity | 11.90R1 
 
 
-| NVSRAM | N6000-880834-D08.dlp 
+| NVSRAM | N6000-890834-D02.dlp 
 
 
 | Firmware da unidade | Mais recente disponível para os modelos de acionamento em uso. 
@@ -201,15 +184,16 @@ A tabela a seguir lista os requisitos de software implantados automaticamente co
 | BeeGFS | 7.4.4 
 
 
-| Corosync | 3,1.5-4 
+| Corosync | 3,1.7-1 
 
 
-| Pacemaker | 2,1.4-5 
+| Pacemaker | 2,1.6-10 
 
 
-| OpenSM  a| 
-opensm-5.17.2 (de MLNX_OFED_Linux-23,10-3,2.2,0-LTS)
+| Agentes de vedação (peixe-vermelho/apc) | 4,10.0-55 
 
+
+| Drivers InfiniBand / RDMA | MLNX_OFED_LINUX-23,10-3,2.2,0-LTS 
 |===
 
 

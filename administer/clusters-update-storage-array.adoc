@@ -14,13 +14,13 @@ summary: Etapas para atualizar os storage arrays e-Series do cluster HA.
 
 
 [role="lead"]
-Siga estas etapas para atualizar os storage arrays e-Series do cluster de HA (nós de bloco).
+Siga estas etapas para atualizar os componentes do storage array e-Series do cluster HA.
 
 
 
 == Visão geral
 
-Manter os storage arrays NetApp e-Series atualizados do seu cluster de HA com o firmware mais recente garante desempenho ideal e segurança aprimorada. As atualizações de firmware para a matriz de armazenamento são aplicadas usando os arquivos SANtricity os, NVSRAM e firmware da unidade.
+Manter os storage arrays NetApp e-Series atualizados do seu cluster de HA com o firmware mais recente garante desempenho ideal e segurança aprimorada. As atualizações de firmware para a matriz de armazenamento são aplicadas através de ficheiros de firmware da unidade, NVSRAM e SANtricity os.
 
 
 IMPORTANT: Embora os storage arrays possam ser atualizados on-line com o cluster de HA, é recomendável colocar o cluster no modo de manutenção para todas as atualizações.
@@ -65,7 +65,7 @@ Consulte link:https://docs.ansible.com/ansible/latest/collections_guide/collecti
 
 
 . Se necessário, atualize os arquivos de inventário do Ansible do cluster para incluir todos os storage arrays (nós de bloco) que exigem atualizações. Para obter orientação, consulte link:../custom/architectures-inventory-overview.html["Visão geral do Ansible Inventory"^]a secção.
-. Garantir que o cluster esteja no estado ideal, com cada serviço BeeGFS no nó de sua preferência. link:clusters-examine-state.html["Examine o estado do cluster"^]Consulte para obter detalhes.
+. Garantir que o cluster esteja no estado ideal com cada serviço BeeGFS no nó de sua preferência. link:clusters-examine-state.html["Examine o estado do cluster"^]Consulte para obter detalhes.
 . Coloque o cluster no modo de manutenção seguindo as instruções na link:clusters-maintenance-mode.html["Coloque o cluster no modo de manutenção"^].
 . Crie um novo manual do Ansible chamado `update_block_node_playbook.yml`. Preencha o manual com o seguinte conteúdo, substituindo as versões do SANtricity os, NVSRAM e firmware da unidade para o caminho de atualização desejado:
 +
