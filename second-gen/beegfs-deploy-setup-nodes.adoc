@@ -49,10 +49,7 @@ NOTE: Embora não sejam estritamente necessárias, as seções subsequentes pres
 ....
 subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpms --add=enabled:1
 ....
-. Atualize todo o firmware HCA para a versão recomendada em link:beegfs-technology-requirements.html["Requisitos de tecnologia"].
-+
-Esta atualização pode ser feita baixando e executando uma versão da ferramenta mlxup que agrupa o firmware recomendado. Pode transferir esta ferramenta a partir de https://network.nvidia.com/support/firmware/mlxup-mft/["Mlxup - Utilitário de atualização e consulta"^] (link:https://docs.nvidia.com/networking/display/mlxupfwutility["manual do utilizador"^] ).
-
+. Atualize todo o firmware HCA para a versão recomendada no link:beegfs-technology-requirements.html["Requisitos de tecnologia"] uso do link:..administer/clusters-update-hca-firmware.html["Atualize o firmware do adaptador do nó de arquivo"^] guia.
 
 
 
@@ -63,11 +60,11 @@ Configure os nós de bloco EF600 configurando a porta de gerenciamento em cada c
 
 . Configure a porta de gerenciamento em cada controlador EF600.
 +
-Para obter instruções sobre como configurar portas, vá para o https://docs.netapp.com/us-en/e-series/maintenance-ef600/hpp-overview-supertask-concept.html["E-Series Documentation Center"^].
+Para obter instruções sobre como configurar portas, vá para o https://docs.netapp.com/us-en/e-series/install-hw-ef600/complete-setup-task.html#step-2-connect-and-configure-the-management-connection["E-Series Documentation Center"^].
 
 . Opcionalmente, defina o nome do storage array para cada sistema.
 +
-Definir um nome pode facilitar a consulta a cada sistema nas seções subsequentes. Para obter instruções sobre como definir o nome do array, vá para https://docs.netapp.com/us-en/e-series/maintenance-ef600/hpp-overview-supertask-concept.html["E-Series Documentation Center"^] .
+Definir um nome pode facilitar a consulta a cada sistema nas seções subsequentes. Para obter instruções sobre como definir o nome do array, vá para https://docs.netapp.com/us-en/e-series-santricity/sm-interface/setup-wizard-overview.html#first-time-setup["E-Series Documentation Center"^] .
 
 
 

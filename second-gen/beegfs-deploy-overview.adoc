@@ -14,15 +14,15 @@ summary: É possível implantar o BeeGFS no NetApp para nós de arquivos e bloco
 
 
 [role="lead"]
-É possível implantar o BeeGFS no NetApp para nós de arquivos e blocos validados usando a segunda geração do design de componentes básicos do BeeGFS da NetApp.
+O BeeGFS no NetApp pode ser implantado para nós de arquivo e bloco validados usando o Ansible com o design de componentes básicos do BeeGFS da NetApp.
 
 
 
 == Coleções e funções do Ansible
 
-Com o Ansible, você implanta a solução BeeGFS no NetApp, que é um mecanismo popular de automação DE TI usado para automatizar as implantações de aplicações. O Ansible usa uma série de arquivos coletivamente conhecidos como um inventário, que modela o sistema de arquivos BeeGFS que você deseja implantar.
+A solução BeeGFS no NetApp é implantada com o Ansible, um mecanismo de automação DE TI popular que automatiza as implantações de aplicações. O Ansible usa uma série de arquivos coletivamente conhecidos como inventário, que modela o sistema de arquivos BeeGFS que você deseja implantar.
 
-O Ansible permite que empresas como o NetApp expandam a funcionalidade incorporada usando coleções no Ansible Galaxy ( https://galaxy.ansible.com/netapp_eseries/santricity["Coleção BeeGFS da NetApp e-Series"^]consulte ). As coleções incluem módulos que executam alguma função ou tarefa específica (como criar um volume e-Series) e incluem funções que podem chamar vários módulos e outras funções. Essa abordagem automatizada reduz o tempo necessário para implantar o sistema de arquivos BeeGFS e o cluster de HA subjacente. Além disso, simplifica a adição de componentes básicos para expandir os sistemas de arquivos existentes.
+O Ansible permite que empresas como o NetApp expandam a funcionalidade incorporada usando coleções disponíveis no Ansible Galaxy ( https://galaxy.ansible.com/netapp_eseries/santricity["Coleção BeeGFS da NetApp e-Series"^]consulte ). As coleções incluem módulos que executam funções ou tarefas específicas (como criar um volume e-Series) e funções que podem chamar vários módulos e outras funções. Essa abordagem automatizada reduz o tempo necessário para implantar o sistema de arquivos BeeGFS e o cluster de HA subjacente. Além disso, simplifica a manutenção e a expansão do cluster e do sistema de arquivos BeeGFS.
 
 Para obter mais detalhes, link:beegfs-deploy-learn-ansible.html["Saiba mais sobre o inventário do Ansible"]consulte .
 
@@ -40,7 +40,7 @@ Os procedimentos de implantação abrangem os seguintes perfis de configuração
 * Um terceiro componente básico que inclui apenas serviços de storage.
 
 
-Esses perfis demonstram a gama completa de perfis de configuração recomendados para os blocos de construção BeeGFS do NetApp. Para cada implantação, o número de componentes básicos de storage e metadados ou componentes básicos apenas de serviços de storage pode variar nos procedimentos, dependendo dos requisitos de capacidade e desempenho.
+Esses perfis demonstram a gama completa de perfis de configuração recomendados para os blocos de construção BeeGFS do NetApp. Para cada implantação, o número de componentes básicos de storage e metadados ou componentes básicos apenas de serviços de storage pode variar dependendo dos requisitos de capacidade e desempenho.
 
 
 

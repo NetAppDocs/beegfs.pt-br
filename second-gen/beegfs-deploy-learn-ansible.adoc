@@ -14,15 +14,15 @@ summary: Antes de começar a implantação, entenda como usar o Ansible para con
 
 
 [role="lead"]
-Antes de começar a implantação, entenda como usar o Ansible para configurar e implantar a solução BeeGFS no NetApp usando o design de componentes básicos do BeeGFS de segunda geração.
+Antes de iniciar uma implantação, familiarize-se com a forma como o Ansible é configurado e usado para implantar a solução BeeGFS no NetApp.
 
-O inventário do Ansible define a configuração para nós de arquivo e bloco e representa o sistema de arquivos BeeGFS que você deseja implantar. O inventário inclui hosts, grupos e variáveis descrevendo o sistema de arquivos BeeGFS desejado. Os inventários de amostra podem ser baixados de https://github.com/netappeseries/beegfs/tree/master/getting_started/["NetApp e-Series BeeGFS GitHub"^].
+O inventário do Ansible é uma estrutura de diretório que lista os nós de arquivo e bloco para o sistema de arquivos BeeGFS a ser implantado. Ele inclui hosts, grupos e variáveis descrevendo o sistema de arquivos BeeGFS desejado. O inventário do Ansible precisa ser armazenado no nó de controle do Ansible, que é qualquer máquina com acesso aos nós de bloco e arquivo usados para executar o manual de estratégia do Ansible. Os inventários de amostras podem ser transferidos a partir do https://github.com/netappeseries/beegfs/tree/master/getting_started/["NetApp e-Series BeeGFS GitHub"^].
 
 
 
 == Módulos e funções do Ansible
 
-Para aplicar a configuração descrita pelo inventário do Ansible, use os vários módulos e funções do Ansible fornecidos na coleção do NetApp e-Series Ansible, em particular a função BeeGFS HA 7,4 (disponível no https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_ha_7_4["NetApp e-Series BeeGFS GitHub"^]) que implanta a solução completa.
+Para aplicar a configuração descrita pelo inventário do Ansible, use os vários módulos e funções do Ansible fornecidos na coleção Ansible do NetApp e-Series (disponível na https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_ha_7_4["NetApp e-Series BeeGFS GitHub"^]) que implantam a solução completa.
 
 Cada função na coleção Ansible do NetApp e-Series é uma implantação completa completa e completa da solução BeeGFS no NetApp. As funções usam as coleções SANtricity, host e BeeGFS do NetApp e-Series que permitem configurar o sistema de arquivos BeeGFS com HA (alta disponibilidade). Em seguida, você pode provisionar e mapear o armazenamento e garantir que o armazenamento de cluster esteja pronto para uso.
 
@@ -35,11 +35,11 @@ NOTE: Embora as etapas de implantação tentem fornecer detalhes suficientes par
 
 == Layout de inventário para um cluster BeeGFS HA
 
-Use a estrutura de inventário do Ansible para definir um cluster BeeGFS HA.
+Defina um cluster BeeGFS HA com a estrutura de inventário do Ansible.
 
-Qualquer pessoa com experiência anterior do Ansible deve estar ciente de que a função BeeGFS HA implementa um método personalizado para descobrir quais variáveis (ou fatos) se aplicam a cada host. Isso é necessário para simplificar a criação de um inventário do Ansible que descreve recursos que podem ser executados em vários servidores.
+Qualquer pessoa com experiência anterior do Ansible deve estar ciente de que a função de HA do BeeGFS implementa um método personalizado para descobrir quais variáveis (ou fatos) se aplicam a cada host. Esse design simplifica a estruturação do inventário do Ansible para descrever recursos que podem ser executados em vários servidores.
 
-Um inventário do Ansible normalmente consiste nos arquivos no `host_vars` eno e `group_vars` em um `inventory.yml` arquivo que atribui hosts a grupos específicos (e potencialmente grupos a outros grupos).
+Um inventário do Ansible normalmente consiste nos arquivos no `host_vars` e `group_vars`, juntamente com um `inventory.yml` arquivo que atribui hosts a grupos específicos (e potencialmente grupos a outros grupos).
 
 
 NOTE: Não crie nenhum arquivo com o conteúdo desta subseção, que se destina apenas a exemplo.
@@ -93,7 +93,7 @@ beegfs_targets:
           - size: 21.25
             owning_controller: A
 ....
-Esse layout permite que a configuração de serviço, rede e storage do BeeGFS para cada recurso seja definida em um único lugar. Nos bastidores, a função BeeGFS agrega a configuração necessária para cada nó de arquivo e bloco com base nessa estrutura de inventário. Para obter mais informações, consulte este post no blog: https://www.netapp.com/blog/accelerate-deployment-of-ha-for-beegfs-with-ansible/["O NetApp acelera a implantação do HA para BeeGFS com o Ansible"^].
+Esse layout permite que a configuração de serviço, rede e storage do BeeGFS para cada recurso seja definida em um único lugar. Nos bastidores, a função BeeGFS agrega a configuração necessária para cada nó de arquivo e bloco com base nessa estrutura de inventário.
 
 
 NOTE: O ID numérico e do nó de string BeeGFS para cada serviço é configurado automaticamente com base no nome do grupo. Assim, além do requisito geral do Ansible para que os nomes de grupos sejam únicos, os grupos que representam um serviço BeeGFS precisam terminar em um número exclusivo para o tipo de serviço BeeGFS que o grupo representa. Por exemplo, meta_01 e stor_01 são permitidos, mas metadata_01 e meta_01 não são.
