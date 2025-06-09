@@ -23,7 +23,7 @@ Siga estas etapas para atualizar os componentes do storage array e-Series do clu
 Manter os storage arrays NetApp e-Series atualizados do seu cluster de HA com o firmware mais recente garante desempenho ideal e segurança aprimorada. As atualizações de firmware para a matriz de armazenamento são aplicadas através de ficheiros de firmware da unidade, NVSRAM e SANtricity os.
 
 
-IMPORTANT: Embora os storage arrays possam ser atualizados on-line com o cluster de HA, é recomendável colocar o cluster no modo de manutenção para todas as atualizações.
+NOTE: Embora os storage arrays possam ser atualizados on-line com o cluster de HA, é recomendável colocar o cluster no modo de manutenção para todas as atualizações.
 
 
 

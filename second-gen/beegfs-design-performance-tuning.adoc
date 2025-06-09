@@ -26,7 +26,7 @@ Os parâmetros de ajuste disponíveis que você pode configurar incluem o seguin
 
 . * Configurações do sistema na UEFI/BIOS de nós de arquivo.* Para maximizar o desempenho, recomendamos configurar as configurações do sistema no modelo de servidor que você usa como nós de arquivo. Você configura as configurações do sistema quando configura seus nós de arquivo usando a configuração do sistema (UEFI/BIOS) ou as APIs do Redfish fornecidas pelo controlador de gerenciamento de placa base (BMC).
 +
-As configurações do sistema variam dependendo do modelo de servidor que você usa como nó de arquivo. As configurações devem ser configuradas manualmente com base no modelo de servidor em uso. Para saber como configurar as configurações do sistema para os nós de arquivo validados do Lenovo SR665, link:beegfs-deploy-file-node-tuning.html["Ajuste as configurações do sistema do nó de arquivo para obter desempenho"]consulte .
+As configurações do sistema variam dependendo do modelo de servidor que você usa como nó de arquivo. As configurações devem ser configuradas manualmente com base no modelo de servidor em uso. Para saber como configurar as configurações do sistema para os nós de arquivo Lenovo SR665 V3 validados, consulte link:beegfs-deploy-file-node-tuning.html["Ajuste as configurações do sistema do nó de arquivo para obter desempenho"] .
 
 . * Configurações padrão para os parâmetros de configuração necessários.* Os parâmetros de configuração necessários afetam a forma como os serviços BeeGFS são configurados e como os volumes do e-Series (dispositivos de bloco) são formatados e montados pelo pacemaker. Estes parâmetros de configuração necessários incluem o seguinte:
 +

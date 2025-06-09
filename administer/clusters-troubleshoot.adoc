@@ -246,7 +246,7 @@ Passos para resolver:
 . Verifique se o nó está realmente desligado.
 +
 
-IMPORTANT: Se o nó especificado não estiver realmente desativado, mas executando serviços ou recursos de cluster, ocorrerá corrupção de dados/falha de cluster.
+CAUTION: Se o nó especificado não estiver realmente desativado, mas executando serviços ou recursos de cluster, ocorrerá corrupção de dados/falha de cluster.
 
 . Confirme manualmente a vedação com: `pcs stonith confirm <NODE>`
 
@@ -264,7 +264,7 @@ Neste ponto, os serviços devem terminar de falhar e ser reiniciados em outro n�
 Normalmente, se um serviço BeeGFS precisar ser reiniciado (por exemplo, para facilitar uma alteração de configuração), isso deve ser feito atualizando o inventário do Ansible e executando novamente o manual de estratégia. Em alguns cenários, pode ser desejável reiniciar serviços individuais para facilitar a solução de problemas mais rápida, por exemplo, para alterar o nível de log sem precisar esperar que todo o manual de estratégia seja executado.
 
 
-IMPORTANT: A menos que quaisquer alterações manuais também sejam adicionadas ao inventário do Ansible, elas serão revertidas na próxima vez que o manual de estratégia do Ansible for executado.
+CAUTION: A menos que quaisquer alterações manuais também sejam adicionadas ao inventário do Ansible, elas serão revertidas na próxima vez que o manual de estratégia do Ansible for executado.
 
 
 

@@ -62,4 +62,5 @@ Passos:
 . Para ativar a execução de esgrima: `pcs property set stonith-enabled=true`
 
 
-Observação: Essa configuração será substituída na próxima vez que você executar o manual do Ansible.
+
+CAUTION: Esta configuração será substituída na próxima vez que você executar o manual do Ansible.

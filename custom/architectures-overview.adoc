@@ -67,7 +67,7 @@ O Ansible gerencia todas as tarefas de configuração e provisionamento de softw
 
 O suporte ao BeeGFS no Ansible é lançado link:https://galaxy.ansible.com/netapp_eseries/beegfs["Ansible Galaxy"]como uma coleção de funções e módulos que automatizam a implantação e o gerenciamento completos dos clusters de HA do BeeGFS.
 
-O BeeGFS em si é versionado seguindo um esquema de controle de versão do <major> <major>.<minor> <minor>.<patch> e a coleção mantém funções para cada versão suportada do BeeGFS, por exemplo, BeeGFS 7,2 ou BeeGFS 7,3. À medida que as atualizações da coleção são lançadas, a versão de patch em cada função será atualizada para apontar a versão BeeGFS mais recente disponível para essa ramificação de lançamento (exemplo: 7,2.8). Cada versão da coleção também é testada e suportada com distribuições e versões específicas do Linux, atualmente Red Hat para nós de arquivos, RedHat e Ubuntu para clientes. A execução de outras distribuições não é suportada e a execução de outras versões (especialmente outras versões principais) não é recomendada.
+O BeeGFS em si é versionado seguindo um esquema de controle de versão do <major> <major>.<minor> <minor>.<patch> e a coleção mantém funções para cada versão suportada do BeeGFS, por exemplo, BeeGFS 7,2 ou BeeGFS 7,3. À medida que as atualizações da coleção são lançadas, a versão de patch em cada função será atualizada para apontar a versão BeeGFS mais recente disponível para essa ramificação de lançamento (exemplo: 7,2.8). Cada versão da coleção também é testada e suportada com distribuições e versões específicas do Linux, atualmente Red Hat para nós de arquivo e Red Hat e Ubuntu para clientes. A execução de outras distribuições não é suportada e a execução de outras versões (especialmente outras versões principais) não é recomendada.
 
 
 
@@ -86,7 +86,7 @@ Também é recomendável configurar SSH sem senha do nó de controle para todos 
 
 === Nós de arquivos BeeGFS
 
-Os nós de arquivo devem executar o RedHat 9,3 e ter acesso ao repositório HA que contém os pacotes necessários (pacemaker, corosync, fence-agents-all, resource-maents). Por exemplo, o seguinte comando pode ser executado para ativar o repositório apropriado no RedHat 9:
+Os nós de arquivo devem executar o Red Hat Enterprise Linux (RHEL) 9.4 e ter acesso ao repositório HA que contém os pacotes necessários (pacemaker, corosync, fence-agents-all, resource-agents). Por exemplo, o seguinte comando pode ser executado para habilitar o repositório apropriado no RHEL 9:
 
 [source, bash]
 ----
@@ -96,6 +96,6 @@ subscription-manager repo-override repo=rhel-9-for-x86_64-highavailability-rpms 
 
 === Nós de cliente BeeGFS
 
-Uma função Ansible do cliente BeeGFS está disponível para instalar o pacote cliente BeeGFS e gerenciar a(s) montagem(s) do BeeGFS. Esta função foi testada com RedHat 8,4 e Ubuntu 22,04.
+Uma função Ansible do cliente BeeGFS está disponível para instalar o pacote cliente BeeGFS e gerenciar a(s) montagem(s) do BeeGFS. Esta função foi testada com RHEL 9.4 e Ubuntu 22.04.
 
 Se você não estiver usando o Ansible para configurar o cliente BeeGFS e montar o BeeGFS, é possível usar qualquer umlink:https://doc.beegfs.io/latest/release_notes.html#supported-linux-distributions-and-kernels["BeeGFS suporta distribuição Linux e kernel"].

@@ -45,9 +45,9 @@ Instale um sistema operacional suportado com base nos requisitos de nó de arqui
 
 
 
-==== RedHat
+==== Red Hat
 
-Use o RedHat Subscription Manager para Registrar e assinar o sistema para permitir a instalação dos pacotes necessários dos repositórios oficiais da Red Hat e limitar as atualizações da versão suportada do Red Hat: `subscription-manager release --set=<MAJOR_VERSION>.<MINOR_VERSION>`. Para obter instruções, consulte https://access.redhat.com/solutions/253273["Como Registrar e assinar um sistema RHEL"^] e  https://access.redhat.com/solutions/2761031["Como limitar as atualizações"^].
+Use o Red Hat Subscription Manager para registrar e assinar o sistema para permitir a instalação dos pacotes necessários dos repositórios oficiais do Red Hat e limitar as atualizações à versão suportada do Red Hat:  `subscription-manager release --set=<MAJOR_VERSION>.<MINOR_VERSION>` . Para obter instruções, consulte  https://access.redhat.com/solutions/253273["Como Registrar e assinar um sistema RHEL"^] e  https://access.redhat.com/solutions/2761031["Como limitar as atualizações"^] .
 
 Ative o repositório Red Hat que contém os pacotes necessários para alta disponibilidade:
 

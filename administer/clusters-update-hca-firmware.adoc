@@ -40,7 +40,7 @@ Este guia aborda duas abordagens para atualizar o firmware do adaptador ConnectX
 Recomenda-se usar o utilitário do NVIDIA `mlxfwmanager` para atualizar o firmware do adaptador de um nó, que é fornecido com o driver MLNX_OFED da NVIDIA. Antes de iniciar as atualizações, baixe a imagem de firmware do adaptador link:https://network.nvidia.com/support/firmware/firmware-downloads/["Site de suporte da NVIDIA"^]e armazene-a em cada nó de arquivo.
 
 
-NOTE: Para adaptadores Lenovo ConnectX-7, use a `mlxfwmanager_LES` ferramenta, que está disponível na página do NVIDIAlink:https://network.nvidia.com/support/firmware/lenovo-intelligent-cluster/["Firmware OEM"^].
+TIP: Para adaptadores Lenovo ConnectX-7, use a `mlxfwmanager_LES` ferramenta, que está disponível na página do NVIDIAlink:https://network.nvidia.com/support/firmware/lenovo-intelligent-cluster/["Firmware OEM"^].
 
 
 
@@ -101,8 +101,21 @@ mlxfwreset -d <pci_device_name> reset -y
 ----
 systemctl start opensm
 ----
+.. Reinicie o  `eseries_nvme_ib.service` .
++
+[source, console]
+----
+systemctl restart eseries_nvme_ib.service
+----
+.. Verifique se os volumes do array de armazenamento da Série E estão presentes.
 
 
+
+
+[listing]
+----
+multipath -ll
+----
 . Execute `ibstat` e verifique se todos os adaptadores estão sendo executados na versão de firmware desejada:
 +
 [source, console]

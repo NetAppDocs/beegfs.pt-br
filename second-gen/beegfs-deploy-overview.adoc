@@ -69,12 +69,17 @@ A implantação envolve as seguintes tarefas de alto nível:
 . link:beegfs-deploy-configure-clients.html["Configurar clientes BeeGFS"].
 
 
+[NOTE]
+====
+Os procedimentos de implantação incluem vários exemplos em que o texto precisa ser copiado para um arquivo. Preste muita atenção a quaisquer comentários inline indicados por carateres "///" para qualquer coisa que deve ou pode ser modificada para uma implantação específica. Por exemplo:
 
-NOTE: Os procedimentos de implantação incluem vários exemplos em que o texto precisa ser copiado para um arquivo. Preste muita atenção a quaisquer comentários inline indicados por carateres "///" para qualquer coisa que deve ou pode ser modificada para uma implantação específica. Por exemplo:
+[source, yaml]
+----
 `beegfs_ha_ntp_server_pools:  # THIS IS AN EXAMPLE OF A COMMENT!
   - "pool 0.pool.ntp.org iburst maxsources 3"
   - "pool 1.pool.ntp.org iburst maxsources 3"`
-
+----
+====
 Arquiteturas derivadas com variações nas recomendações de implantação:
 
 * link:beegfs-design-high-capacity-building-block.html["Bloco de construção de alta capacidade"]

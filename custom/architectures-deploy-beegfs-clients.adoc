@@ -89,7 +89,7 @@ all:
 ----
 +
 
-IMPORTANT: Não armazene senhas em texto simples. Em vez disso, use o Ansible Vault (consulte o link:https://docs.ansible.com/ansible/latest/user_guide/vault.html["Documentação do Ansible"^] para criptografar conteúdo com o Ansible Vault) ou use a `--ask-become-pass` opção ao executar o manual de estratégia.
+NOTE: Não armazene senhas em texto simples. Em vez disso, use o Ansible Vault (consulte o link:https://docs.ansible.com/ansible/latest/user_guide/vault.html["Documentação do Ansible"^] para criptografar conteúdo com o Ansible Vault) ou use a `--ask-become-pass` opção ao executar o manual de estratégia.
 
 . No `client_inventory.yml` arquivo, liste todos os hosts que devem ser configurados como clientes BeeGFS no `beegfs_clients` grupo e, em seguida, consulte os comentários inline e descomente qualquer configuração adicional necessária para criar o módulo do kernel do cliente BeeGFS no seu sistema:
 +

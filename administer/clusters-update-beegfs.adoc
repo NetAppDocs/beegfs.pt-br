@@ -25,7 +25,7 @@ BeeGFS segue um `major.minor.patch` esquema de controle de versão. As funções
 O Ansible deve ser usado em todas as atualizações do BeeGFS, incluindo a migração entre as versões principal, secundária e de patch do BeeGFS. Para atualizar o BeeGFS, primeiro você precisará atualizar a coleção BeeGFS Ansible, que também abordará as correções e os aprimoramentos mais recentes da automação de implantação/gerenciamento e do cluster de HA subjacente. Mesmo depois de atualizar para a versão mais recente da coleção, BeeGFS não será atualizado até `ansible-playbook` que seja executado com o `-e "beegfs_ha_force_upgrade=true"` conjunto.
 
 
-NOTE: Para obter mais informações sobre as versões BeeGFS, consulte link:https://doc.beegfs.io/latest/advanced_topics/upgrade.html["Documentação do BeeGFS Upgrade"^].
+TIP: Para obter mais informações sobre as versões BeeGFS, consulte link:https://doc.beegfs.io/latest/advanced_topics/upgrade.html["Documentação do BeeGFS Upgrade"^].
 
 
 
