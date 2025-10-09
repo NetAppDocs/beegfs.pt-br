@@ -23,8 +23,6 @@ sidebar:
       entries:
       - title: Visão geral da solução
         url: "/second-gen/beegfs-solution-overview.html"
-      - title: Projete gerações
-        url: "/second-gen/beegfs-gens.html"
       - title: Visão geral da arquitetura
         url: "/second-gen/beegfs-architecture-overview.html"
       - title: Requisitos técnicos

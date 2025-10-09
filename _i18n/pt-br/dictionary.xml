@@ -1677,18 +1677,6 @@
   <block id="7c6326491c77a63417df94790ba07083" category="inline-link">NVIDIA DGX SuperPOD com NetApp</block>
   <block id="64dc43320ec1a44c390fafb5e2408f4b" category="inline-link">NVIDIA DGX BasePOD</block>
   <block id="33d753992c8525a016e60650889ef7a9" category="paragraph">Para obter mais informações,<block ref="917e0b817a1bc5579c3d00c8de7a0790" category="inline-link-rx"></block> consulte e<block ref="d4d49ddfca3de3daecdc231399362db8" category="inline-link-rx"></block>.</block>
-  <block id="51bfd24e79e0939d84e9230980db5f18" category="summary">A solução BeeGFS on NetApp está atualmente em seu segundo projeto geracional.</block>
-  <block id="fa0de4179a84e742d2d88028d16bf137" category="doc">Projete gerações</block>
-  <block id="51c16b7415d506b9bbcedd7241c7c1c0" category="paragraph">A primeira e a segunda geração incluem uma arquitetura básica que incorpora um sistema de arquivos BeeGFS e um sistema de storage NVMe EF600. No entanto, a segunda geração baseia-se na primeira a incluir estes benefícios adicionais:</block>
-  <block id="20667306535e51f69f34371b95abfd0b" category="list-text">Duplique o desempenho e a capacidade, adicionando apenas 2U GB de espaço em rack</block>
-  <block id="edcc56d654a1a9362699f309c738a185" category="list-text">Alta disponibilidade (HA) com base em um design de hardware de duas camadas de disco compartilhado</block>
-  <block id="21b6d1b90774505daa15a9be831436a9" category="inline-link-macro">guia de design</block>
-  <block id="1cba1266f00c729aee1318803f870d22" category="list-text">Arquitetura projetada para os sistemas NVIDIA DGX SuperPOD A100, H100, H200 e B200, que foi validada anteriormente em um cluster de aceitação dedicado na NVIDIA. Leia mais sobre o NVIDIA DGX SuperPOD com a NetApp no <block ref="e98320202738eb339bebe66cbb05ad8f" category="inline-link-macro-rx"></block>.</block>
-  <block id="189fdda096d5b994e140eac128f464e1" category="section-title">Segundo design geracional</block>
-  <block id="145c927b5996411105e8a05381bfab75" category="section-title">Primeiro design geracional</block>
-  <block id="10ca191b839b35e5100464ff59b95b97" category="paragraph">A primeira geração de BeeGFS no NetApp foi projetada para workloads de aprendizado de máquina (ML) e inteligência artificial (AI) usando os sistemas de storage NVMe NetApp EF600, o sistema de arquivos paralelos BeeGFS, os sistemas NVIDIA A100 e os switches IB NVIDIA Mellanox Quantum QM8700 200GBGb/s. Esse design também oferece InfiniBand (IB) de 200GB GB/s para a malha de interconexão de cluster de computação e storage para fornecer uma arquitetura totalmente baseada em IB para workloads de alto desempenho.</block>
-  <block id="8c2de6dc6972aa428c25b73867ee0c6c" category="inline-link-macro">NetApp EF-Series AI com os sistemas DGX A100 e BeeGFS da NVIDIA</block>
-  <block id="cb0e1ee82028e21bcb25d1cedee42a90" category="paragraph">Para obter mais informações sobre a primeira geração, <block ref="7c75f12548abfaad3f9a226ecdfc54d3" category="inline-link-macro-rx"></block>consulte .</block>
   <block id="cef5ab698867f39ec4b495cba708da1a" category="summary">A solução BeeGFS on NetApp combina o sistema de arquivos paralelos do BeeGFS com os sistemas de storage NetApp EF600 para uma infraestrutura confiável, dimensionável e econômica que acompanha os workloads exigentes.</block>
   <block id="c0c4b60d27032c028c91440e9d3be949" category="doc">Visão geral da solução</block>
   <block id="c6ff1c8ffcd7024a30e7240129bf57a8" category="section-title">Programa NVA</block>
@@ -1790,9 +1778,6 @@
   <block id="28e8b3e83af233fe7085ba954fc6fd36" category="sidebar">BeeGFS no NetApp com storage e-Series</block>
   <block id="e3b88cba18358b065044f4788449026b" category="sidebar">Suporte à solução para o sistema de arquivos de cluster paralelo BeeGFS que é executado no storage NetApp e-Series de alta performance e baixa latência. Uma solução de HPC econômica, fácil de gerenciar e altamente disponível, com suporte da NetApp.</block>
   <block id="be11c74c1dd7f307bb80183a90dc2067" category="sidebar">Comece agora</block>
-  <block id="12623d7cc9dff74b7325aa809ffc84df" category="sidebar">Blog - Saiba mais sobre BeeGFS e e-Series</block>
-  <block id="0af9e7bf64a8e8c1b37ec554248f3d14" category="sidebar">Blog - BeeGFS para iniciantes</block>
-  <block id="6316c96cdd51a54d33d0011cf5f10c81" category="sidebar">Blog - HA para BeeGFS</block>
   <block id="b89fcecfac1f6b8376165aabe5b6c5ee" category="sidebar">Documentos adicionais</block>
   <block id="bc4fe2352063642d68529f2aa0ca7ca3" category="sidebar">Documentação do produto NetApp</block>
   <block id="dbd68e15f4c30d2a47d780a9bf4f3da1" category="sidebar">Documentação BeeGFS</block>
@@ -1800,7 +1785,6 @@
   <block id="974ad78dc53c253ebfe5b2b8b376f353" category="sidebar">Ferramentas e suporte</block>
   <block id="d564be87f67790fe4b92faa0eea29c48" category="sidebar">Coleções do NetApp e-Series no Ansible Galaxy</block>
   <block id="668e2078ef1b1722c77cdb5c523a4463" category="sidebar">Base de dados de Conhecimento da NetApp</block>
-  <block id="2bae42f280067110dfd52cc69a468364" category="sidebar">Active IQ (login necessário)</block>
   <block id="c35665ae18bf4eff9afa413fcb281b07" category="sidebar">BeeGFS na NetApp docs</block>
   <block id="f40341c80e215542b4fdfe4e2f2e2a21" category="sidebar">O que está incluído neste site</block>
   <block id="2146c9256a2a3883605731032b6b8015" category="sidebar">Use arquiteturas verificadas</block>
@@ -1837,7 +1821,6 @@
   <block id="da8d8318ceb4254068ec25272c92bc85" category="list-text">Preencha o<block ref="b8d32e4c2d78b6e404b69e5c1fbf3118" prefix=" " category="inline-code"></block> com o seguinte, substituindo todos os parâmetros de nome de usuário e senha de acordo com sua configuração:</block>
   <block id="7e60d329db54d74d692f53620b366281" category="list-text">Execute<block ref="150063209c60b18e2173569bd82ec639" prefix=" " category="inline-code"></block> e defina uma senha do Vault quando solicitado.</block>
   <block id="1d2459ca9cef1e38badde9d192eff628" category="admonition">Se o<block ref="f2bf771afbc16045e1951ded58c56f98" prefix=" " category="inline-code"></block> já estiver<block ref="63a9f0ea7bb98050796b649e85481845" prefix=" " category="inline-code"></block> , você poderá omitir opcionalmente o<block ref="424240cd4e5c359372b7f199431603d5" prefix=" " category="inline-code"></block> e especificar a<block ref="13d87b4892426ec19bdc58a4643d3104" prefix=" " category="inline-code"></block> opção ao executar o manual de estratégia.</block>
-  <block id="49e794dd3d68025fd6943b67048e4f27" category="paragraph">A segunda geração do BeeGFS no NetApp é otimizada para atender aos requisitos de performance de workloads exigentes, incluindo computação de alta performance (HPC), aprendizado de máquina (ML), deep learning (DL) e outras técnicas de inteligência artificial (AI). Ao incorporar uma arquitetura de alta disponibilidade (HA) de disco compartilhado, esse design garante a durabilidade e a disponibilidade dos dados, tornando-o ideal para empresas e outras organizações que não podem pagar tempo de inatividade ou perda de dados. O projeto de segunda geração inclui componentes como servidores PCIe Gen5 e suporte para switches InfiniBand NVIDIA Quantum QM9700 400GBGb/s. Essa solução não só foi verificada pela NetApp, mas também passou na qualificação externa como opção de storage para o SuperPOD do NVIDIA DGX™ A100, com certificação estendida para os sistemas DGX SuperPOD H100, H200 e B200.</block>
   <block id="7da4cabbb2f4c4e53ccb9660355b7dd1" category="list-text">Os sistemas NVIDIA DGX SuperPOD apresentam DGX com GPU A100, H100, H200 e B200.</block>
   <block id="e02a1b9bf28135b2931b63ac814ff7ac" category="sidebar">NVA-1174 - BeeGFS no NetApp EF-Series com sistemas NVIDIA DGX SuperPOD</block>
   <block id="049125cf8ec62098912c4f2c8db9f61b" category="paragraph">A<block ref="e6211db0073064ade016ad4558767968" prefix=" " category="inline-code"></block> propriedade não aparecerá se o cluster estiver operando normalmente. Se o cluster estiver no modo de manutenção, a propriedade será reportada como<block ref="b326b5062b2f0e69046810717534cb09" prefix=" " category="inline-code"></block>. Para ativar a execução do modo de manutenção:</block>
@@ -1922,7 +1905,6 @@
   <block id="53fff94cbca4161cd31d168451033f2e" category="cell">MFP7E20-Nxxx (cabo de fibra divisor de 2 canais multimodo, 4 canais para dois)</block>
   <block id="804e83e6974e7f6076f940326b985a83" category="cell">MMA1Z00-NS400 (multimodo, IB/ETH, QSFP-112 de porta única de 400GB GB/s)</block>
   <block id="b2f1f9abf8117b3cde0475d1adf7a64f" category="cell">MCP7Y40-N002 (cabo divisor de cobre passivo NVIDIA, InfiniBand de 800GB GB/s para 4x 200GB GB/s, OSFP para 4x QSFP112 GB)</block>
-  <block id="0d665a6c7072af8fddd1f64d9c741762" category="cell">11.90R1</block>
   <block id="6c3a5f2fbe0e1eb20af96ccd813c89b0" category="cell">N6000-890834-D02.dlp</block>
   <block id="088914339db9effda3ac57ec2e9439b6" category="cell">Agentes de vedação (peixe-vermelho/apc)</block>
   <block id="f8b6aa2ae96c25a05a0cc6e26a9236d7" category="sidebar">Atualize os pacotes Pacemaker e Corosync</block>
@@ -1984,7 +1966,6 @@
   <block id="eb13ea1edb52f2f7cdf4b15544892c06" category="cell">Red Hat Enterprise Linux (RHEL)</block>
   <block id="33b7125f0da71f5f4c0d1adb2490c32d" category="cell">Servidor RHEL 9.4 físico com alta disponibilidade (2 soquetes). *Observação:* Os nós de arquivo exigem uma assinatura válida do Red Hat Enterprise Linux Server e o complemento de alta disponibilidade do Red Hat Enterprise Linux.</block>
   <block id="6e2ccf2574232a4db553354b8bf2b912" category="cell">5.14.0-427.42.1.el9_4.x86_64</block>
-  <block id="1e921a460cdb78aac6c0658f56a63429" category="paragraph">* Firmware HCA * ConnectX-7 FW: 28.43.1014 e PXE: 3.7.0500 e UEFI: 14.36.0016</block>
   <block id="564eb0bfa4895a5fed3372708aea6e59" category="paragraph">* Firmware HCA * ConnectX-6 FW: 20.43.2566 e PXE: 3.7.0500 e UEFI: 14.37.0013</block>
   <block id="7670b29ec4dc7aed23b236d72df9dc4e" category="cell">Mais recente disponível para os modelos de acionamento em uso. Consulte <block ref="dc6c914f008159d5969a25304ddfb479" category="inline-link-macro-rx"></block>.</block>
   <block id="90a84b80b2ae4bb2a14bb18a1c790012" category="cell">7.4.6</block>
@@ -1994,4 +1975,6 @@
   <block id="23df4986c6f31aaed7db4752a96b620b" category="cell">0,11.7-2</block>
   <block id="ddf60efdd8bc8468bc0a5502f1b51c47" category="cell">4,10.0-62</block>
   <block id="c83be155e8adea701991eeba59a9d048" category="cell">MLNX_OFED_LINUX-23,10-3,2.2,1-LTS</block>
+  <block id="7cd5ec19f90bf866b287afecf9a8cce0" category="paragraph">*Firmware ConnectX-7 HCA* FW: 28.45.1200 + PXE: 3.7.0500 + UEFI: 14.38.0016</block>
+  <block id="f86fe0da10c1b039adc0c656c6fe10a1" category="cell">11.90R3</block>
 </blocks>
