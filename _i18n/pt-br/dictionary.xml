@@ -1977,4 +1977,159 @@
   <block id="c83be155e8adea701991eeba59a9d048" category="cell">MLNX_OFED_LINUX-23,10-3,2.2,1-LTS</block>
   <block id="7cd5ec19f90bf866b287afecf9a8cce0" category="paragraph">*Firmware ConnectX-7 HCA* FW: 28.45.1200 + PXE: 3.7.0500 + UEFI: 14.38.0016</block>
   <block id="f86fe0da10c1b039adc0c656c6fe10a1" category="cell">11.90R3</block>
+  <block id="62c1c24659da4c1307a1aec4e9fa9dd7" category="summary">Instruções de implantação para o driver BeeGFS CSI.</block>
+  <block id="affb21f82a5248780841be74507689d4" category="doc">Implantação do driver BeeGFS CSI</block>
+  <block id="bd415b54a1a35e3fb2eec195775a2f4f" category="paragraph">Instruções para implantar o driver CSI do BeeGFS em um ambiente Kubernetes.</block>
+  <block id="49f6a7048ccf8bb4de69bc72a5ef7a6f" category="section-title">Implantação isolada da internet</block>
+  <block id="6d01a1481ac6dd659168c4aa2803fca9" category="paragraph">Para realizar uma implantação isolada da internet (offline), tanto os arquivos de configuração YAML do Kubernetes quanto as imagens de contêiner necessárias devem ser baixados antecipadamente em um sistema com acesso à internet.  Em seguida, esses arquivos precisam ser transferidos para o(s) nó(s) de destino onde o driver CSI será instalado.</block>
+  <block id="409591c74705bed8cf42ce30118d7e3a" category="section-title">Recuperar o driver e as imagens</block>
+  <block id="f77b0ee0f127843f3462f044be6047b5" category="paragraph">Execute os seguintes passos para implantar o driver CSI do BeeGFS em um ambiente isolado da internet (air-gapped).</block>
+  <block id="26d13d74f86ba4f7444392151dbcc4cb" category="list-text">Clone o repositório GitHub do driver CSI do BeeGFS para o seu sistema com acesso à internet:</block>
+  <block id="bf1c46788436014c9796833265061b93" category="list-text">Adquira e registre as tags da versão mais recente das imagens listadas abaixo.  Você pode visitar os registros oficiais ou as versões do GitHub de cada imagem para determinar as tags da versão mais recente:</block>
+  <block id="4285de0ff00a5fc5cf4f756a444f62d7" category="cell">Nome da imagem</block>
+  <block id="664a83be959d109b0a249ce2163380da" category="cell">URL/Referência do Registro</block>
+  <block id="603a45c52d8386fb685a3863bbcb30c9" category="cell">driver-csi-beeggs</block>
+  <block id="a686f5e30845e3f70729f33cd22bdc15" category="cell"><block ref="a686f5e30845e3f70729f33cd22bdc15" category="inline-link-rx"></block></block>
+  <block id="e85c0c0696d91d903e147e3c8b19ff12" category="cell">provisionador csi</block>
+  <block id="8b290a238d0233fc53f10b721a2e0133" category="cell"><block ref="8b290a238d0233fc53f10b721a2e0133" category="inline-link-rx"></block></block>
+  <block id="e481146938fc2bc465c78a7361e40602" category="cell">redimensionador csi</block>
+  <block id="0ca797786536ce26a124f24459719a5b" category="cell"><block ref="0ca797786536ce26a124f24459719a5b" category="inline-link-rx"></block></block>
+  <block id="c0316766d145aaefd85f41ca9386c477" category="cell">sonda de vivacidade</block>
+  <block id="fe27019dc608c0087953d639a8ad0b8a" category="cell"><block ref="fe27019dc608c0087953d639a8ad0b8a" category="inline-link-rx"></block></block>
+  <block id="46b701fc0aa62f484f2e07e207594448" category="cell">csi-node-driver-registrar</block>
+  <block id="415d195e38180071f74a988ffc60c45f" category="cell"><block ref="415d195e38180071f74a988ffc60c45f" category="inline-link-rx"></block></block>
+  <block id="043d5e887513ab35c6e80616cc605869" category="list-text">Faça o download de cada imagem para o seu sistema usando o containerd, certificando-se de substituir<block ref="22b0607250cb0c53df9a2bcc780e1cac" prefix=" " category="inline-code"></block> com a tag mais recente de cada imagem:</block>
+  <block id="72d8ab21c0846404c9fa1d2c0ed6de3b" category="list-text">Cada imagem extraída deve ser exportada separadamente.<block ref="58963a595c988dc6f693cb3238dc907a" prefix=" " category="inline-code"></block> arquivo.  Isso é necessário para transferir as imagens para o seu ambiente isolado da internet (Air-Gapped) e importá-las para o containerd no sistema de destino. Por exemplo:</block>
+  <block id="458f7d5f35bdf0f6043130445d1cfc71" category="paragraph">Repita este comando de exportação para cada imagem necessária, substituindo o nome e a etiqueta da imagem conforme apropriado.</block>
+  <block id="2217140bc2c23612307761f7cb282334" category="list-text">Copie o repositório do driver CSI do BeeGFS e todos os arquivos exportados.<block ref="58963a595c988dc6f693cb3238dc907a" prefix=" " category="inline-code"></block> Transfira os arquivos para o seu ambiente isolado da internet (Air-Gapped) usando o método de sua preferência.  Para esta configuração, salve o<block ref="603a45c52d8386fb685a3863bbcb30c9" prefix=" " category="inline-code"></block> arquivos para<block ref="5fd37a234d3f6a9bc0a21cc07731ffd7" prefix=" " category="inline-code"></block> e as imagens para<block ref="c8227798f49cbb50b8d04754d8f45ee9" prefix=" " category="inline-code"></block> .</block>
+  <block id="7f68beba0dd9ab1053879c73e95e722b" category="section-title">Importe as imagens necessárias.</block>
+  <block id="50a0462e171c50558a3a13dae699c03e" category="list-text">Navegue até o<block ref="c8227798f49cbb50b8d04754d8f45ee9" prefix=" " category="inline-code"></block> Diretório onde as imagens estão salvas e importe cada imagem usando o containerd. Por exemplo:</block>
+  <block id="98aafa5870a2b9f5d25c1574ae58b469" category="list-text">Execute o seguinte comando para verificar se as imagens foram carregadas no containerd:</block>
+  <block id="465b5810a892336db44b0c769a0eb60b" category="section-title">Configurar e implantar as sobreposições de driver CSI</block>
+  <block id="50867adc3a7cabd5d8fe87fc742e12c0" category="list-text">Navegue até o<block ref="5fd37a234d3f6a9bc0a21cc07731ffd7" prefix=" " category="inline-code"></block> diretório.</block>
+  <block id="422df0ed85c408f270129542d56b8810" category="list-text">Por padrão, as configurações de sobreposição são destinadas a implantações online.  Para realizar uma implantação isolada da internet (air-gapped), a configuração da sobreposição precisa ser modificada.  Copie a pasta de sobreposição “padrão” para uma nova sobreposição, como por exemplo:<block ref="16e4da293eeeaf27c6ba3949f0356e80" prefix=" " category="inline-code"></block> :</block>
+  <block id="49a2f8c2310ba7a1752847c399b17158" category="list-text">Editar o<block ref="25b82f571149598ee47d12d5d61194aa" prefix=" " category="inline-code"></block> arquivo.  Remova o comentário e atualize o<block ref="59b514174bffe4ae402b3d63aad79fe0" prefix=" " category="inline-code"></block> seção com as tags exatas que você baixou:</block>
+  <block id="91786c07b0a4a2a2c3536eed93cfaae2" category="list-text">Configure o Kubernetes para usar as imagens carregadas localmente no containerd alterando a política de pull de imagens de<block ref="68eec46437c384d8dad18d5464ebc35c" prefix=" " category="inline-code"></block> para<block ref="6e7b34fa59e1bd229b207892956dc41c" prefix=" " category="inline-code"></block> .  Crie um arquivo chamado<block ref="853fc0d13ffa93cd975ed24609b8343a" prefix=" " category="inline-code"></block> em seu<block ref="a2d4bbdbe440ac49ed78fc74d6dacb1c" prefix=" " category="inline-code"></block> diretório com o seguinte conteúdo:</block>
+  <block id="5eb7c9d936dbe748b520bff1630b629f" category="admonition">Contexto<block ref="3a228a751d4e9e04c19ca2752a11d160" prefix=" " category="inline-code"></block> Garante que o Kubernetes utilize as imagens carregadas no containerd e não tente obtê-las de registros externos.</block>
+  <block id="bc275aa722815ec77f72d817c7b54bd1" category="list-text">Abrir<block ref="25b82f571149598ee47d12d5d61194aa" prefix=" " category="inline-code"></block> e adicione a seguinte seção:</block>
+  <block id="8c5d2c16e12f5275bc2fa336e913cb91" category="admonition">O<block ref="c2934aa84321b97e14787e2aec99d2f5" prefix=" " category="inline-code"></block> Esta seção permite aplicar correções personalizadas, como alterar o<block ref="2b8b5018006a800ae06485c3aacfa08d" prefix=" " category="inline-code"></block> com base nos manifestos do Kubernetes.  Verifique o caminho para<block ref="853fc0d13ffa93cd975ed24609b8343a" prefix=" " category="inline-code"></block> está correto em relação ao seu<block ref="67b2cc1cd5b1570014463995fb2ada61" prefix=" " category="inline-code"></block> arquivo.</block>
+  <block id="f1ef26ccc46f1f686316ca27b5857d58" category="section-title">Instale o driver CSI do BeeGFS</block>
+  <block id="df5c81289dd355ad8959bf8aa77b5fcf" category="list-text">Instale o driver CSI do BeeGFS usando sua sobreposição personalizada.  Esta etapa aplica todas as suas alterações de configuração, incluindo o uso de imagens importadas localmente e a política de extração de imagens atualizada.</block>
+  <block id="f71f0c923d11fceafd8703af31e867d2" category="paragraph">A partir da raiz do seu repositório clonado do driver CSI do BeeGFS, execute:</block>
+  <block id="2c24299170fb70d00b03247bccfcb7a1" category="list-text">Prossiga para o<block ref="754835206590e06e47d1caf7bd547848" category="inline-xref-macro-rx"></block> seção para implantar e validar sua configuração do driver CSI BeeGFS.</block>
+  <block id="13b2e855597fd8f22487fccbe4a80eae" category="section-title">Implantação online</block>
+  <block id="e4b86b9875f74bf62b17ea80083b70a4" category="paragraph">Se os seus nós do Kubernetes tiverem acesso à internet, você poderá implantar o driver CSI do BeeGFS diretamente, sem precisar baixar ou transferir manualmente as imagens do contêiner.  Quando os pods forem implantados, eles baixarão automaticamente as imagens do Image Hub e iniciarão os serviços necessários.</block>
+  <block id="5f11f71bbfdebcf4ad264dc61816a734" category="section-title">Recuperar o repositório de drivers</block>
+  <block id="54daa05290ed0877f9265db9ae57e3fc" category="list-text">Clone o repositório GitHub do driver CSI do BeeGFS para o seu sistema local:</block>
+  <block id="d21a5501cb10accfdf04229c8558fc56" category="section-title">Configurar o driver</block>
+  <block id="90bc50386df0e270e499eebdee173bc8" category="list-text">Navegue até o diretório do repositório clonado e, se necessário, atualize os arquivos de configuração no diretório de sobreposição padrão:</block>
+  <block id="94b4fb70ee11240a3a52e7a02eabb573" category="paragraph">Você deverá ver arquivos como:</block>
+  <block id="f25f8d8829b3707a808a58abb4de8757" category="list-text">Se o seu arquivo de configuração do cliente BeeGFS não estiver nomeado<block ref="0e2e0e04197278e759d18ad910b66065" prefix=" " category="inline-code"></block> Crie um link simbólico com esse nome exato apontando para o seu arquivo de configuração:</block>
+  <block id="9e7874ce377884e3527280e8bb415a45" category="admonition">O driver CSI requer que o arquivo de configuração esteja localizado em<block ref="0e2e0e04197278e759d18ad910b66065" prefix=" " category="inline-code"></block> e ter exatamente esse nome.</block>
+  <block id="dbf1a5b63c74a74a2e3fb0a120101c7f" category="list-text">Se precisar personalizar alguma configuração, como classes de armazenamento, segredos ou autenticação de conexão, edite os arquivos relevantes em<block ref="4e59bd10e78320bf511400f519b7f63b" prefix=" " category="inline-code"></block> antes da implantação.</block>
+  <block id="ffa68119a4261c6c6f991574f3e13cb9" category="list-text">Instale a sobreposição padrão usando<block ref="0f12ee5c9f1dd90158580f1c292b0d37" prefix=" " category="inline-code"></block> .  Isso irá automaticamente obter as imagens necessárias de seus respectivos registros e criar todos os recursos do Kubernetes necessários:</block>
+  <block id="12a7f9470cdc13eee1ab84d6d332d348" category="list-text">Verifique se os recursos foram criados e se os pods estão em execução:</block>
+  <block id="8637d6c1f3e0436f7f2ec935b829bd22" category="list-text">Exemplo de saída:</block>
+  <block id="e978b168b4d9799f573a467a7e55f53f" category="admonition">Usar<block ref="65a45a241a9c54cd8c4592713f1750bb" prefix=" " category="inline-code"></block> para sobreposições (diretórios que contêm um<block ref="67b2cc1cd5b1570014463995fb2ada61" prefix=" " category="inline-code"></block> arquivo).  Usar<block ref="abef5e1865ed355db68990ddefd152e3" prefix=" " category="inline-code"></block> para manifestos YAML simples ou diretórios de manifestos.</block>
+  <block id="cb128f50baa7598675416d0ff2e14267" category="list-text">Prossiga para o<block ref="754835206590e06e47d1caf7bd547848" category="inline-xref-macro-rx"></block> seção para validar a configuração do seu driver CSI BeeGFS.</block>
+  <block id="40462a3d159ac4f4e4f34952d3a65463" category="section-title">Implantar aplicação de exemplo</block>
+  <block id="d668cf8d9ef769defd503b4241077202" category="paragraph">Após instalar o driver CSI do BeeGFS (seja em ambiente isolado da internet ou online), você pode implantar o aplicativo de exemplo para validar sua configuração.  Este exemplo inclui uma StorageClass, um PersistentVolumeClaim (PVC) e um pod usando o driver CSI BeeGFS.</block>
+  <block id="72d214918d58d6a6894e25a754f675f9" category="section-title">Antes da implantação:</block>
+  <block id="ac7b7057ee700cf2643e737a19884559" category="list-text">Obtenha o endereço IP do nó de gerenciamento do BeeGFS:</block>
+  <block id="c8dcea75adc3e609de5d39a447933c33" category="paragraph">**BeeGFS 7.4**</block>
+  <block id="eb96b76c0ccb44c7de66c9e3f9c879e8" category="paragraph">**BeeGFS 8**</block>
+  <block id="9d3a5f8790393047a3908cbc0ee51420" category="paragraph">**Resultado esperado:**</block>
+  <block id="af8f06e731d7616c000ebe03fa476e5f" category="list-text">Atualize o IP do nó de gerenciamento em<block ref="dc34d2dc8fcddfd1ee45eb519a8f6a9c" prefix=" " category="inline-code"></block> .</block>
+  <block id="9ccb0f3b017f98c1272fadb2d6a617e7" category="list-text">Atualize o valor para<block ref="d0353404142971776db78f4531dd2920" prefix=" " category="inline-code"></block> .  Defina este valor como único (como o nome do seu cluster Kubernetes) para impedir que vários clusters provisionem volumes dinamicamente no mesmo caminho BeeGFS.</block>
+  <block id="86bbb8f6d180e61d3ccb17135c77a505" category="listing-title">Exemplo de trecho de código da classe StorageClass:</block>
+  <block id="507a3a88cebc46603ce2be8eaa924eee" category="section-title">Implantar</block>
+  <block id="b5c5d64e0816d7ee03e86e799e6c7ef6" category="list-text">Implante os arquivos do aplicativo de exemplo:</block>
+  <block id="842d962ed645a298d85dca6023ab75ce" category="list-text">Verifique se o pod de exemplo e o PVC estão em execução e vinculados:</block>
+  <block id="48f14000b6a7abc3c947c38345bda15f" category="admonition">Os passos de implantação do aplicativo de exemplo são idênticos tanto para implantações isoladas da internet (Air-Gapped) quanto para implantações online.  Certifique-se de ter atualizado o endereço IP do nó de gerenciamento e<block ref="d0353404142971776db78f4531dd2920" prefix=" " category="inline-code"></block> no manifesto da StorageClass antes da implantação.</block>
+  <block id="55ec134e0d67db67c58275cc5dbab8c9" category="summary">Visão geral e configuração do driver CSI do BeeGFS.</block>
+  <block id="88e5cc66bcc4a5e334c90758d3c0b282" category="doc">Configuração do driver CSI do BeeGFS</block>
+  <block id="2e940d7b092eed69be59f873663e4fcf" category="paragraph">O driver CSI do BeeGFS permite que clusters Kubernetes provisionem e gerenciem volumes BeeGFS dinamicamente, integrando o armazenamento de alto desempenho do BeeGFS com cargas de trabalho conteinerizadas.</block>
+  <block id="06c2cea18679d64399783748fa367bdd" category="inline-image-macro">Um</block>
+  <block id="8ad4bd3c6599e6f179dde3df62a3b1bd" category="paragraph-title"><block ref="58f667aaf05f87159670e12bd9bc076b" category="inline-image-macro-rx" type="image"></block>Certifique-se de que todos os pré-requisitos sejam atendidos.</block>
+  <block id="74553e70a4b772df56cfb1a597955b1c" category="paragraph">Verifique os pré-requisitos para garantir que você tenha um cluster Kubernetes em execução, conectividade com o cluster BeeGFS e as permissões necessárias para instalar recursos em todo o cluster.</block>
+  <block id="aada29daee1d64ed0fe907043855cb7e" category="inline-image-macro">Dois</block>
+  <block id="952c3a2d65c211d4733271165f539995" category="paragraph-title"><block ref="54f425ce8d89f4ed6b8a546561af5d60" category="inline-image-macro-rx" type="image"></block>Implante o driver CSI do BeeGFS</block>
+  <block id="afd9415aa01025fcc4ffd0174f760665" category="paragraph">Clone o repositório do driver CSI do BeeGFS e implante o driver usando os manifestos ou overlays do Kubernetes fornecidos.</block>
+  <block id="ca8a2087e5557e317599344687a57391" category="inline-image-macro">Três</block>
+  <block id="4f6945dd585cd0da29fce8b6936d0f0b" category="paragraph-title"><block ref="05b2444faffd66d76e88602ea7dd353f" category="inline-image-macro-rx" type="image"></block>Verificar implantação</block>
+  <block id="ba5bead71d6bd3866e17944925461bc6" category="paragraph">Verifique se todos os componentes do driver CSI do BeeGFS estão instalados e operacionais, inspecionando os pods relevantes do Kubernetes.  Solucione quaisquer problemas, como conflitos de agendamento de nós ou swap habilitado nos nós.</block>
+  <block id="981b8fcee42e1e726a67a2b9a98ea6e9" category="inline-image-macro">Quatro</block>
+  <block id="4a1dc59c2958190ddf06e8e83de02c70" category="paragraph-title"><block ref="beadfa85a2fdca06b91edc1131c603e6" category="inline-image-macro-rx" type="image"></block>Implantar e validar aplicações de exemplo</block>
+  <block id="56992f17034a256bf311aae4a4b055a6" category="paragraph">Aplique os exemplos de manifestos do Kubernetes e confirme se as cargas de trabalho podem acessar o armazenamento com suporte do BeeGFS conforme o esperado.</block>
+  <block id="603ef41eb6cd17d863e4f467dcd8cfb4" category="summary">Pré-requisitos para implantar o driver CSI do BeeGFS</block>
+  <block id="f9d8a648f7c6721d3f15d8f3a7d3e7e0" category="paragraph">Antes de implantar e configurar o driver CSI do BeeGFS, certifique-se de ter um cluster Kubernetes em execução, acesso ao seu cluster BeeGFS e as permissões apropriadas para instalar recursos em todo o cluster.</block>
+  <block id="e12672f2dc5733b4e3a9787d47568750" category="section-title">Verificar configuração do Kubernetes</block>
+  <block id="254db9997d3d74e42d791bca5cab05ae" category="paragraph">Execute o seguinte comando para verificar o status dos pods no seu cluster Kubernetes:</block>
+  <block id="dcfaf14ae15c960ad26b7c5926755051" category="paragraph">**Resultado esperado:**</block>
+  <block id="e8b73f849c9424fbf30a1495f9647ddc" category="paragraph">Se nenhum pod estiver em execução, a lista estará vazia.  Caso contrário, os pods devem ser listados sem erros.</block>
+  <block id="39af16c3663078c0d25dacf20f5c32f4" category="section-title">Validar o cliente e os serviços da BeeGFS</block>
+  <block id="586353ad9196702917d4dd6b15a6c079" category="paragraph">Verifique se o cluster BeeGFS está íntegro e se todos os serviços estão acessíveis executando o seguinte comando:</block>
+  <block id="24f31e15d816c01d4984671c5289aeb6" category="admonition">O driver CSI funciona com ambos<block ref="0af6b87fa08012299b34064ba959cf4e" prefix=" " category="inline-code"></block> e<block ref="976bae16a27bdb18aba01a29b5cc2d4e" prefix=" " category="inline-code"></block> , que deve ser instalado em cada nó do Kubernetes.  Para obter instruções de instalação, consulte a documentação do BeeGFS Client DKMS:<block ref="4dd12024bd6894a04e0c022171f8f14e" category="inline-link-rx"></block></block>
+  <block id="e25be8e7a17930576238e77bf9177506" category="paragraph">**Saída esperada do BeeGFS 7.4:**</block>
+  <block id="d7f6fe5c2d3c17bd2364508996328d89" category="paragraph">Caso algum serviço esteja inacessível, verifique se o cliente BeeGFS está configurado corretamente e se a conectividade de rede com os servidores BeeGFS está funcionando.</block>
+  <block id="75c14dd603e19d9d33db73ba234b5c7f" category="summary">Solução de problemas na implantação do driver CSI do BeeGFS.</block>
+  <block id="208322d5c9ec44ddbbd85cf49e17df6e" category="doc">Solução de problemas de implantação do driver BeeGFS CSI</block>
+  <block id="56bad221ec5807f76a20617ae9da412b" category="paragraph">Ao solucionar problemas com a implantação do driver CSI do BeeGFS, certifique-se de que:</block>
+  <block id="e976ce4f9fe3247fcf6ce92edfe04bae" category="list-text">Todos os pré-requisitos foram atendidos, incluindo a instalação e configuração do cliente BeeGFS.</block>
+  <block id="bdba2285ab9f40b4639ccafbc4797d01" category="list-text">O driver CSI do BeeGFS foi implantado usando as sobreposições corretas.</block>
+  <block id="4745ccbc322a33be8729ec78931a3a66" category="list-text">A implementação foi verificada e quaisquer erros — como contaminação de nós ou swap ativado — foram corrigidos.</block>
+  <block id="886bf328722bc8f20eb92f5fbd0a74b3" category="list-text">Aplicações de exemplo foram implementadas e validadas para confirmar a funcionalidade.</block>
+  <block id="b3b8c965d6d37607fec4fb4867cece2e" category="inline-link-macro">Driver CSI BeeGFS GitHub</block>
+  <block id="9657e0a9e6e65b93d5ae0427b27abf8f" category="paragraph">Para obter informações detalhadas sobre a resolução de problemas, consulte o<block ref="9d24771a1bfa218970e74f53ae447160" category="inline-link-macro-rx"></block> .</block>
+  <block id="c2c6e7a3ecf8ed632c275146ba1d2a64" category="section-title">Configuração do Kubernetes - Cenários de Erro Comuns</block>
+  <block id="c10f08d79df6a85e98a20bc5cb4134cb" category="paragraph">Exemplo de erro ao tentar recuperar todos os pods em execução no nó:</block>
+  <block id="384679146a5bc15e9b5bc504a8d2c024" category="paragraph">**Exemplo de saída de erro:**</block>
+  <block id="94b36e4d62375a86e2bd62bad09ad470" category="paragraph">Existem diversas áreas-chave a serem investigadas ao abordar questões como essas.  Recomenda-se começar examinando cada área listada abaixo.</block>
+  <block id="1b8edc52f33fe39f7087c5e81309dcfb" category="section-title">Erro no containerd</block>
+  <block id="3fedd102645ec75ab2434b28b2ec0693" category="paragraph">Verifique o status do daemon containerd:</block>
+  <block id="86defa5bf9e807700d4cccd688f99e8e" category="paragraph">Se o daemon não estiver em execução<block ref="a8404d648f2511ea5f08f9eca4839117" prefix="(" category="inline-code"></block> ), reinicie-o.  Se o sistema permanecer inativo após a reinicialização, verifique os registros do sistema em busca de erros:</block>
+  <block id="5072df87bb825b2cdfea041593dd98ac" category="section-title">Erro no kubelet</block>
+  <block id="232c36a71579df7b86e347acd7ce3a60" category="paragraph">Verifique o status do serviço kubelet:</block>
+  <block id="58a21ff850536cc55e4672b372f8d7cb" category="paragraph">Se o serviço não estiver em execução, reinicie-o:</block>
+  <block id="38e7d36bda123c394540d5a7e42dd766" category="paragraph">Se o problema persistir, verifique o syslog em busca de erros:</block>
+  <block id="fed519e0ddb1a8b183c1c987b9e7d3d3" category="section-title">Problema de troca</block>
+  <block id="f9adc615b843c7d1fc88a7133c9753c0" category="paragraph">Se você encontrar erros relacionados a "swap", desative o swap e reinicie o kubelet.</block>
+  <block id="c2c011c8c283a6fd50efe130a9d4e481" category="admonition">A partição de swap geralmente é ativada por padrão durante a instalação do sistema operacional e é listada em<block ref="816a3ef77b62ade41c3f936c958aa555" prefix=" " category="inline-code"></block> O Kubernetes não suporta a execução com swap ativado.  Para impedir que a memória swap seja reativada após uma reinicialização, comente todas as entradas de swap em<block ref="816a3ef77b62ade41c3f936c958aa555" prefix=" " category="inline-code"></block> .</block>
+  <block id="8504b71b5661fc7252208f63cc784f4a" category="section-title">Solução de problemas de configuração do cliente BeeGFS e do Helperd</block>
+  <block id="db9d9ed8f960a5d3a3249aba43a8c1ed" category="list-text">Analise a configuração em<block ref="0e2e0e04197278e759d18ad910b66065" prefix=" " category="inline-code"></block> .</block>
+  <block id="d804d68c0e802de24545563b4f391e9f" category="paragraph">Por padrão, a autenticação de conexão BeeGFS deve estar **ativada** para ambientes seguros.  Garanta o<block ref="1c285a92de2348d33dd1fc333fb66c45" prefix=" " category="inline-code"></block> A flag está definida como<block ref="68934a3e9455fa72420237eb05902327" prefix=" " category="inline-code"></block> e o caminho correto para o<block ref="6097b6e95af2579f2147a330c21f7b59" prefix=" " category="inline-code"></block> é especificado:</block>
+  <block id="63635c1d07ff5dcb5b4603720dfa1169" category="admonition">Se você intencionalmente deseja permitir que o sistema de arquivos BeeGFS se conecte **sem autenticação**, defina<block ref="c69429e5c5c7d58d10a00d1658f74de1" prefix=" " category="inline-code"></block> e remova ou comente o<block ref="6097b6e95af2579f2147a330c21f7b59" prefix=" " category="inline-code"></block> parâmetro.</block>
+  <block id="af14bbdf6eb7c92aa161d2a31f8ba4df" category="list-text">Verifique o endereço IP do serviço de gerenciamento em<block ref="6ea5464abdaaa0243bf0db8481a9a52b" prefix=" " category="inline-code"></block> O parâmetro está configurado corretamente.</block>
+  <block id="5d0683df890e48533023fab6377845ff" category="list-text">Atualize os caminhos para<block ref="813dc23e54b6d145f44c2c4bc7dade8c" prefix=" " category="inline-code"></block> e<block ref="7f8e8358da4bb8d8e7f6f717ad9eb0e9" prefix=" " category="inline-code"></block> .  Esses arquivos especificam as interfaces de rede usadas para armazenamento ou comunicação entre nós. Por exemplo:</block>
+  <block id="292fc81e058013795feae73d29ff095d" category="list-text">Atualize o caminho para o<block ref="6097b6e95af2579f2147a330c21f7b59" prefix=" " category="inline-code"></block> parâmetro **se a autenticação estiver habilitada**.</block>
+  <block id="5ef116818fffd81fdeaff10c5c809a45" category="paragraph">**Exemplo de configuração:**</block>
+  <block id="e7f19f57f91378c152e9da5ba65546f4" category="list-text">Analise a configuração em<block ref="debd4c97a4d385fe7993e6103307943b" prefix=" " category="inline-code"></block> .</block>
+  <block id="317d34215f4ca6c1677201dca4276668" category="paragraph">Assim como na configuração do cliente, a autenticação de conexão deve estar **ativada** por padrão.  Garanta o<block ref="1c285a92de2348d33dd1fc333fb66c45" prefix=" " category="inline-code"></block> A flag está definida como<block ref="68934a3e9455fa72420237eb05902327" prefix=" " category="inline-code"></block> e o caminho correto para o<block ref="6097b6e95af2579f2147a330c21f7b59" prefix=" " category="inline-code"></block> é especificado:</block>
+  <block id="6ef6bcb47a028dd3d882c38dfc320c80" category="paragraph">**Exemplo de configuração do helperd:**</block>
+  <block id="8b3015b51b9088a08eac05bb296a4505" category="section-title">Solução de problemas do controlador BeeGFS</block>
+  <block id="b33847b1940c739029febbf7cf1eeeae" category="paragraph">Após a implantação das sobreposições, você poderá ver alguns recursos com o status PENDING na saída do comando kubectl get all.</block>
+  <block id="140781a98dce4a770e71d321a8f8e611" category="paragraph">Cápsulas em<block ref="2d13df6f8b5e4c5af9f87e0dc39df69d" prefix=" " category="inline-code"></block> O status pode ser causado por contaminação de nós, restrições de recursos, imagens ausentes ou requisitos de agendamento não atendidos.  Consulte os eventos e registros do pod para obter mais detalhes.  Se o status aparecer como mostrado acima, prossiga para inspecionar os pods criados usando o comando describe.</block>
+  <block id="8b09a755212b5cca1f1d7d9a1e997e47" category="paragraph">Se você vir erros de extração de imagem ou pods travados em<block ref="afee797a1930cb975abc264ca69d32f3" prefix=" " category="inline-code"></block> Verifique se todas as imagens necessárias estão presentes no containerd (offline) ou acessíveis a partir do registro (online).  Consulte:</block>
+  <block id="582cbc0a0d0b768b731ad000cabe5151" category="section-title">Verificando os registros do pod</block>
+  <block id="a46f16ede9c31ebdf5ab0299691aa4f7" category="paragraph">Se um pod não estiver iniciando ou estiver em um<block ref="9457e58b926d8b2d0da3eb31f3ad636e" prefix=" " category="inline-code"></block> Para obter mais detalhes, verifique os registros do estado:</block>
+  <block id="496d0c1dd803c59e593044d8c5366870" category="paragraph">Se você encontrar erros relacionados a "contaminação não tolerada" (visíveis na saída do comando `kubectl describe`), como os abaixo:</block>
+  <block id="29201c8949211ed5669e84f70f66edd3" category="paragraph">Remova a contaminação do nó usando o seguinte comando:</block>
+  <block id="9951f77a7e9a382a385903b2c91dbd5b" category="paragraph">Após remover a mancha, reaplique as sobreposições.  Isso deve resolver o problema:</block>
+  <block id="dd812878805193824385408c5fd1225f" category="summary">Verificação da implantação do driver CSI do BeeGFS.</block>
+  <block id="2504618a50d6cfe174ffb859c662a397" category="doc">Verificação da implantação do driver CSI do BeeGFS</block>
+  <block id="fc73979248109f69ab34551b358492fc" category="paragraph">Para verificar se o driver CSI do BeeGFS foi implantado com sucesso, verifique o status dos pods do driver CSI e confirme se eles estão em execução conforme o esperado.</block>
+  <block id="ac613bcb5c71c67fca0637a5e52f9444" category="paragraph">Para verificar o status de todos os recursos no namespace BeeGFS-CSI, execute:</block>
+  <block id="6fc82c24a6a193b67f54717ad788f4d5" category="section-title">Inspecione o módulo do controlador.</block>
+  <block id="76eb94c4020b607bf5bb0f8ee7a6c9e6" category="paragraph">Para diagnosticar problemas ou obter mais detalhes sobre o pod do Controlador CSI do BeeGFS, use o seguinte comando para descrever o pod e revisar seus eventos, status e atividades recentes:</block>
+  <block id="d93bbac66e89b657b4ffd789b32672bb" category="section-title">Verificar classe de armazenamento</block>
+  <block id="4388b94df80adf5a29867f1e565a04df" category="list-text">Verifique se a StorageClass foi criada com sucesso:</block>
+  <block id="cbc9efaa280e1bbc441dd3fe29c2bc95" category="list-text">Confirme se o volume BeeGFS está montado conforme o esperado.</block>
+  <block id="d1427b4ccfc3361e3a4469e3e4b845c7" category="paragraph">Verifique o diretório especificado como<block ref="d0353404142971776db78f4531dd2920" prefix=" " category="inline-code"></block> em<block ref="dc34d2dc8fcddfd1ee45eb519a8f6a9c" prefix=" " category="inline-code"></block> aparece em<block ref="d960002b1832abbbb111ea314b0bb6c0" prefix=" " category="inline-code"></block> .</block>
+  <block id="e92bdde19fe0a0cf76c7af170c492a5f" category="paragraph">Por exemplo, se<block ref="d0353404142971776db78f4531dd2920" prefix=" " category="inline-code"></block> está definido para<block ref="8e191b49bbc9aad656bf0228dd928cc7" prefix=" " category="inline-code"></block> Você deverá ver este diretório listado:</block>
+  <block id="186a96557e62566dbb3a7afc406cb710" category="sidebar">Implementar funcionalidades e integrações</block>
+  <block id="bcb997ab063bc1a29baf053859f1f080" category="sidebar">Motorista CSI da BeeGFS</block>
+  <block id="ee68e5b99222bbc29a480fcb0d1d6ee2" category="sidebar">Pré-requisitos</block>
+  <block id="ea355214fd4bc7c57f471bd92918879b" category="sidebar">Implantação</block>
+  <block id="52b8ffce119fe77b28034f2fdd35eb5f" category="sidebar">Verificação</block>
+  <block id="231cf4c70d866b616c21baddaeed0696" category="sidebar">Solução de problemas</block>
 </blocks>
