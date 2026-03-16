@@ -25,7 +25,7 @@ BeeGFS segue um `major.minor.patch` esquema de controle de versão. As funções
 O Ansible deve ser usado para todas as atualizações do BeeGFS, incluindo a migração entre versões principais, secundárias e de correção do BeeGFS. Para atualizar o BeeGFS, você precisará primeiro atualizar a coleção Ansible do BeeGFS, o que também trará as correções e melhorias mais recentes para a automação de implantação/gerenciamento e o cluster de alta disponibilidade subjacente. Mesmo após atualizar para a versão mais recente da coleção, o BeeGFS não será atualizado até que  `ansible-playbook` seja executado com o  `-e "beegfs_ha_force_upgrade=true"` definido. Para detalhes adicionais sobre cada atualização, consulte a link:https://doc.beegfs.io/latest/advanced_topics/upgrade.html["Documentação do BeeGFS Upgrade"^] da sua versão atual.
 
 
-NOTE: Se você estiver atualizando para o BeeGFS v8, consulte o link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS v8"] procedimento em vez disso.
+NOTE: Se você estiver atualizando para BeeGFS 8, consulte o link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS 8"] procedimento em vez disso.
 
 
 
@@ -59,13 +59,13 @@ Os seguintes caminhos de upgrade foram testados e verificados:
 | 7.4.2 | 7.4.6 | Sim | Atualize usando a coleção beegfs v3,2.0 
 
 
-| 7.4.6 | 8,0 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS v8"] procedimento. 
+| 7.4.6 | 8,0 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS 8"] procedimento. 
 
 
-| 7.4.6 | 8,1 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS v8"] procedimento. 
+| 7.4.6 | 8,1 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS 8"] procedimento. 
 
 
-| 7.4.6 | 8,2 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS v8"] procedimento. 
+| 7.4.6 | 8,2 | Sim | Atualize usando as instruções no link:clusters-upgrade-beegfs-v8.html["Atualize para BeeGFS 8"] procedimento. 
 |===
 
 

@@ -1,10 +1,10 @@
 ---
 sidebar: sidebar 
 permalink: administer/clusters-upgrade-beegfs-v8.html 
-keywords: BeeGFS on NetApp, HA, Cluster, Administration, update, upgrade, BeeGFS 8, BeeGFS v8 
-summary: Atualize do BeeGFS v7.4.6 para BeeGFS v8. 
+keywords: BeeGFS on NetApp, HA, Cluster, Administration, update, upgrade, BeeGFS 8 
+summary: Atualize do BeeGFS 7.4 para o BeeGFS 8. 
 ---
-= Atualize para BeeGFS v8
+= Atualize para BeeGFS 8
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,33 +14,33 @@ summary: Atualize do BeeGFS v7.4.6 para BeeGFS v8.
 
 
 [role="lead"]
-Siga estes passos para atualizar seu cluster BeeGFS HA da versão 7.4.6 para BeeGFS v8.
+Siga estes passos para atualizar seu cluster BeeGFS HA de BeeGFS 7.4 para BeeGFS 8.
 
 
 
 == Visão geral
 
-O BeeGFS v8 introduz diversas mudanças significativas que exigem configuração adicional antes da atualização do BeeGFS v7. Este documento orienta você na preparação do seu cluster para os novos requisitos do BeeGFS v8 e, em seguida, na atualização para o BeeGFS v8.
+O BeeGFS 8 introduz diversas mudanças significativas que exigem configuração adicional antes da atualização do BeeGFS 7. Este documento orienta você na preparação do seu cluster para os novos requisitos do BeeGFS 8 e, em seguida, na atualização para o BeeGFS 8.
 
 
-IMPORTANT: Antes de atualizar para o BeeGFS v8, certifique-se de que seu sistema esteja executando pelo menos o BeeGFS 7.4.6. Qualquer cluster que execute uma versão anterior ao BeeGFS 7.4.6 deve primeiro link:clusters-upgrade-beegfs.html["Atualize para a versão 7.4.6"] antes de prosseguir com este procedimento de atualização para o BeeGFS v8.
+IMPORTANT: Antes de atualizar para o BeeGFS 8, certifique-se de que seu sistema esteja executando pelo menos o BeeGFS 7.4. Qualquer cluster que execute uma versão anterior ao BeeGFS 7.4 deve link:clusters-upgrade-beegfs.html["Atualize para BeeGFS 7.4"] antes de atualizar para o BeeGFS 8.
 
 
 
-== Principais alterações no BeeGFS v8
+== Principais alterações no BeeGFS 8
 
-BeeGFS v8 introduz as seguintes alterações principais:
+BeeGFS 8 introduz as seguintes alterações principais:
 
-* **Aplicação de licença:** O BeeGFS v8 requer uma licença para usar recursos premium, como pools de armazenamento, destinos de armazenamento remoto, BeeOND e mais. Adquira uma licença válida para o seu cluster BeeGFS antes de atualizar. Se necessário, você pode obter uma licença de avaliação temporária do BeeGFS v8 em link:https://beegfs.io/license/["Portal de Licenças BeeGFS"^].
-* **Migração de banco de dados do serviço de gerenciamento:** Para habilitar a configuração com o novo formato baseado em TOML no BeeGFS v8, você deve migrar manualmente o banco de dados do serviço de gerenciamento do BeeGFS v7 para o formato atualizado do BeeGFS v8.
-* **Criptografia TLS:** O BeeGFS v8 introduz TLS para comunicação segura entre serviços. Você precisará gerar e distribuir certificados TLS para o serviço de gerenciamento do BeeGFS e o  `beegfs` utilitário de linha de comando como parte da atualização.
+* **Aplicação de licença:** O BeeGFS 8 requer uma licença para usar recursos premium, como pools de armazenamento, destinos de armazenamento remoto, BeeOND e mais. Obtenha uma licença válida para o seu cluster BeeGFS antes de atualizar. Se necessário, você pode obter uma licença de avaliação temporária do BeeGFS 8 em link:https://beegfs.io/license/["Portal de Licenças BeeGFS"^].
+* **Migração de banco de dados do serviço de gerenciamento:** para habilitar a configuração com o novo formato baseado em TOML no BeeGFS 8, você deve migrar manualmente o banco de dados do serviço de gerenciamento do BeeGFS 7 para o formato atualizado do BeeGFS 8.
+* **Criptografia TLS:** O BeeGFS 8 introduz TLS para comunicação segura entre serviços. Você precisará gerar e distribuir certificados TLS para o serviço de gerenciamento do BeeGFS e o  `beegfs` utilitário de linha de comando como parte da atualização.
 
 
-Para mais detalhes e alterações adicionais no BeeGFS 8, consulte o link:https://doc.beegfs.io/8.0/advanced_topics/upgrade.html["Guia de atualização do BeeGFS v8.0.0"^].
+Para mais detalhes e alterações adicionais no BeeGFS 8, consulte o link:https://doc.beegfs.io/8.0/advanced_topics/upgrade.html["Guia de atualização do BeeGFS 8.0.0"^].
 
 [IMPORTANT]
 ====
-A atualização para BeeGFS v8 requer a indisponibilidade do cluster. Além disso, clientes BeeGFS v7 não podem se conectar a clusters BeeGFS v8. Coordene cuidadosamente o cronograma de atualização entre o cluster e os clientes para minimizar o impacto nas operações.
+A atualização para BeeGFS 8 requer a indisponibilidade do cluster e os clientes BeeGFS 7 não podem se conectar a clusters BeeGFS 8. Coordene cuidadosamente o momento da atualização para minimizar o impacto operacional.
 
 ====
 
@@ -49,49 +49,46 @@ A atualização para BeeGFS v8 requer a indisponibilidade do cluster. Além diss
 
 Antes de iniciar a atualização, prepare cuidadosamente seu ambiente para garantir uma transição tranquila e minimizar o tempo de inatividade.
 
+. Verifique se todos os servidores e clientes estão usando link:https://doc.beegfs.io/8.2/release_notes.html#supportedlinuxdistributionsandkernels["distribuições Linux e versões do kernel suportadas"^] para BeeGFS 8.
 . Certifique-se de que seu cluster esteja em bom estado, com todos os serviços BeeGFS em execução nos nós preferenciais. A partir de um nó de arquivo executando os serviços BeeGFS, verifique se todos os recursos Pacemaker estão em execução nos nós preferenciais:
 +
 [source, console]
 ----
 pcs status
 ----
-. Registre e faça backup da configuração do seu cluster.
+. Registre e faça backup da configuração do seu cluster. Os dados do serviço de gerenciamento BeeGFS serão copiados posteriormente como parte do processo de atualização do banco de dados de gerenciamento.
 +
-.. Consulte o link:https://doc.beegfs.io/7.4.6/advanced_topics/backup.html["Documentação de backup do BeeGFS"^] para obter instruções sobre como fazer backup da configuração do seu cluster.
-.. Faça backup do diretório de dados de gerenciamento existente:
-+
-[source, console]
-----
-cp -r /mnt/mgmt_tgt_mgmt01/data /mnt/mgmt_tgt_mgmt01/data_beegfs_v7_backup_$(date +%Y%m%d)
-----
-.. Execute os seguintes comandos a partir de um cliente beegfs e salve a saída para referência:
+.. Execute os seguintes comandos em um cliente BeeGFS e salve a saída para referência:
 +
 [source, console]
 ----
 beegfs-ctl --getentryinfo --verbose /path/to/beegfs/mountpoint
 ----
-.. Se estiver usando espelhamento, colete informações detalhadas sobre o estado:
+.. Se estiver usando espelhamento, colete informações detalhadas sobre o estado para que você possa identificar o alvo primário original caso ambos os membros do espelho entrem no estado "needs-resync":
 +
 [source, console]
 ----
 beegfs-ctl --listtargets --longnodes --state --spaceinfo --mirrorgroups --nodetype=meta
 beegfs-ctl --listtargets --longnodes --state --spaceinfo --mirrorgroups --nodetype=storage
 ----
+.. Se estiver usando espelhamento, verifique se todos os grupos de parceiros estão no  `GOOD` estado antes de prosseguir com a atualização.
 
 
-. Prepare seus clientes para períodos de inatividade e pare os `beegfs-client` serviços. Para cada cliente, execute:
+. Pare o sistema BeeGFS na seguinte ordem:
++
+.. Em cada cliente, desmonte o sistema de arquivos BeeGFS e pare o  `beegfs-client` serviço. Para cada cliente, execute:
 +
 [source, console]
 ----
 systemctl stop beegfs-client
 ----
-. Para cada cluster Pacemaker, desative STONITH. Isso permitirá validar a integridade do cluster após a atualização sem acionar reinicializações desnecessárias dos nós.
+.. Para cada cluster Pacemaker, desative o STONITH para que você possa validar a integridade do cluster após a atualização sem acionar reinicializações desnecessárias dos nós:
 +
 [source, console]
 ----
 pcs property set stonith-enabled=false
 ----
-. Para todos os clusters Pacemaker no namespace BeeGFS, use PCS para parar o cluster:
+.. Em todos os clusters Pacemaker, pare o cluster:
 +
 [source, console]
 ----
@@ -101,63 +98,40 @@ pcs cluster stop --all
 
 
 
-== Atualize os pacotes BeeGFS
 
-Em todos os nós de arquivos do cluster, adicione o repositório do pacote BeeGFS v8 para sua distribuição Linux. As instruções para usar os repositórios oficiais do BeeGFS podem ser encontradas em link:https://www.beegfs.io/c/download/["Página de download do BeeGFS"^]. Caso contrário, configure seu repositório espelho local do beegfs de acordo.
 
-Os passos a seguir descrevem o uso do repositório oficial BeeGFS 8.2 em nós de arquivo RHEL 9. Execute os seguintes passos em todos os nós de arquivo do cluster:
+== Atualize o pacote de gerenciamento BeeGFS
 
-. Importe a chave GPG do BeeGFS:
+Em todos os nós de arquivos do cluster, adicione o repositório de pacotes BeeGFS 8 para sua distribuição Linux. As instruções para adicionar o repositório oficial BeeGFS para sua distribuição Linux podem ser encontradas em link:https://www.beegfs.io/c/download/["Página de download do BeeGFS"^]. Caso contrário, configure seu repositório local BeeGFS mirror de acordo.
+
+. Nos dois primeiros nós de arquivo do seu cluster, atualize apenas o pacote do daemon de gerenciamento BeeGFS para BeeGFS 8:
 +
-[source, console]
-----
-rpm --import https://www.beegfs.io/release/beegfs_8.2/gpg/GPG-KEY-beegfs
-----
-. Importe o repositório BeeGFS:
-+
-[source, console]
-----
-curl -L -o /etc/yum.repos.d/beegfs-rhel9.repo https://www.beegfs.io/release/beegfs_8.2/dists/beegfs-rhel9.repo
-----
-+
-[NOTE]
-====
-Remova quaisquer repositórios BeeGFS previamente configurados para evitar conflitos com o novo repositório BeeGFS v8.
+Para RHEL, após configurar seu repositório BeeGFS, execute os seguintes comandos:
 
-====
-. Limpe o cache do seu gerenciador de pacotes:
 +
 [source, console]
 ----
 dnf clean all
-----
-. Em todos os nós de arquivo, atualize os pacotes BeeGFS para BeeGFS 8.2.
-+
-[source, console]
-----
-dnf update beegfs-mgmtd beegfs-storage beegfs-meta libbeegfs-ib
+dnf update beegfs-mgmtd
 ----
 
 
-[NOTE]
-====
-Em um cluster padrão, o `beegfs-mgmtd` pacote será atualizado apenas nos dois primeiros nós de arquivo.
-
-====
 
 
 == Atualize o banco de dados de gerenciamento
 
-Em um dos nós de arquivos que executam o serviço de gerenciamento BeeGFS, realize as seguintes etapas para migrar o banco de dados de gerenciamento do BeeGFS v7 para o v8.
+Em um dos nós de arquivos que executam o serviço de gerenciamento BeeGFS, siga estas etapas para migrar o banco de dados de gerenciamento do BeeGFS 7 para BeeGFS 8.
 
-. Liste todos os dispositivos NVMe e filtre pelo destino de gerenciamento:
+. Liste todos os dispositivos NVMe e identifique o alvo de gerenciamento:
 +
 [source, console]
 ----
 nvme netapp smdevices | grep mgmt_tgt
 ----
 +
-.. Observe o caminho do dispositivo a partir da saída.
+Observe o caminho do dispositivo na saída (por exemplo, `/dev/nvmeXnY`).
+
++
 .. Monte o dispositivo de destino de gerenciamento no ponto de montagem de destino de gerenciamento existente (substitua  `/dev/nvmeXnY` pelo caminho do seu dispositivo):
 +
 [source, console]
@@ -166,6 +140,12 @@ mount /dev/nvmeXnY /mnt/mgmt_tgt_mgmt01/
 ----
 
 
+. Execute um backup do diretório de dados de gerenciamento:
++
+[source, console]
+----
+tar --force-local -cpzf /mnt/mgmt_tgt_mgmt01/data_beegfs_7_backup_$(date +'%F_%T').tar.gz /mnt/mgmt_tgt_mgmt01/data
+----
 . Importe seus dados de gerenciamento do BeeGFS 7 para o novo formato de banco de dados executando:
 +
 [source, console]
@@ -183,7 +163,7 @@ Created new database version 3 at "/var/lib/beegfs/mgmtd.sqlite". Successfully i
 +
 [IMPORTANT]
 ====
-A importação automática pode não ser bem-sucedida em todos os casos devido aos requisitos de validação mais rigorosos no BeeGFS v8. Por exemplo, se os destinos forem atribuídos a pools de armazenamento inexistentes, a importação falhará. Se a migração de banco de dados falhar, não prossiga com a atualização. Entre em contato com o suporte da NetApp para obter assistência na resolução dos problemas de migração de banco de dados. Como solução provisória, você pode fazer o downgrade dos pacotes do BeeGFS v8 e continuar executando o BeeGFS v7 enquanto o problema é resolvido.
+A importação automática pode não ser bem-sucedida em todos os casos devido aos requisitos de validação mais rigorosos no BeeGFS 8. Por exemplo, se os destinos forem atribuídos a pools de armazenamento inexistentes, a importação falha. Se a migração falhar, não continue com a atualização. Entre em contato com o suporte da NetApp para obter assistência na resolução dos problemas de migração de banco de dados. Você pode fazer o downgrade dos pacotes de gerenciamento do BeeGFS 8 e continuar executando o BeeGFS 7 enquanto o problema é resolvido.
 
 ====
 . Mova o arquivo SQLite gerado para o ponto de montagem do serviço de gerenciamento:
@@ -199,21 +179,32 @@ mv /var/lib/beegfs/mgmtd.sqlite /mnt/mgmt_tgt_mgmt01/data/
 mv /etc/beegfs/beegfs-mgmtd.toml /mnt/mgmt_tgt_mgmt01/mgmt_config/
 ----
 +
-Preparar o  `beegfs-mgmtd.toml` arquivo de configuração será feito após a conclusão das etapas de licenciamento e configuração TLS nas próximas seções.
+Você preparará o arquivo de configuração  `beegfs-mgmtd.toml` após concluir as etapas de licenciamento e configuração TLS nas seções a seguir.
 
 
 
+
+
+== Atualize os pacotes BeeGFS restantes
+
+Após concluir a migração de banco de dados de gerenciamento, atualize os pacotes BeeGFS restantes em todos os nós de arquivo do cluster. Para RHEL, após configurar seu repositório BeeGFS, execute os seguintes comandos:
+
+[source, console]
+----
+dnf clean all
+dnf update beegfs-storage beegfs-meta libbeegfs-ib
+----
 
 
 == Configurar licenciamento
 
-. Instale os pacotes de licença do beegfs em todos os nós que executam o serviço de gerenciamento do beegfs. Isso normalmente corresponde aos dois primeiros nós do cluster:
+. Instale os pacotes de licença do BeeGFS em todos os nós que executam o serviço de gerenciamento do BeeGFS. Normalmente, são os dois primeiros nós de arquivos do seu cluster:
 +
 [source, console]
 ----
 dnf install libbeegfs-license
 ----
-. Faça o download do seu arquivo de licença BeeGFS v8 para os nós de gerenciamento e coloque-o em:
+. Faça o download do seu arquivo de licença BeeGFS 8 para os nós de gerenciamento e coloque-o em:
 +
 [listing]
 ----
@@ -225,17 +216,22 @@ dnf install libbeegfs-license
 
 == Configurar criptografia TLS
 
-O BeeGFS v8 requer criptografia TLS para comunicação segura entre os serviços de gerenciamento e os clientes. Existem três opções para configurar a criptografia TLS nas comunicações de rede entre os serviços de gerenciamento e os serviços de cliente. O método recomendado e mais seguro é usar certificados assinados por uma Autoridade Certificadora confiável. Como alternativa, você pode criar sua própria CA local para assinar certificados para o seu cluster BeeGFS. Para ambientes onde a criptografia não é necessária ou para solução de problemas, o TLS pode ser desativado completamente, embora isso seja desaconselhado, pois expõe informações confidenciais à rede.
+O BeeGFS 8 requer criptografia TLS para comunicação segura entre os serviços de gerenciamento e a ferramenta BeeGFS CLI (`beegfs`). Escolha um dos três métodos de configuração: use certificados assinados por uma Autoridade Certificadora confiável, crie sua própria CA local para assinar certificados para seu cluster BeeGFS ou desative o TLS completamente para solução de problemas (não recomendado para produção).
 
-Antes de prosseguir, siga as instruções no link:../deploy-features-integration/beegfs-tls/beegfs-tls-deploy.html["Configurar criptografia TLS para BeeGFS 8"] guia para configurar a criptografia TLS em seu ambiente.
+Configure a criptografia TLS para os serviços de gerenciamento em seus nós de arquivos usando o link:../deploy-features-integration/beegfs-tls/beegfs-tls-deploy.html["Configurar criptografia TLS para BeeGFS 8"] guia.
 
+[NOTE]
+====
+A configuração TLS do cliente será concluída posteriormente, após a atualização dos clientes BeeGFS. Nesta etapa, configure o TLS apenas para os serviços de gerenciamento e para o beegfs-tool nos nós de arquivo.
+
+====
 
 
 == Atualizar a configuração do serviço de gerenciamento
 
-Prepare o arquivo de configuração do serviço de gerenciamento BeeGFS v8 transferindo manualmente as configurações do seu arquivo de configuração BeeGFS v7 para o arquivo  `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.toml`.
+Prepare o arquivo de configuração do serviço de gerenciamento do BeeGFS 8 transferindo manualmente as configurações do seu arquivo de configuração do BeeGFS 7 para o arquivo  `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.toml`.
 
-. No nó de gerenciamento com o alvo de gerenciamento montado, faça referência ao `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.conf` arquivo de serviço de gerenciamento do BeeGFS 7 e transfira todas as configurações para o `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.toml` arquivo. Para uma configuração básica, seu `beegfs-mgmtd.toml` pode ser semelhante ao seguinte:
+. No nó de gerenciamento com o alvo de gerenciamento montado, faça referência ao  `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.conf` arquivo de serviço de gerenciamento do BeeGFS 7 e transfira todas as configurações para o  `/mnt/mgmt_tgt_mgmt01/mgmt_config/beegfs-mgmtd.toml` arquivo. Para uma configuração básica, seu  `beegfs-mgmtd.toml` pode ser semelhante ao seguinte:
 +
 [source, toml]
 ----
@@ -273,13 +269,13 @@ systemctl daemon-reload
 
 
 . Para cada nó de arquivo que executa serviços de gerenciamento, abra a porta 8010 para a comunicação gRPC do serviço de gerenciamento.
-+
-.. Adicione a porta 8010/tcp à zona beegfs:
+. Adicione a porta TCP 8010 à zona beegfs:
 +
 [source, console]
 ----
 sudo firewall-cmd --zone=beegfs --permanent --add-port=8010/tcp
 ----
++
 .. Recarregue o firewall para aplicar a alteração:
 +
 [source, console]
@@ -294,7 +290,7 @@ sudo firewall-cmd --reload
 
 == Atualize o script de monitor do BeeGFS
 
-O script OCF do Pacemaker `beegfs-monitor` precisa ser atualizado para oferecer suporte ao novo formato de configuração TOML e ao gerenciamento de serviços do systemd. Atualize o script em um nó do cluster, depois copie o script atualizado para todos os outros nós.
+O script  `beegfs-monitor`Pacemaker Open Cluster Framework (OCF) requer atualizações para suportar o novo formato de configuração TOML e o gerenciamento de serviços systemd. Atualize o script em um nó do cluster, depois copie o script atualizado para todos os outros nós.
 
 . Crie um backup do script atual:
 +
@@ -323,7 +319,7 @@ case $type in
 E substitua por:
 
 +
-[source, bash]
+[source, console]
 ----
 case $type in
   management)
@@ -342,7 +338,7 @@ vi /usr/lib/ocf/resource.d/eseries/beegfs-monitor
 .. Exclua ambas as funções inteiras, começando em `get_interfaces()` até o final de `get_subnet_ips()`.
 .. Copie e cole as seguintes funções atualizadas em seus respectivos lugares:
 +
-[source, bash]
+[source, console]
 ----
 # Return network communication interface name(s) from the BeeGFS resource's connInterfaceFile
 get_interfaces() {
@@ -384,7 +380,7 @@ get_subnet_ips() {
 }
 ----
 .. Salve e saia do editor de texto.
-.. Execute o seguinte comando para verificar se há erros de sintaxe no script antes de prosseguir. A ausência de saída indica que o script está sintaticamente correto.
+.. Execute o seguinte comando para verificar se há erros de sintaxe no script antes de prosseguir. Se nenhuma saída for exibida, o script está sintaticamente correto.
 +
 [source, bash]
 ----
@@ -392,9 +388,9 @@ bash -n /usr/lib/ocf/resource.d/eseries/beegfs-monitor
 ----
 
 
-. Copie o script OCF atualizado `beegfs-monitor` para todos os outros nós do cluster para garantir a consistência:
+. Copie o script OCF atualizado `beegfs-monitor` para todos os outros nós do cluster:
 +
-[source, bash]
+[source, console]
 ----
 scp /usr/lib/ocf/resource.d/eseries/beegfs-monitor user@node:/usr/lib/ocf/resource.d/eseries/beegfs-monitor
 ----
@@ -406,7 +402,7 @@ scp /usr/lib/ocf/resource.d/eseries/beegfs-monitor user@node:/usr/lib/ocf/resour
 
 . Após concluir todas as etapas de upgrade anteriores, coloque o cluster online novamente iniciando os serviços BeeGFS em todos os nós.
 +
-[source, bash]
+[source, console]
 ----
 pcs cluster start --all
 ----
@@ -433,7 +429,7 @@ Serving gRPC requests on [::]:8010
 +
 [NOTE]
 ====
-Se erros aparecerem nos logs do diário, revise os caminhos do arquivo de configuração de gerenciamento e certifique-se de que todos os valores foram transferidos corretamente do arquivo de configuração do BeeGFS 7.
+Se erros aparecerem nos registros do diário, revise os caminhos do arquivo de configuração de gerenciamento e verifique se você transferiu todos os valores corretamente do arquivo de configuração do BeeGFS 7.
 
 ====
 . Execute  `pcs status` e verifique se o cluster está íntegro e se os serviços foram iniciados nos nós preferenciais.
@@ -443,66 +439,69 @@ Se erros aparecerem nos logs do diário, revise os caminhos do arquivo de config
 ----
 pcs property set stonith-enabled=true
 ----
-. Prossiga para a próxima seção para atualizar os clientes BeeGFS no cluster e verificar a integridade do cluster BeeGFS.
+. Prossiga para a próxima seção para atualizar os clientes BeeGFS e verificar a integridade do cluster.
 
 
 
 
 == Atualizar clientes BeeGFS
 
-Após atualizar com sucesso seu cluster para BeeGFS v8, você também deve atualizar todos os clientes BeeGFS.
+Após atualizar seu cluster para BeeGFS 8, você também deve atualizar todos os clientes BeeGFS.
 
-Os passos a seguir descrevem o processo de upgrade dos clientes BeeGFS em um sistema baseado em Ubuntu.
-
-. Caso ainda não o tenha feito, pare o serviço do cliente BeeGFS:
+. Se você ainda não interrompeu o serviço do cliente BeeGFS, interrompa-o agora:
 +
 [source, console]
 ----
 systemctl stop beegfs-client
 ----
-. Adicione o repositório do pacote BeeGFS v8 para sua distribuição Linux. Instruções para usar os repositórios oficiais do BeeGFS podem ser encontradas em link:https://www.beegfs.io/c/download/["^Página de download do BeeGFS"^]. Caso contrário, configure seu repositório local BeeGFS de acordo.
-+
-Os passos a seguir utilizam o repositório oficial BeeGFS 8.2 em um sistema baseado em Ubuntu:
-
-. Importe a chave GPG do BeeGFS:
-+
-[source, console]
-----
-wget https://www.beegfs.io/release/beegfs_8.2/gpg/GPG-KEY-beegfs -O /etc/apt/trusted.gpg.d/beegfs.asc
-----
-. Baixe o arquivo do repositório:
-+
-[source, console]
-----
-wget https://www.beegfs.io/release/beegfs_8.2/dists/beegfs-noble.list -O /etc/apt/sources.list.d/beegfs.list
-----
-+
-[NOTE]
-====
-Remova quaisquer repositórios BeeGFS previamente configurados para evitar conflitos com o novo repositório BeeGFS v8.
-
-====
+. Adicione o repositório de pacotes BeeGFS 8 para sua distribuição Linux. As instruções para adicionar os repositórios oficiais BeeGFS podem ser encontradas em link:https://www.beegfs.io/c/download/["Página de download do BeeGFS"^]. Caso contrário, configure seu repositório local BeeGFS de acordo.
 . Atualize os pacotes do cliente BeeGFS:
++
+Para Ubuntu/Debian:
+
 +
 [source, console]
 ----
 apt-get update
 apt-get install --only-upgrade beegfs-client
 ----
-. Configure o TLS para o cliente. O TLS é necessário para usar a CLI do BeeGFS. Consulte o link:../deploy-features-integration/beegfs-tls/beegfs-tls-deploy.html["Configurar criptografia TLS para BeeGFS 8"^] procedimento para configurar o TLS no cliente.
+. Configure o TLS para o cliente. O TLS é necessário para usar a CLI do BeeGFS a partir dos nós clientes. Consulte a seção link:../deploy-features-integration/beegfs-tls/beegfs-tls-deploy.html#configure-tls-for-beegfs-8-clients["Configurar TLS para clientes BeeGFS 8"] no guia de implantação do TLS.
++
+[NOTE]
+====
+O TLS não é necessário para que o  `beegfs-client` serviço monte o sistema de arquivos BeeGFS. O TLS é necessário apenas para usar as ferramentas de linha de comando do BeeGFS e outros serviços administrativos.
+
+====
 . Inicie o serviço cliente BeeGFS:
 +
 [source, console]
 ----
 systemctl start beegfs-client
 ----
++
+Se a montagem do BeeGFS falhar, verifique o registro do sistema em busca de erros. Se você vir mensagens como "Não foi possível prosseguir sem um nó de metadados raiz funcional" ou "Erro de E/S remota", a importação do BeeGFS 7 pode não ter sido concluída com sucesso. Entre em contato com o suporte da NetApp para obter assistência.
+
+. (Opcional) Instale e configure a nova  `beegfs` ferramenta de linha de comando (CLI) nos nós cliente ou em outros sistemas onde você deseja executar comandos administrativos do BeeGFS:
++
+.. Instale o `beegfs-tools` pacote:
++
+Para Ubuntu/Debian:
+
++
+[source, console]
+----
+apt-get install beegfs-tools
+----
+.. Configure o TLS para a  `beegfs` ferramenta. O TLS é necessário para usar a CLI do BeeGFS a partir de um nó cliente. Consulte a seção link:../deploy-features-integration/beegfs-tls/beegfs-tls-deploy.html#configure-tls-for-beegfs-8-clients["Configurar TLS para clientes BeeGFS 8"] no guia de implantação do TLS.
+
+
 
 
 
 
 == Verifique a atualização
 
-Após concluir a atualização para BeeGFS v8, execute os seguintes comandos para verificar se a atualização foi bem-sucedida.
+Após concluir a atualização para BeeGFS 8, execute os seguintes comandos para verificar se a atualização foi bem-sucedida.
 
 . Verifique se o inode raiz pertence ao mesmo nó de metadados de antes. Isso deve acontecer automaticamente se você utilizou a funcionalidade  `import-from-v7` no serviço de gerenciamento:
 +
@@ -510,7 +509,7 @@ Após concluir a atualização para BeeGFS v8, execute os seguintes comandos par
 ----
 beegfs entry info /mnt/beegfs
 ----
-. Verifique se todos os nós e alvos estão online e em bom estado:
+. Verifique se todos os nós e alvos estão online e em um estado saudável:
 +
 [source, console]
 ----
