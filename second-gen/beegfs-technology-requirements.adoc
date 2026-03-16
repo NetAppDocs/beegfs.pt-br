@@ -79,23 +79,6 @@ Cada bloco de construção requer dois E-Series arrays do mesmo modelo. Não mis
 | Quantidade | Modelo | Especificações 
 
 
-| 2 | EF80  a| 
-*Hardware:*
-
-* *Memória:* 128GB (64GB por controlador)
-* *Adaptador:* 2x 2-port 200Gb/NDR (NVMe/IB)
-* *Drives:* Configuradas para corresponder aos metadados e à capacidade de storage desejados
-
-
-*Firmware:*
-
-* *SANtricity OS:* 12.00
-* *NVSRAM:* NEF80-200834-D00
-* *Firmware da unidade:* Versão mais recente disponível para seus modelos de unidade (consulte link:https://mysupport.netapp.com/site/downloads/firmware/e-series-disk-firmware["Site de firmware de disco e-Series"^])
-
-
-
-
 | 2 | EF600  a| 
 *Hardware:*
 
@@ -107,7 +90,7 @@ Cada bloco de construção requer dois E-Series arrays do mesmo modelo. Não mis
 *Firmware:*
 
 * *SANtricity OS:* 11.90R5
-* *NVSRAM:* N6000-890834-D02
+* *NVSRAM:* N6000-890834-D03
 * *Firmware da unidade:* Versão mais recente disponível para seus modelos de unidade (consulte link:https://mysupport.netapp.com/site/downloads/firmware/e-series-disk-firmware["Site de firmware de disco e-Series"^])
 
 
