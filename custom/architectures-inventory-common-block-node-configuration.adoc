@@ -105,4 +105,4 @@ eseries_storage_pool_usable_drives: "99:0,99:23,99:1,99:22,99:2,99:21,99:3,99:20
 
 
 
-Clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/group_vars/eseries_storage_systems.yml["aqui"^] para ver um exemplo de um arquivo de inventário completo que representa a configuração de nó de bloco comum.
+Clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/H2_DAC_IB_A2_EF600/beegfs_cluster_building_blocks/beegfs_ha_building_block_cluster_1/group_vars/eseries_storage_systems.yml["aqui"^] para ver um exemplo de um arquivo de inventário completo representando a configuração comum de um nó de bloco.

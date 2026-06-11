@@ -202,7 +202,7 @@ CAUTION: Para evitar conflitos quando as interfaces são renomeadas (impedindo-a
 
 +
 
-NOTE: Se você estiver usando um modelo de nó de arquivo verificado, clique link:https://docs.netapp.com/us-en/beegfs/beegfs-deploy-create-inventory.html#step-4-define-configuration-that-should-apply-to-all-file-nodes["aqui"^] em exemplo mapeamentos de endereço PCIe para porta lógica.
+NOTE: Se você estiver usando um modelo de nó de arquivo verificado, clique link:https://docs.netapp.com/us-en/beegfs/second-gen/beegfs-deploy-create-inventory.html#step-4-define-configuration-that-should-apply-to-all-file-nodes["aqui"^] para ver, por exemplo, mapeamentos de endereço PCIe para porta lógica.
 
 
 
@@ -255,7 +255,7 @@ beegfs_ha_conn_auth_enabled: false
 
 
 
-Clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/group_vars/ha_cluster.yml["aqui"^] para ver um exemplo de um arquivo de inventário completo que representa a configuração comum do nó de arquivo.
+Clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/H2_DAC_IB_A2_EF600/beegfs_cluster_building_blocks/beegfs_ha_building_block_cluster_1/group_vars/ha_cluster.yml["aqui"^] para ver um exemplo de um arquivo de inventário completo que representa a configuração comum de um nó de arquivo.
 
 
 

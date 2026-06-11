@@ -165,7 +165,7 @@ beegfs_ha_conn_auth_enabled: false
 
 
 
-Para obter uma lista completa dos parâmetros suportados e detalhes adicionais, consulte o link:https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_client["Documentação completa do cliente BeeGFS"^]. Para obter um exemplo completo de um inventário de cliente, clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/client_inventory.yml["aqui"^]em .
+Para obter uma lista completa dos parâmetros suportados e detalhes adicionais, consulte o link:https://github.com/NetApp/beegfs/tree/master/roles/beegfs_client["Documentação completa do cliente BeeGFS"^]. Para um exemplo completo de inventário de cliente, clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/H2_DAC_IB_A2_EF600/beegfs_client/beegfs_client_inventory.yml["aqui"^].
 
 
 
@@ -223,7 +223,7 @@ Para obter uma lista completa dos parâmetros suportados e detalhes adicionais, 
 ----
 
 
-Para obter um exemplo completo de um manual de estratégia de cliente, clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/client_playbook.yml["aqui"^]em .
+Para ver um exemplo completo de um playbook de cliente, clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/H2_DAC_IB_A2_EF600/beegfs_client/beegfs_client_playbook.yml["aqui"^].
 
 
 

@@ -120,7 +120,7 @@ NOTE: Uma função BeeGFS HA é mantida para cada versão maior.menor suportada 
 . Opcional: Se você deseja definir tarefas adicionais, lembre-se de que as tarefas devem ser direcionadas a `all` hosts (incluindo os sistemas de storage e-Series) ou apenas aos nós de arquivos. Se necessário, defina uma nova reprodução segmentando especificamente os nós de arquivos usando `- hosts: ha_cluster`o .
 
 
-Clique link:https://github.com/netappeseries/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/playbook.yml["aqui"^] para obter um exemplo de um arquivo de manual completo.
+Clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_on_netapp/gen2/H2_DAC_IB_A2_EF600/beegfs_cluster_building_blocks/beegfs_ha_playbook.yml["aqui"^] para ver um exemplo de um arquivo de playbook completo.
 
 
 

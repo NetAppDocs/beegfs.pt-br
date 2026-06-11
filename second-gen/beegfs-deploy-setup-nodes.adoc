@@ -49,7 +49,7 @@ NOTE: Embora não sejam estritamente necessárias, as seções subsequentes pres
 ....
 subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpms --add=enabled:1
 ....
-. Atualize todo o firmware HCA para a versão recomendada no link:beegfs-technology-requirements.html["Requisitos de tecnologia"] uso do link:..administer/clusters-update-hca-firmware.html["Atualize o firmware do adaptador do nó de arquivo"^] guia.
+. Atualize todo o firmware HCA para a versão recomendada em link:beegfs-technology-requirements.html["Requisitos de tecnologia"] usando o guia link:../administer/clusters-update-hca-firmware.html["Atualize o firmware do adaptador do nó de arquivo"^].
 
 
 
