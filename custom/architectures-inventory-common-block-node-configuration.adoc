@@ -18,6 +18,7 @@ Especifique a configuração de nó de bloco comum usando variáveis de grupo (g
 
 
 
+[[overview]]
 == Visão geral
 
 A configuração que deve ser Apple para todos os nós de bloco é definida em `group_vars/eseries_storage_systems.yml`. Geralmente inclui:
@@ -32,6 +33,7 @@ NOTE: As opções definidas neste arquivo também podem ser definidas em nós de
 
 
 
+[[steps]]
 == Passos
 
 Crie o arquivo `group_vars/eseries_storage_systems.yml` e preencha-o da seguinte forma:

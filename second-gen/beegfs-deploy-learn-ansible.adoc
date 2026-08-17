@@ -20,6 +20,7 @@ O inventário do Ansible é uma estrutura de diretório que lista os nós de arq
 
 
 
+[[ansible-modules-and-roles]]
 == Módulos e funções do Ansible
 
 Para aplicar a configuração descrita pelo inventário do Ansible, use os vários módulos e funções do Ansible fornecidos na coleção Ansible do NetApp e-Series (disponível na https://github.com/netappeseries/beegfs/tree/master/roles/beegfs_ha_7_4["NetApp e-Series BeeGFS GitHub"^]) que implantam a solução completa.
@@ -33,6 +34,7 @@ NOTE: Embora as etapas de implantação tentem fornecer detalhes suficientes par
 
 
 
+[[inventory-layout-for-a-beegfs-ha-cluster]]
 == Layout de inventário para um cluster BeeGFS HA
 
 Defina um cluster BeeGFS HA com a estrutura de inventário do Ansible.

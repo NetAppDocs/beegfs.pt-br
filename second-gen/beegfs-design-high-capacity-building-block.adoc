@@ -10,7 +10,7 @@ summary: As variações de projeto para um bloco de construção de alta capacid
 :nofooter: 
 :icons: font
 :linkattrs: 
-:imagesdir: ./media/
+:imagesdir: ../media/
 
 
 [role="lead"]
@@ -18,6 +18,7 @@ O design da solução padrão BeeGFS foi desenvolvido com os workloads de alta p
 
 
 
+[[hardware-and-software-configuration]]
 == Configuração de hardware e software
 
 A configuração de hardware e software para o componente básico de alta capacidade é padrão, exceto que os controladores EF600 devem ser substituídos por EF300 controladores com a opção de anexar entre 1 e 7 bandejas de expansão IOM com 60 unidades cada para cada storage de armazenamento, totalizando 2 a 14 bandejas de expansão por bloco de construção.
@@ -28,6 +29,7 @@ image:high-capacity-rack-diagram.png[""]
 
 
 
+[[sizing-guidelines]]
 == Diretrizes de dimensionamento
 
 Essas diretrizes de dimensionamento presumem que os componentes básicos de alta capacidade são configurados com um grupo de volume SSD NVMe de mais de 2 GB para metadados no compartimento EF300 básico e 2 6x 8 grupos de volume NL-SAS de mais de 2 TB por bandeja de expansão IOM para storage.

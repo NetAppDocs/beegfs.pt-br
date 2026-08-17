@@ -18,16 +18,19 @@ Adicione ou remova blocos de construção do cluster.
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção documenta várias considerações e opções para ajustar o tamanho do cluster BeeGFS HA. Normalmente, o tamanho do cluster é ajustado adicionando ou removendo componentes básicos, que geralmente são dois nós de arquivo configurados como um par de HA. Também é possível adicionar ou remover nós de arquivo individuais (ou outros tipos de nós de cluster), se necessário.
 
 
 
+[[adding-a-building-block-to-the-cluster]]
 == Adicionando um Building Block ao cluster
 
 
 
+[[considerations]]
 === Considerações
 
 Aumentar o cluster adicionando componentes básicos adicionais é um processo simples. Antes de começar, lembre-se das restrições relativas ao número mínimo e máximo de nós de cluster em cada cluster de HA individual e determine se você deve adicionar nós ao cluster de HA existente ou criar um novo cluster de HA. Normalmente, cada componente básico consiste em dois nós de arquivo, mas três nós é o número mínimo de nós por cluster (para estabelecer quorum) e dez é o máximo recomendado (testado). Para cenários avançados, é possível adicionar um único nó "tiebreaker" que não executa nenhum serviço BeeGFS ao implantar um cluster de dois nós. Entre em Contato com o suporte da NetApp se você estiver pensando em tal implantação.
@@ -39,6 +42,7 @@ TIP: Lembre-se: Um único sistema de arquivos BeeGFS pode consistir em vários c
 
 
 
+[[steps]]
 === Passos
 
 Ao adicionar um componente básico ao cluster, você precisará criar os `host_vars` arquivos para cada um dos novos nós de arquivo e nós de bloco (arrays e-Series). Os nomes desses hosts precisam ser adicionados ao inventário, juntamente com os novos recursos que devem ser criados. Os arquivos correspondentes `group_vars` precisarão ser criados para cada novo recurso. Consulte link:../custom/architectures-overview.html["use arquiteturas personalizadas"^]a secção para obter detalhes.
@@ -51,6 +55,7 @@ ansible-playbook -i <inventory>.yml <playbook>.yml
 ----
 
 
+[[removing-a-building-block-from-the-cluster]]
 == Removendo um Building Block do cluster
 
 Há uma série de considerações a ter em mente quando você precisa aposentar um bloco de construção, por exemplo:

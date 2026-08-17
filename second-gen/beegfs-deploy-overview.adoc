@@ -18,6 +18,7 @@ O BeeGFS no NetApp pode ser implantado para nós de arquivo e bloco validados us
 
 
 
+[[ansible-collections-and-roles]]
 == Coleções e funções do Ansible
 
 A solução BeeGFS no NetApp é implantada com o Ansible, um mecanismo de automação DE TI popular que automatiza as implantações de aplicações. O Ansible usa uma série de arquivos coletivamente conhecidos como inventário, que modela o sistema de arquivos BeeGFS que você deseja implantar.
@@ -31,6 +32,7 @@ NOTE: Como várias etapas estão envolvidas na implantação da solução BeeGFS
 
 
 
+[[configuration-profiles-for-beegfs-building-blocks]]
 == Perfis de configuração para blocos de construção BeeGFS
 
 Os procedimentos de implantação abrangem os seguintes perfis de configuração:
@@ -44,6 +46,7 @@ Esses perfis demonstram a gama completa de perfis de configuração recomendados
 
 
 
+[[overview-of-deployment-steps]]
 == Visão geral das etapas de implantação
 
 A implantação envolve as seguintes tarefas de alto nível:

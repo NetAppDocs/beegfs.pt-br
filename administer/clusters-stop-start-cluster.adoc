@@ -18,12 +18,14 @@ Parar e iniciar o cluster HA com simplicidade.
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção descreve como encerrar e reiniciar o cluster BeeGFS com simplicidade. Exemplos de cenários onde isso pode ser necessário incluem manutenção elétrica ou migração entre data centers ou racks.
 
 
 
+[[steps]]
 == Passos
 
 Se, por algum motivo, você precisar parar todo o cluster BeeGFS e encerrar todos os serviços serão executados:

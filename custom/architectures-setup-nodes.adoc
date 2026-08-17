@@ -18,10 +18,12 @@ Etapas manuais necessárias para configurar nós de arquivo e bloco antes de exe
 
 
 
+[[file-nodes]]
 == Nós de arquivo
 
 
 
+[[configure-the-baseboard-management-controller-bmc]]
 === Configurar o controlador de gerenciamento de placa base (BMC)
 
 Um controlador de gerenciamento de placa base (BMC), às vezes chamado de processador de serviço, é o nome genérico para o recurso de gerenciamento fora da banda incorporado em várias plataformas de servidor que podem fornecer acesso remoto, mesmo que o sistema operacional não esteja instalado ou acessível. Normalmente, os fornecedores comercializam essa funcionalidade com sua própria marca. Por exemplo, no Lenovo SR665, o BMC é conhecido como o controlador XClarity (XCC) da Lenovo.
@@ -33,12 +35,14 @@ NOTE: Se for desejado esgrima baseada em BMC usando o Red Fish, certifique-se de
 
 
 
+[[tune-system-settings]]
 === Sintonize as definições do sistema
 
 Usando a interface de configuração do sistema (BIOS/UEFI), verifique se as configurações estão definidas para maximizar o desempenho. As configurações exatas e os valores ideais variam de acordo com o modelo do servidor em uso. As orientações são fornecidas para link:../second-gen/beegfs-deploy-file-node-tuning.html["modelos de nó de arquivo verificados"^], caso contrário, consulte a documentação do fornecedor do servidor e as práticas recomendadas com base no seu modelo.
 
 
 
+[[install-an-operating-system]]
 === Instale um sistema operativo
 
 Instale um sistema operacional suportado com base nos requisitos de nó de arquivo link:../second-gen/beegfs-technology-requirements.html#file-node-requirements["aqui"^]listados . Consulte as etapas adicionais abaixo com base na sua distribuição Linux.
@@ -56,6 +60,7 @@ subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpm
 ....
 
 
+[[configure-management-network]]
 === Configurar a rede de gestão
 
 Configure todas as interfaces de rede necessárias para permitir o gerenciamento na banda do sistema operacional. As etapas exatas dependerão da distribuição e versão específica do Linux em uso.
@@ -65,12 +70,14 @@ NOTE: Certifique-se de que o SSH esteja ativado e que todas as interfaces de ger
 
 
 
+[[update-hca-and-hba-firmware]]
 === Atualize o firmware HCA e HBA
 
 Certifique-se de que todos os HBAs e HCAs estão a executar versões de firmware suportadas listadas no link:https://imt.netapp.com/matrix/["Matriz de interoperabilidade do NetApp"^] e, se necessário, atualize. Recomendações adicionais para adaptadores NVIDIA ConnectX podem ser encontradas link:../second-gen/beegfs-technology-requirements.html#file-node-requirements["aqui"^].
 
 
 
+[[block-nodes]]
 == Nós de bloco
 
 Siga as etapas para link:https://docs.netapp.com/us-en/e-series/getting-started/getup-run-concept.html["Comece a trabalhar com o e-Series"^]configurar a porta de gerenciamento em cada controlador de nó de bloco e, opcionalmente, definir o nome do storage array para cada sistema.

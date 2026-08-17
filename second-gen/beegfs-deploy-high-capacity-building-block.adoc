@@ -20,6 +20,7 @@ image:high-capacity-rack-diagram.png["Diagrama de rack de alta capacidade"]
 
 
 
+[[controllers]]
 == Controladores
 
 Para blocos de construção de alta capacidade, os controladores EF600 devem ser substituídos por controladores EF300, cada um com um Cascade HIC instalado para expansão SAS. Cada nó de bloco terá um número mínimo de SSDs NVMe preenchidos no compartimento do array para o storage de metadados do BeeGFS e será anexado aos compartimentos de expansão preenchidos com HDDs NL-SAS para volumes de storage BeeGFS.
@@ -28,6 +29,7 @@ A configuração do nó do arquivo para o nó do bloco permanece a mesma.
 
 
 
+[[drive-placement]]
 == Posicionamento da unidade
 
 Para o storage de metadados do BeeGFS, são necessários no mínimo 4 SSD NVMe em cada nó de bloco. Essas unidades devem ser colocadas nos slots mais externos do gabinete.
@@ -36,6 +38,7 @@ image:high-capacity-drive-slots-diagram.png["Diagrama do slot da unidade de alta
 
 
 
+[[expansion-trays]]
 == Bandejas de expansão
 
 O componente básico de alta capacidade pode ser dimensionado com bandejas de expansão de 1 a 7 unidades e 60 por storage array.

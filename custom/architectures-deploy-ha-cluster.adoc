@@ -18,16 +18,19 @@ Especifique quais tarefas devem ser executadas para implantar o cluster BeeGFS H
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção aborda como montar o manual de estratégia padrão usado para implantar/gerenciar o BeeGFS no NetApp.
 
 
 
+[[steps]]
 == Passos
 
 
 
+[[create-the-ansible-playbook]]
 === Crie o Playbook do Ansible
 
 Crie o arquivo `playbook.yml` e preencha-o da seguinte forma:
@@ -124,6 +127,7 @@ Clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_
 
 
 
+[[install-the-netapp-ansible-collections]]
 === Instalar as coleções do NetApp Ansible
 
 A coleção BeeGFS para Ansible e todas as dependências são mantidas link:https://galaxy.ansible.com/netapp_eseries/beegfs["Ansible Galaxy"^]no . No nó de controle do Ansible, execute o seguinte comando para instalar a versão mais recente:
@@ -140,6 +144,7 @@ ansible-galaxy collection install netapp_eseries.beegfs:==<MAJOR>.<MINOR>.<PATCH
 ----
 
 
+[[run-the-playbook]]
 === Execute o Playbook
 
 A partir do diretório no nó de controle do Ansible que contém os `inventory.yml` arquivos e `playbook.yml`, execute o manual de estratégia da seguinte forma:

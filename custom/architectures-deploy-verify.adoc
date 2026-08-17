@@ -18,12 +18,14 @@ Verifique a implantação do sistema de arquivos antes de colocar o sistema em p
 
 
 
+[[overview]]
 == Visão geral
 
 Antes de colocar o sistema de arquivos BeeGFS em produção, execute algumas verificações.
 
 
 
+[[steps]]
 === Passos
 
 . Faça login em qualquer cliente e execute o seguinte para garantir que todos os nós esperados estejam presentes/acessíveis, e não haja inconsistências ou outros problemas relatados:

@@ -48,7 +48,7 @@ image:driveslots.png["EF600 slots de unidade"]
 
 
 
-. Conete os nós de bloco e arquivo usando o link:beegfs-technology-requirements.html#block-file-cables["Cabos de cobre de conexão direta InfiniBand HDR 200GB de 1m GB"], de modo que correspondam à topologia mostrada na figura a seguir.
+. Conecte os nós de bloco e de arquivo usando o link:beegfs-technology-requirements.html#file-node-requirements["Cabos de cobre de conexão direta InfiniBand HDR 200GB de 1m GB"], de forma que correspondam à topologia mostrada na figura a seguir.
 +
 image:directattachcable-sr665v3.png["Cabeamento de conexão direta SR665V3"]
 
@@ -56,7 +56,7 @@ image:directattachcable-sr665v3.png["Cabeamento de conexão direta SR665V3"]
 
 NOTE: Os nós em vários componentes básicos nunca são conetados diretamente. Cada bloco de construção deve ser Tratado como uma unidade autônoma e toda a comunicação entre blocos de construção ocorre através de switches de rede.
 
-. Conete as portas InfiniBand restantes no nó de arquivo ao switch InfiniBand da rede de storage usando o link:beegfs-technology-requirements.html#file-switch-cables["Cabos InfiniBand de 2M GB"] específico do switch de storage InfiniBand.
+. Conecte as portas restantes de InfiniBand no nó de arquivos à rede de storage InfiniBand usando o link:beegfs-technology-requirements.html#storage-network-switch-requirements["Cabos InfiniBand de 2M GB"] específico para o seu switch de storage InfiniBand.
 +
 Ao usar cabos divisores para conetar o switch de armazenamento a nós de arquivo, um cabo deve se ramificar para fora do switch e se conetar às portas delineadas em verde claro. Outro cabo divisor deve ser ramificado para fora do switch e conetar-se às portas delineadas em verde escuro.
 

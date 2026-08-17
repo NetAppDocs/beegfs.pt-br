@@ -18,6 +18,7 @@ Para definir a configuração de nós de arquivo e bloco, crie um inventário do
 
 
 
+[[step-1-define-configuration-for-all-building-blocks]]
 == Passo 1: Defina a configuração para todos os blocos de construção
 
 Defina a configuração que se aplica a todos os blocos de construção, independentemente do perfil de configuração que você possa aplicar a eles individualmente.
@@ -78,6 +79,7 @@ bmc_password: <PASSWORD>
 
 
 
+[[step-2-define-configuration-for-individual-file-and-block-nodes]]
 == Etapa 2: Defina a configuração para nós individuais de arquivo e bloco
 
 Defina a configuração que se aplica a nós de arquivo individuais e nós de bloco de construção individuais.
@@ -174,6 +176,7 @@ eseries_controller_nvme_ib_port:
 
 
 
+[[step-3-define-configuration-that-should-apply-to-all-file-and-block-nodes]]
 == Etapa 3: Defina a configuração que deve ser aplicada a todos os nós de arquivo e bloco
 
 Você pode definir a configuração comum a um grupo de hosts em em `group_vars` um nome de arquivo que corresponde ao grupo. Isso impede a repetição de uma configuração compartilhada em vários locais.
@@ -194,6 +197,7 @@ beegfs_ha_ntp_server_pools:  # Modify the NTP server addressess if desired.
 ....
 
 
+[[step-4-define-configuration-that-should-apply-to-all-file-nodes]]
 == Etapa 4: Defina a configuração que deve ser aplicada a todos os nós de arquivo
 
 A configuração compartilhada para nós de arquivo é definida em um grupo `ha_cluster` chamado . As etapas nesta seção compilam a configuração que deve ser incluída no `group_vars/ha_cluster.yml` arquivo.
@@ -366,6 +370,7 @@ NOTE: No teste de verificação, `randomrobin` o era normalmente usado para gara
 
 
 
+[[step-5-define-the-configuration-for-the-common-block-node]]
 == Etapa 5: Defina a configuração para o nó de bloco comum
 
 A configuração compartilhada para nós de bloco é definida em um grupo `eseries_storage_systems` chamado . As etapas nesta seção compilam a configuração que deve ser incluída no `group_vars/ eseries_storage_systems.yml` arquivo.

@@ -18,16 +18,19 @@ Movimentação de serviços do BeeGFS entre nós de cluster.
 
 
 
+[[overview]]
 == Visão geral
 
 Os serviços BeeGFS podem fazer o failover entre nós no cluster para garantir que os clientes possam continuar acessando o sistema de arquivos em caso de falha ou que você precise executar a manutenção planejada. Esta seção descreve várias maneiras pelas quais os administradores podem curar o cluster depois de se recuperar de uma falha ou mover serviços manualmente entre nós.
 
 
 
+[[steps]]
 == Passos
 
 
 
+[[failover-and-failback]]
 === Failover e failback
 
 
@@ -89,6 +92,7 @@ pcs resource relocate run
 ----
 
 
+[[moving-individual-beegfs-services-to-alternate-file-nodes]]
 === Movendo serviços individuais BeeGFS para nós de arquivos alternativos
 
 

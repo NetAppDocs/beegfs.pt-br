@@ -18,6 +18,7 @@ Embora a maioria das tarefas de configuração de software seja automatizada com
 
 
 
+[[set-up-file-nodes]]
 == Configurar nós de arquivo
 
 . Configure a rede no controlador de gerenciamento de placa base (BMC) de cada servidor.
@@ -54,6 +55,7 @@ subscription-manager repo-override --repo=rhel-9-for-x86_64-highavailability-rpm
 
 
 
+[[set-up-block-nodes]]
 == Configurar nós de bloco
 
 Configure os nós de bloco EF600 configurando a porta de gerenciamento em cada controlador.

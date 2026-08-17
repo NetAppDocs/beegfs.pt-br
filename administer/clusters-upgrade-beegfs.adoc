@@ -18,6 +18,7 @@ Use o Ansible para atualizar a versão do BeeGFS em execução no seu cluster de
 
 
 
+[[overview]]
 == Visão geral
 
 BeeGFS segue um `major.minor.patch` esquema de controle de versão. As funções do BeeGFS HA Ansible são fornecidas para cada versão com suporte `major.minor` (por exemplo, `beegfs_ha_7_2` e `beegfs_ha_7_3`). Cada função de HA é fixada à versão de patch BeeGFS mais recente disponível no momento do lançamento da coleção Ansible.
@@ -29,6 +30,7 @@ NOTE: Se você estiver atualizando para BeeGFS 8, consulte o link:clusters-upgra
 
 
 
+[[tested-upgrade-paths]]
 == Caminhos de atualização testados
 
 Os seguintes caminhos de upgrade foram testados e verificados:
@@ -69,12 +71,14 @@ Os seguintes caminhos de upgrade foram testados e verificados:
 |===
 
 
+[[beegfs-upgrade-steps]]
 == Etapas de atualização do BeeGFS
 
 As seções a seguir fornecem etapas para atualizar a coleção BeeGFS Ansible e o próprio BeeGFS. Preste atenção especial a qualquer passo extra para atualizar as versões BeeGFS Major ou menor.
 
 
 
+[[step-1-upgrade-beegfs-collection]]
 === Passo 1: Atualize a coleção BeeGFS
 
 Para atualizações de coleção com acesso ao link:https://galaxy.ansible.com/netapp_eseries/beegfs["Ansible Galaxy"^], execute o seguinte comando:
@@ -93,12 +97,14 @@ Consulte link:https://docs.ansible.com/ansible/latest/collections_guide/collecti
 
 
 
+[[step-2-update-ansible-inventory]]
 === Etapa 2: Atualize o inventário do Ansible
 
 Faça as atualizações necessárias ou desejadas nos arquivos de inventário do Ansible do seu cluster. Consulte a seção <<Notas de atualização da versão>> abaixo para detalhes sobre os requisitos específicos da sua atualização. Consulte a seção link:../custom/architectures-inventory-overview.html["Visão geral do Ansible Inventory"^] para informações gerais sobre como configurar o inventário BeeGFS HA.
 
 
 
+[[step-3-update-ansible-playbook-when-updating-major-or-minor-versions-only]]
 === Etapa 3: Atualizar o manual do Ansible (somente ao atualizar versões principais ou secundárias)
 
 Se você estiver se movendo entre versões maiores ou menores, no `playbook.yml` arquivo usado para implantar e manter o cluster, atualize o nome da `beegfs_ha_<VERSION>` função para refletir a versão desejada. Por exemplo, se você quiser implantar o BeeGFS 7,4, isso `beegfs_ha_7_4` seria :
@@ -119,6 +125,7 @@ Para obter mais detalhes sobre o conteúdo deste arquivo de manual de estratégi
 
 
 
+[[step-4-run-the-beegfs-upgrade]]
 === Passo 4: Execute a atualização BeeGFS
 
 Para aplicar a atualização BeeGFS:
@@ -144,10 +151,12 @@ Nos bastidores, o papel BeeGFS HA vai lidar com:
 
 
 
+[[version-upgrade-notes]]
 == Notas de atualização da versão
 
 
 
+[[upgrading-from-beegfs-version-7-2-6-or-7-3-0]]
 === Atualização do BeeGFS versão 7.2.6 ou 7.3.0
 
 

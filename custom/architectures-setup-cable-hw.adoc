@@ -18,6 +18,7 @@ As etapas necessárias para instalar e o hardware do cabo usado para executar o 
 
 
 
+[[plan-the-installation]]
 == Planeie a instalação
 
 Cada sistema de arquivos BeeGFS consistirá em alguns nós de arquivo que executam serviços BeeGFS usando storage de back-end fornecido por alguns nós de bloco. Os nós de arquivo são configurados em um ou mais clusters de alta disponibilidade para fornecer tolerância de falhas para serviços BeeGFS. Cada nó de bloco já é um par de HA ativo/ativo. O número mínimo de nós de arquivos com suporte em cada cluster de HA é de três e o número máximo de nós de arquivos com suporte em cada cluster é de dez. Os sistemas de arquivos BeeGFS podem ser dimensionados além de dez nós, implantando vários clusters de HA independentes que trabalham juntos para fornecer um namespace único do sistema de arquivos.
@@ -31,6 +32,7 @@ CAUTION: Certifique-se de que a arquitetura do sistema de arquivos desejada para
 
 
 
+[[rack-hardware]]
 == Hardware de rack
 
 Ao Planejar a instalação, é importante que todos os equipamentos em cada bloco de construção sejam montados em rack adjacentes. A prática recomendada é que os nós de arquivo sejam colocados imediatamente acima dos nós de bloco em cada componente básico. Siga a documentação do(s) modelo(s) de arquivo e link:https://docs.netapp.com/us-en/e-series/getting-started/getup-run-concept.html["bloco"^] nós que você está usando ao instalar trilhos e hardware no rack.
@@ -45,6 +47,7 @@ image:beegfs-design-image3-small.png["Exemplo de implantação do BeeGFS"]
 
 
 
+[[cable-file-and-block-nodes]]
 == Nós de bloco e arquivo de cabo
 
 Normalmente, você conetará diretamente as portas HIC dos nós de bloco e-Series às portas designadas do adaptador de canal do host (para protocolos InfiniBand) ou do adaptador de barramento do host (para Fibre Channel e outros protocolos) dos nós de arquivo. A maneira exata de estabelecer essas conexões dependerá da arquitetura desejada do sistema de arquivos, aqui está um link:../second-gen/beegfs-design-hardware-architecture.html["Baseado na arquitetura BeeGFS de segunda geração na NetApp Verified"^]exemplo :
@@ -53,6 +56,7 @@ image:buildingblock-sr665v3.png["Exemplo de arquivo BeeGFS para bloquear o cabea
 
 
 
+[[cable-file-nodes-to-the-client-network]]
 == Nós de arquivo de cabo para a rede do cliente
 
 Cada nó de arquivo terá algum número de portas InfiniBand ou Ethernet designadas para o tráfego de clientes BeeGFS. Dependendo da arquitetura, cada nó de arquivo terá uma ou mais conexões com uma rede cliente/storage de alto desempenho, potencialmente com vários switches para redundância e maior largura de banda. Aqui está um exemplo de cabeamento de cliente usando switches de rede redundantes, onde as portas destacadas em verde escuro versus verde claro estão conetadas a switches separados:
@@ -61,6 +65,7 @@ image:networkcable-sr665v3.png["Exemplo de cabeamento do cliente BeeGFS"]
 
 
 
+[[connect-management-networking-and-power]]
 == Ligar a rede de gestão e energia
 
 Estabeleça todas as conexões de rede necessárias para a rede dentro e fora da banda.

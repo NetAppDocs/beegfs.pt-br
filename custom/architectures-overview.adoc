@@ -21,6 +21,7 @@ TIP: As definições de terminologia usadas nesta seção podem ser encontradas 
 
 
 
+[[introduction]]
 == Introdução
 
 link:../second-gen/beegfs-solution-overview.html["Arquiteturas verificadas da NetApp"]Embora forneça configurações de referência predefinidas e orientações para dimensionamento, alguns clientes e parceiros podem preferir projetar arquiteturas personalizadas mais adequadas a requisitos específicos ou preferências de hardware. Um dos principais benefícios da escolha do BeeGFS no NetApp é a capacidade de implantar clusters de HA de disco compartilhado BeeGFS com o Ansible. Isso simplifica o gerenciamento do cluster e aumenta a confiabilidade com componentes de HA de autoria da NetApp. A implantação de arquiteturas BeeGFS personalizadas no NetApp ainda é feita usando o Ansible. Isso mantém uma abordagem semelhante a um dispositivo em uma variedade flexível de hardware.
@@ -29,6 +30,7 @@ Esta seção descreve as etapas gerais necessárias para implantar os sistemas d
 
 
 
+[[deployment-overview]]
 == Visão geral da implantação
 
 Geralmente, a implantação de um sistema de arquivos BeeGFS envolve as seguintes etapas:
@@ -63,6 +65,7 @@ O Ansible gerencia todas as tarefas de configuração e provisionamento de softw
 ====
 
 
+[[requirements]]
 == Requisitos
 
 O suporte ao BeeGFS no Ansible é lançado link:https://galaxy.ansible.com/netapp_eseries/beegfs["Ansible Galaxy"]como uma coleção de funções e módulos que automatizam a implantação e o gerenciamento completos dos clusters de HA do BeeGFS.
@@ -71,6 +74,7 @@ O BeeGFS em si é versionado seguindo um esquema de controle de versão do <majo
 
 
 
+[[ansible-control-node]]
 === Nó de controle do Ansible
 
 Esse nó conterá o inventário e os playbooks usados para gerenciar o BeeGFS. Requer:
@@ -84,6 +88,7 @@ Também é recomendável configurar SSH sem senha do nó de controle para todos 
 
 
 
+[[beegfs-file-nodes]]
 === Nós de arquivos BeeGFS
 
 Os nós de arquivo devem executar o Red Hat Enterprise Linux (RHEL) 9.4 e ter acesso ao repositório HA que contém os pacotes necessários (pacemaker, corosync, fence-agents-all, resource-agents). Por exemplo, o seguinte comando pode ser executado para habilitar o repositório apropriado no RHEL 9:
@@ -94,6 +99,7 @@ subscription-manager repo-override repo=rhel-9-for-x86_64-highavailability-rpms 
 ----
 
 
+[[beegfs-client-nodes]]
 === Nós de cliente BeeGFS
 
 Uma função Ansible do cliente BeeGFS está disponível para instalar o pacote cliente BeeGFS e gerenciar a(s) montagem(s) do BeeGFS. Esta função foi testada com RHEL 9.4 e Ubuntu 22.04.

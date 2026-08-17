@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: deploy-features-integration/beegfs-csi-driver/csi-driver-tshoot.html 
+permalink: deploy-features-integration/beegfs-features-csi-driver/beegfs-features-csi-driver-tshoot.html 
 keywords: BeeGFS Features, CSI, Driver, Troubleshoot, Troubleshooting 
 summary: Solução de problemas na implantação do driver CSI do BeeGFS. 
 ---
@@ -26,6 +26,7 @@ Para obter informações detalhadas sobre a resolução de problemas, consulte o
 
 
 
+[[kubernetes-setup-common-error-scenarios]]
 == Configuração do Kubernetes - Cenários de Erro Comuns
 
 Exemplo de erro ao tentar recuperar todos os pods em execução no nó:
@@ -48,6 +49,7 @@ Existem diversas áreas-chave a serem investigadas ao abordar questões como ess
 
 
 
+[[error-in-containerd]]
 == Erro no containerd
 
 Verifique o status do daemon containerd:
@@ -75,6 +77,7 @@ journalctl -u containerd
 ----
 
 
+[[error-in-kubelet]]
 == Erro no kubelet
 
 Verifique o status do serviço kubelet:
@@ -112,6 +115,7 @@ tail -f /var/log/syslog | grep kubelet
 ----
 
 
+[[swap-issue]]
 == Problema de troca
 
 Se você encontrar erros relacionados a "swap", desative o swap e reinicie o kubelet.
@@ -146,6 +150,7 @@ NOTE: A partição de swap geralmente é ativada por padrão durante a instalaç
 
 
 
+[[troubleshooting-beegfs-client-and-helperd-configuration]]
 == Solução de problemas de configuração do cliente BeeGFS e do Helperd
 
 . Analise a configuração em `/etc/beegfs/beegfs-client.conf` .
@@ -232,6 +237,7 @@ tuneNumWorkers                = 2
 
 
 
+[[troubleshooting-beegfs-controller-issues]]
 == Solução de problemas do controlador BeeGFS
 
 Após a implantação das sobreposições, você poderá ver alguns recursos com o status PENDING na saída do comando kubectl get all.
@@ -256,6 +262,7 @@ kubectl describe pod <pod-name> -n beegfs-csi | grep -i image
 ----
 
 
+[[checking-pod-logs]]
 === Verificando os registros do pod
 
 Se um pod não estiver iniciando ou estiver em um `CrashLoopBackOff` Para obter mais detalhes, verifique os registros do estado:

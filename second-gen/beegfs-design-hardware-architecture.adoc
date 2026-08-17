@@ -18,6 +18,7 @@ A configuração de hardware do BeeGFS no NetApp inclui nós de arquivo e cabeam
 
 
 
+[[file-node-configuration]]
 == Configuração do nó do arquivo
 
 Os nós de arquivo têm dois soquetes de CPU configurados como zonas NUMA separadas, que incluem acesso local a um número igual de slots PCIe e memória.
@@ -32,6 +33,7 @@ Os processos BeeGFS são fixados a uma zona NUMA específica para garantir que a
 
 
 
+[[network-cabling-configuration]]
 == Configuração de cabeamento de rede
 
 Em um componente básico, cada nó de arquivo é conetado a dois nós de bloco usando um total de quatro conexões InfiniBand redundantes. Além disso, cada nó de arquivo tem quatro conexões redundantes com a rede de storage InfiniBand.

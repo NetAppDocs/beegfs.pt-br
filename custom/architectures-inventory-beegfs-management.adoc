@@ -18,6 +18,7 @@ Os serviços BeeGFS são configurados usando variáveis de grupo (group_vars).
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção descreve a definição do serviço de gerenciamento BeeGFS. Apenas um serviço desse tipo deve existir no(s) cluster(s) HA para um sistema de arquivos específico. A configuração deste serviço inclui a definição de:
@@ -30,6 +31,7 @@ Esta seção descreve a definição do serviço de gerenciamento BeeGFS. Apenas 
 
 
 
+[[steps]]
 == Passos
 
 Crie um novo arquivo `group_vars/mgmt.yml` e consulte a link:architectures-plan-file-system.html["Planeie o sistema de ficheiros"^] seção preencha-o da seguinte forma:

@@ -18,12 +18,14 @@ Substituindo um nó de arquivo se o servidor original estiver com defeito.
 
 
 
+[[overview]]
 == Visão geral
 
 Esta é uma visão geral das etapas necessárias para substituir um nó de arquivo no cluster. Essas etapas presumem que o nó do arquivo falhou devido a um problema de hardware e foi substituído por um novo nó de arquivo idêntico.
 
 
 
+[[steps]]
 == Passos:
 
 . Substitua fisicamente o nó de arquivo e restaure todo o cabeamento para o nó de bloco e rede de armazenamento.

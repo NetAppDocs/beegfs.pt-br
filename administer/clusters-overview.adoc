@@ -18,12 +18,14 @@ Saiba como administrar clusters de HA do BeeGFS após a implantação.
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção destina-se aos administradores de cluster que precisam gerenciar clusters de HA do BeeGFS após a implantação. Mesmo aqueles que estão familiarizados com os clusters de HA do Linux devem ler cuidadosamente este guia, pois há várias diferenças em como gerenciar o cluster, especialmente em relação à reconfiguração devido ao uso do Ansible.
 
 
 
+[[key-concepts]]
 == Conceitos-chave
 
 Embora alguns desses conceitos sejam introduzidos na página principallink:../get-started/beegfs-terms.html["termos e conceitos"], é útil reintroduzi-los no contexto de um cluster BeeGFS HA:
@@ -50,6 +52,7 @@ Embora alguns desses conceitos sejam introduzidos na página principallink:../ge
 
 
 
+[[common-terminology]]
 == Terminologia comum
 
 **Failover:** cada serviço BeeGFS tem um nó de arquivo preferido em que será executado, a menos que esse nó falhe. Quando um serviço BeeGFS está sendo executado no nó de arquivo secundário/não preferencial, diz-se que está em failover.

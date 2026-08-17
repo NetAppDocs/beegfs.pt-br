@@ -18,12 +18,14 @@ Siga estas etapas para atualizar os adaptadores ConnectX-7 do nó do arquivo par
 
 
 
+[[overview]]
 == Visão geral
 
 A atualização do firmware do adaptador ConnectX-7 pode ser necessária para suportar um novo driver MLNX_OFED, habilitar novos recursos ou corrigir bugs. Este guia usará o utilitário do NVIDIA `mlxfwmanager` para atualizações de adaptadores devido à sua facilidade de uso e eficiência.
 
 
 
+[[upgrade-considerations]]
 == Considerações sobre a atualização
 
 Este guia aborda duas abordagens para atualizar o firmware do adaptador ConnectX-7: Uma atualização contínua e uma atualização de cluster de dois nós. Escolha a abordagem de atualização apropriada de acordo com o tamanho do cluster. Antes de executar atualizações de firmware, verifique se:
@@ -35,6 +37,7 @@ Este guia aborda duas abordagens para atualizar o firmware do adaptador ConnectX
 
 
 
+[[firmware-update-preparation]]
 == Preparação da atualização de firmware
 
 Recomenda-se usar o utilitário do NVIDIA `mlxfwmanager` para atualizar o firmware do adaptador de um nó, que é fornecido com o driver MLNX_OFED da NVIDIA. Antes de iniciar as atualizações, baixe a imagem de firmware do adaptador link:https://network.nvidia.com/support/firmware/firmware-downloads/["Site de suporte da NVIDIA"^]e armazene-a em cada nó de arquivo.
@@ -44,6 +47,7 @@ TIP: Para adaptadores Lenovo ConnectX-7, use a `mlxfwmanager_LES` ferramenta, qu
 
 
 
+[[rolling-update-approach]]
 == Abordagem de atualização progressiva
 
 Essa abordagem é recomendada para qualquer cluster de HA com mais de dois nós. Essa abordagem envolve a atualização do firmware do adaptador em um nó de arquivo de cada vez, permitindo que o cluster de HA mantenha solicitações de manutenção, embora seja recomendável evitar a manutenção de e/S durante esse período.
@@ -80,7 +84,7 @@ Observe o `PCI Device Name` para cada adaptador que recebe atualizações de fir
 . Redefina cada adaptador usando o `mlxfwreset` utilitário para aplicar o novo firmware.
 +
 
-NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. link:https://docs.nvidia.com/networking/display/mftv4310/mlxfwreset+%E2%80%93+loading+firmware+on+5th+generation+devices+tool#src-3566627427_safe-id-bWx4ZndyZXNldOKAk0xvYWRpbmdGaXJtd2FyZW9uNXRoR2VuZXJhdGlvbkRldmljZXNUb29sLW1seGZ3cmVzZXRMaW1pdGF0aW9ucw["Limitações de mlxfwreset do NVIDIA"^]Consulte para obter orientação. Se for necessária uma reinicialização, execute uma reinicialização em vez de redefinir os adaptadores.
+NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. Consulte link:https://networking-docs.nvidia.com/mftswum/4201/mlxfwreset-loading-firmware-on-5th-generation-devices-tool#id-(4.20.1)mlxfwreset–LoadingFirmwareon5thGenerationDevicesTool-mlxfwresetLimitations["Limitações de mlxfwreset do NVIDIA"^] para obter orientações. Se uma reinicialização for necessária, realize uma reinicialização em vez de redefinir os adaptadores.
 
 +
 .. Pare o serviço opensm:
@@ -146,6 +150,7 @@ Repita estas etapas para cada nó de arquivo no cluster até que todos os adapta
 
 
 
+[[two-node-cluster-update-approach]]
 == Abordagem de atualização de cluster de dois nós
 
 Essa abordagem é recomendada para clusters de HA com apenas dois nós. Essa abordagem é semelhante a uma atualização contínua, mas inclui etapas adicionais para evitar o tempo de inatividade do serviço quando os serviços de cluster de um nó são interrompidos.
@@ -188,7 +193,7 @@ Observe o `PCI Device Name` para cada adaptador que recebe atualizações de fir
 . Redefina cada adaptador usando o `mlxfwreset` utilitário para aplicar o novo firmware.
 +
 
-NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. link:https://docs.nvidia.com/networking/display/mftv4310/mlxfwreset+%E2%80%93+loading+firmware+on+5th+generation+devices+tool#src-3566627427_safe-id-bWx4ZndyZXNldOKAk0xvYWRpbmdGaXJtd2FyZW9uNXRoR2VuZXJhdGlvbkRldmljZXNUb29sLW1seGZ3cmVzZXRMaW1pdGF0aW9ucw["Limitações de mlxfwreset do NVIDIA"^]Consulte para obter orientação. Se for necessária uma reinicialização, execute uma reinicialização em vez de redefinir os adaptadores.
+NOTE: Algumas atualizações de firmware podem exigir uma reinicialização para aplicar a atualização. Consulte link:https://networking-docs.nvidia.com/mftswum/4201/mlxfwreset-loading-firmware-on-5th-generation-devices-tool#id-(4.20.1)mlxfwreset–LoadingFirmwareon5thGenerationDevicesTool-mlxfwresetLimitations["Limitações de mlxfwreset do NVIDIA"^] para obter orientações. Se uma reinicialização for necessária, realize uma reinicialização em vez de redefinir os adaptadores.
 
 +
 .. Pare o serviço opensm:

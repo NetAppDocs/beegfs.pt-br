@@ -18,6 +18,7 @@ Especifique a configuração de nó de arquivo comum usando variáveis de grupo 
 
 
 
+[[overview]]
 == Visão geral
 
 A configuração que deve ser Apple para todos os nós de arquivo é definida em `group_vars/ha_cluster.yml`. Geralmente inclui:
@@ -36,6 +37,7 @@ NOTE: As opções definidas neste arquivo também podem ser definidas em nós de
 
 
 
+[[steps]]
 == Passos
 
 Crie o arquivo `group_vars/ha_cluster.yml` e preencha-o da seguinte forma:
@@ -259,6 +261,7 @@ Clique link:https://github.com/NetApp/beegfs/blob/master/getting_started/beegfs_
 
 
 
+[[using-hdr-200gb-infiniband-with-netapp-ef600-block-nodes]]
 === Usando InfiniBand HDR (200GBK) com nós de bloco NetApp EF600:
 
 Para usar o InfiniBand HDR (200GB) com o EF600, o gerenciador de sub-rede deve suportar a virtualização. Se os nós de arquivo e bloco estiverem conetados usando um switch, isso precisará ser ativado no gerenciador de sub-rede para a malha geral.

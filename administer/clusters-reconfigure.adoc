@@ -18,6 +18,7 @@ Use o Ansible para reconfigurar o cluster.
 
 
 
+[[overview]]
 == Visão geral
 
 De um modo geral, a reconfiguração de qualquer aspecto do cluster BeeGFS HA deve ser feita atualizando seu inventário do Ansible e executando novamente `ansible-playbook` o comando. Isso inclui atualização de alertas, alteração da configuração de cercas permanentes ou ajuste da configuração do serviço BeeGFS. Estes são ajustados usando o `group_vars/ha_cluster.yml` arquivo e uma lista completa de opções pode ser encontrada link:../custom/architectures-inventory-common-file-node-configuration.html["Especifique a Configuração do nó de ficheiro Comum"^]na seção.
@@ -26,12 +27,14 @@ Consulte abaixo para obter detalhes adicionais sobre opções de configuração 
 
 
 
+[[how-to-disable-and-enable-fencing]]
 == Como desativar e ativar o Esgrima
 
 O esgrima é ativado/exigido por padrão ao configurar o cluster. Em alguns casos, pode ser desejável desativar temporariamente o esgrima para garantir que os nós não sejam acidentalmente desligados ao executar determinadas operações de manutenção (como atualizar o sistema operacional). Embora isso possa ser desativado manualmente, há compensações que os administradores devem estar cientes.
 
 
 
+[[option-1-disable-fencing-using-ansible-recommended]]
 === Opção 1: Desativar cercas usando o Ansible (recomendado).
 
 Quando a vedação é desativada usando o Ansible, a ação on-fail do monitor BeeGFS é alterada de "cerca" para "espera". Isso significa que, se o monitor BeeGFS detetar uma falha, ele tentará colocar o nó em espera e fazer o failover de todos os serviços BeeGFS. Fora da solução de problemas/testes ativos, isso geralmente é mais desejável do que a opção 2. A desvantagem é que se um recurso não parar no nó original, ele será bloqueado de começar em outro lugar (é por isso que o esgrima é normalmente necessário para clusters de produção).
@@ -48,6 +51,7 @@ beegfs_ha_cluster_crm_config_options:
 
 
 
+[[option-2-disable-fencing-manually]]
 === Opção 2: Desativar a vedação manualmente.
 
 Em alguns casos, você pode desativar temporariamente o esgrima sem executar novamente o Ansible, talvez para facilitar a solução de problemas ou o teste do cluster.

@@ -18,12 +18,14 @@ Use PCs para visualizar o estado do cluster.
 
 
 
+[[overview]]
 == Visão geral
 
 Executar `pcs status` a partir de qualquer um dos nós de cluster é a maneira mais fácil de ver o estado geral do cluster e o status de cada recurso (como os serviços BeeGFS e suas dependências). Esta seção percorre o que você encontrará na saída do `pcs status` comando.
 
 
 
+[[understanding-the-output-from-pcs-status]]
 == Compreender a saída de `pcs status`
 
 Execute `pcs status` em qualquer nó de cluster onde os serviços de cluster (Pacemaker e Corosync) são iniciados. A parte superior da saída irá mostrar-lhe um resumo do cluster:

@@ -18,6 +18,7 @@ Impedir que o cluster de HA reaja acidentalmente às alterações pretendidas no
 
 
 
+[[overview]]
 == Visão geral
 
 Colocar o cluster no modo de manutenção desativa todo o monitoramento de recursos e impede que o pacemaker mova ou gerencie recursos no cluster. Todos os recursos permanecerão em execução em seus nós originais, independentemente de haver uma condição de falha temporária que os impeça de serem acessíveis. Os cenários em que isso é recomendado/útil incluem:
@@ -31,6 +32,7 @@ Geralmente, a única razão para colocar manualmente o cluster no modo de manute
 
 
 
+[[steps]]
 == Passos
 
 Para verificar se o cluster está no modo de manutenção, execute:

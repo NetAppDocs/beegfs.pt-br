@@ -20,6 +20,7 @@ Embora o BeeGFS forneça desempenho razoável pronto para uso, a NetApp desenvol
 
 
 
+[[performance-tuning-for-file-nodes]]
 == Ajuste de performance para nós de arquivos
 
 Os parâmetros de ajuste disponíveis que você pode configurar incluem o seguinte:
@@ -79,6 +80,7 @@ Você pode aumentar o tamanho máximo da solicitação de leitura para HCAs NVID
 
 
 
+[[performance-tuning-for-block-nodes]]
 == Ajuste de desempenho para nós de bloco
 
 Com base nos perfis de configuração aplicados a um componente básico do BeeGFS específico, os grupos de volume configurados nos nós de bloco mudam ligeiramente. Por exemplo, com um nó de bloco de EF600 unidades de 24 unidades:

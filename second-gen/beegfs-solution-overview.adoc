@@ -18,18 +18,21 @@ A solução BeeGFS on NetApp combina o sistema de arquivos paralelos do BeeGFS c
 
 
 
+[[nva-program]]
 == Programa NVA
 
 A solução BeeGFS on NetApp faz parte do programa NetApp Verified Architecture (NVA), que fornece aos clientes configurações de referência e orientações de dimensionamento para workloads e casos de uso específicos. As soluções NVA são completamente testadas e projetadas para minimizar os riscos de implantação e acelerar o time-to-market.
 
 
 
+[[design-overview]]
 == Visão geral do design
 
 A solução BeeGFS on NetApp foi projetada como uma arquitetura de componentes básicos dimensionável, configurável para uma variedade de workloads exigentes. Seja lidando com muitos arquivos pequenos, gerenciando grandes operações de arquivos ou uma carga de trabalho híbrida, o sistema de arquivos pode ser personalizado para atender a essas necessidades. A alta disponibilidade é incorporada ao design com o uso de uma estrutura de hardware de duas camadas que permite failover independente em várias camadas de hardware e garante desempenho consistente, mesmo durante degradações parciais do sistema. O sistema de arquivos BeeGFS oferece um ambiente dimensionável e de alta performance em diferentes distribuições do Linux. Além disso, apresenta aos clientes um namespace de storage único de fácil acesso. Saiba mais no link:beegfs-architecture-overview.html["visão geral da arquitetura"].
 
 
 
+[[use-cases]]
 == Casos de uso
 
 Os seguintes casos de uso se aplicam à solução BeeGFS no NetApp:
@@ -49,6 +52,7 @@ Os seguintes casos de uso se aplicam à solução BeeGFS no NetApp:
 
 
 
+[[benefits]]
 == Benefícios
 
 Os principais benefícios do uso do BeeGFS no NetApp incluem:

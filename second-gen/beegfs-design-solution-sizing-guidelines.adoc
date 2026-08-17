@@ -22,6 +22,7 @@ Tenha em mente que essas estimativas são o melhor desempenho. Aplicativos de be
 
 
 
+[[performance-sizing]]
 == Dimensionamento da performance
 
 A tabela a seguir fornece o dimensionamento de desempenho recomendado.
@@ -41,6 +42,7 @@ O uso de recursos como listas de controle de acesso e o número de diretórios e
 
 
 
+[[capacity-sizing-for-metadata-storage-building-blocks]]
 == Dimensionamento da capacidade para componentes básicos de storage e metadados
 
 A tabela a seguir fornece o dimensionamento de capacidade recomendado para metadados, além de componentes básicos de storage.
@@ -65,6 +67,7 @@ NOTE: Ao dimensionar metadados e componentes básicos de storage, você pode red
 
 
 
+[[capacity-sizing-for-storage-only-building-blocks]]
 == Dimensionamento da capacidade para componentes básicos somente de storage
 
 A tabela a seguir fornece o dimensionamento da capacidade de regra geral para componentes básicos somente de storage.

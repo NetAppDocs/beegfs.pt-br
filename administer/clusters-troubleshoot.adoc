@@ -18,16 +18,19 @@ Solução de problemas de um cluster BeeGFS HA.
 
 
 
+[[overview]]
 == Visão geral
 
 Esta seção descreve como investigar e solucionar problemas de várias falhas e outros cenários que podem surgir ao operar um cluster BeeGFS HA.
 
 
 
+[[troubleshooting-guides]]
 == Guias de solução de problemas
 
 
 
+[[investigating-unexpected-failovers]]
 === Investigando failovers inesperados
 
 Quando um nó é fechado inesperadamente e seus serviços são movidos para outro nó, a primeira etapa deve ser verificar se o cluster indica falhas de recursos na parte inferior `pcs status`do . Normalmente, nada estará presente se o esgrima for concluído com sucesso e os recursos forem reiniciados em outro nó.
@@ -135,6 +138,7 @@ Se a ação de esgrima falhou por algum motivo, os serviços BeeGFS não poderã
 
 
 
+[[address-failed-resource-actions-found-at-the-bottom-of-pcs-status]]
 === Ações recurso Falha Endereço (encontradas na parte inferior do status PCs)
 
 Se um recurso necessário para executar um serviço BeeGFS falhar, um failover será acionado pelo monitor BeeGFS. Se isso ocorrer, provavelmente não haverá "ações de recurso com falha" listadas na parte inferior do `pcs status` e você deve consultar as etapas sobre como link:clusters-failover-failback.html["failback após um failover não planejado"^].
@@ -211,10 +215,12 @@ Passos para resolver:
 
 
 
+[[common-issues]]
 == Questões comuns
 
 
 
+[[beegfs-services-dont-failover-or-failback-when-requested]]
 === Os serviços BeeGFS não fazem failover ou failback quando solicitados
 
 * Problema provável:* o `pcs resource relocate` comando run foi executado, mas nunca terminou com sucesso.
@@ -225,6 +231,7 @@ Passos para resolver:
 
 
 
+[[one-node-in-pcs-status-shows-standby-on-fail-when-fencing-is-disabled]]
 === Um nó no estado dos PCes mostra "standby (on-fail)" quando a vedação está desativada
 
 *Problema provável:* o pacemaker não conseguiu confirmar com êxito todos os recursos foram parados no nó que falhou.
@@ -237,6 +244,7 @@ Passos para resolver:
 
 
 
+[[after-an-unexpected-failover-resources-show-started-on-fail-in-pcs-status-when-fencing-is-enabled]]
 === Após um failover inesperado, os recursos mostram "Started (on-fail)" no status PCs quando o esgrima está ativado
 
 *Problema provável:* ocorreu Um problema que desencadeou um failover, mas o pacemaker não conseguiu verificar se o nó estava vedado. Isso pode acontecer porque o esgrima foi mal configurado ou houve um problema com o agente de esgrima (exemplo: O PDU foi desconetado da rede).
@@ -255,10 +263,12 @@ Neste ponto, os serviços devem terminar de falhar e ser reiniciados em outro n�
 
 
 
+[[common-troubleshooting-tasks]]
 == Tarefas comuns de resolução de problemas
 
 
 
+[[restart-individual-beegfs-services]]
 === Reinicie os serviços BeeGFS individuais
 
 Normalmente, se um serviço BeeGFS precisar ser reiniciado (por exemplo, para facilitar uma alteração de configuração), isso deve ser feito atualizando o inventário do Ansible e executando novamente o manual de estratégia. Em alguns cenários, pode ser desejável reiniciar serviços individuais para facilitar a solução de problemas mais rápida, por exemplo, para alterar o nível de log sem precisar esperar que todo o manual de estratégia seja executado.

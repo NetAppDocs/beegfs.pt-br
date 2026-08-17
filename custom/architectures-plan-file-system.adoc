@@ -18,12 +18,14 @@ Planeje a implantação do sistema de arquivos antes de desenvolver o inventári
 
 
 
+[[overview]]
 == Visão geral
 
 Antes de implantar o sistema de arquivos, você deve definir quais endereços IP, portas e outras configurações serão exigidas por todos os nós de arquivo, nós de bloco e serviços BeeGFS executados no cluster. Embora a configuração exata varie com base na arquitetura do cluster, esta seção define as práticas recomendadas e as etapas a seguir que geralmente são aplicáveis.
 
 
 
+[[steps]]
 == Passos
 
 . Se você estiver usando um protocolo de storage baseado em IP (como iSER, iSCSI, NVMe/IB ou NVMe/RoCE) para conectar nós de arquivo a nós de bloco, preencha a Planilha a seguir para cada bloco básico. Cada conexão direta em um único bloco de construção deve ter uma sub-rede única, e não deve haver sobreposição com sub-redes usadas para conetividade cliente-servidor.

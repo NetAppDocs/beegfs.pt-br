@@ -18,6 +18,7 @@ Configure um nó de controle do Ansible para implantar e gerenciar o sistema de 
 
 
 
+[[overview]]
 == Visão geral
 
 Um nó de controle do Ansible é uma máquina Linux física ou virtual usada para gerenciar o cluster. Deve cumprir os seguintes requisitos:

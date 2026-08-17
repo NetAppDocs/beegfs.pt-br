@@ -18,12 +18,14 @@ Siga estas etapas para atualizar os pacotes Pacemaker e Corosync em um cluster H
 
 
 
+[[overview]]
 == Visão geral
 
 A atualização da Pacemaker e do Corosync garante que o cluster se beneficie de novos recursos, patches de segurança e melhorias de desempenho.
 
 
 
+[[upgrade-approach]]
 == Abordagem de atualização
 
 Há duas abordagens recomendadas para atualizar um cluster: Uma atualização contínua ou um desligamento completo do cluster. Cada abordagem tem suas próprias vantagens e desvantagens. O procedimento de atualização pode variar dependendo da versão de lançamento do pacemaker. Consulte a documentação do ClusterLabs link:https://clusterlabs.org/projects/pacemaker/doc/3.0/Pacemaker_Administration/html/upgrading.html["Atualizando um cluster de pacemaker"^]para determinar qual abordagem usar. Antes de seguir uma abordagem de atualização, verifique se:
@@ -35,6 +37,7 @@ Há duas abordagens recomendadas para atualizar um cluster: Uma atualização co
 
 
 
+[[rolling-upgrade]]
 === Atualização progressiva
 
 Esse método envolve remover cada nó do cluster, atualizá-lo e reintroduzi-lo no cluster até que todos os nós executem a nova versão. Essa abordagem mantém o cluster operacional, ideal para clusters de HA maiores, mas corre o risco de executar versões mistas durante o processo. Essa abordagem deve ser evitada em um cluster de dois nós.
@@ -129,6 +132,7 @@ NOTE: Se o `Current DC` relatório 'versão em caixa', um nó no cluster ainda e
 
 
 
+[[complete-cluster-shutdown]]
 === Encerramento completo do cluster
 
 Nesta abordagem, todos os nós e recursos do cluster são desligados, os nós são atualizados e, em seguida, o cluster é reiniciado. Essa abordagem é necessária se as versões Pacemaker e Corosync não suportarem uma configuração de versão mista.
