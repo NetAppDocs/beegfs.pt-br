@@ -25,7 +25,7 @@ A configuração de hardware e software para o componente básico de alta capaci
 
 Os clientes que implantam um design de componente básico de alta capacidade provavelmente usarão apenas a configuração básica em estilo de componente básico que consiste no gerenciamento, metadados e serviços de storage do BeeGFS para cada nó. Para obter eficiência de custos, os nós de storage de alta capacidade devem provisionar volumes de metadados nas unidades NVMe no compartimento da controladora EF300 e provisionar volumes de storage para as unidades NL-SAS nas bandejas de expansão.
 
-image:high-capacity-rack-diagram.png[""]
+image:high-capacity-rack-diagram.png["Um diagrama que mostra um rack de alta capacidade BeeGFS com bandejas de expansão EF300 NVMe e NL-SAS IOM"]
 
 
 
