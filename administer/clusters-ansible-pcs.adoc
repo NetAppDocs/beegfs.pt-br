@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: administer/clusters-ansible-pcs.html 
 keywords: BeeGFS on NetApp, HA, Cluster, Administration, pcs, Ansible 
-summary: Quando você deve usar o Ansible versus a ferramenta de linha de comando PCs para gerenciar o cluster de HA? 
+summary: Decida quando usar o Ansible ou a ferramenta de linha de comando pcs para gerenciar um cluster BeeGFS HA. Use o Ansible para implantação e alterações de configuração e o pcs para alterações temporárias no estado do cluster. 
 ---
 = Quando usar o Ansible versus a ferramenta PCs
 :hardbreaks:
