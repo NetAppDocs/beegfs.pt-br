@@ -21,7 +21,7 @@ O inventário do Ansible é um conjunto de arquivos de configuração que define
 [[overview]]
 == Visão geral
 
-Recomenda-se seguir as práticas padrão do Ansible para organizar o link:https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html["inventário"], incluindo o uso do , link:https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html#organizing-host-and-group-variables["subdiretórios/ficheiros"]em vez de armazenar todo o inventário em um arquivo.
+É recomendável seguir as práticas padrão do Ansible para organizar seu inventário link:https://docs.ansible.com/projects/ansible/latest/inventory_guide/intro_inventory.html["inventário"], incluindo o uso de link:https://docs.ansible.com/projects/ansible/latest/inventory_guide/intro_inventory.html#organizing-host-and-group-variables["subdiretórios/ficheiros"] em vez de armazenar todo o inventário em um único arquivo.
 
 O inventário do Ansible para um único cluster BeeGFS HA está organizado da seguinte forma:
 
