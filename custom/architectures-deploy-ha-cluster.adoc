@@ -35,7 +35,7 @@ Esta seção aborda como montar o manual de estratégia padrão usado para impla
 
 Crie o arquivo `playbook.yml` e preencha-o da seguinte forma:
 
-. Primeiro defina um conjunto de tarefas (comumente chamadas de a link:https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html#playbook-syntax["reproduzir"^]) que devem ser executadas somente em nós de bloco do NetApp e-Series. Usamos uma tarefa de pausa para avisar antes de executar a instalação (para evitar execuções acidentais de playbooks) e depois importar a `nar_santricity_management` função. Essa função lida com a aplicação de qualquer configuração geral do sistema definida em `group_vars/eseries_storage_systems.yml` arquivos individuais ou individuais `host_vars/<BLOCK NODE>.yml`.
+. Primeiro, defina um conjunto de tarefas, comumente chamado de link:https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html#playbook-syntax["reproduzir"^]playbook, que deve ser executado apenas nos nós de bloco do NetApp E-Series. Usamos uma tarefa de pausa para solicitar confirmação antes de executar a instalação (para evitar execuções acidentais do playbook) e, em seguida, importamos a `nar_santricity_management` função. Essa função cuida da aplicação de qualquer configuração geral do sistema definida em `group_vars/eseries_storage_systems.yml` ou em arquivos `host_vars/<BLOCK NODE>.yml` individuais.
 +
 [source, yaml]
 ----

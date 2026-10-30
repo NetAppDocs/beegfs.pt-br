@@ -93,7 +93,7 @@ Para atualizações de coleção offline, faça o download da coleção link:htt
 ----
 ansible-galaxy collection install netapp_eseries-beegfs-<VERSION>.tar.gz --upgrade
 ----
-Consulte link:https://docs.ansible.com/ansible/latest/collections_guide/collections_installing.html["Instalando coleções"^] para obter mais informações.
+Consulte link:https://docs.ansible.com/projects/ansible/latest/collections_guide/collections_installing.html["Instalando coleções"^] para obter mais informações.
 
 
 

@@ -49,7 +49,7 @@ The defaults set by the BeeGFS HA role are based on the testing performed as par
 ....
 +
 
-NOTE: Não armazene senhas em texto simples. Em vez disso, use o Ansible Vault (consulte a documentação do Ansible para https://docs.ansible.com/ansible/latest/user_guide/vault.html["Criptografia de conteúdo com o Ansible Vault"^]) ou use a `--ask-become-pass` opção ao executar o manual de estratégia.
+NOTE: Não armazene senhas em texto simples. Em vez disso, use o Ansible Vault (consulte a documentação do Ansible para obter https://docs.ansible.com/projects/ansible/latest/vault_guide/index.html["Criptografia de conteúdo com o Ansible Vault"^] mais informações) ou use a `--ask-become-pass` opção ao executar o playbook.
 
 . No `client_inventory.yml` arquivo, liste todos os hosts que devem ser configurados como clientes BeeGFS no `beegfs_clients` grupo e especifique qualquer configuração adicional necessária para criar o módulo do kernel do cliente BeeGFS.
 +

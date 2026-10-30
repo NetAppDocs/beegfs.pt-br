@@ -42,7 +42,7 @@ Salvo indicação em contrário, todos os arquivos e diretórios criados nesta e
 +
 `packages`
 
-. Crie um subdiretório para senhas de cluster e proteja o arquivo criptografando-o com o Ansible Vault ( https://docs.ansible.com/ansible/latest/user_guide/vault.html["Criptografia de conteúdo com o Ansible Vault"^]consulte ):
+. Crie um subdiretório para as senhas do cluster e proteja o arquivo criptografando-o com o Ansible Vault (consulte https://docs.ansible.com/projects/ansible/latest/vault_guide/index.html["Criptografia de conteúdo com o Ansible Vault"^]):
 +
 .. Crie o subdiretório . `group_vars/all`
 ..  `group_vars/all`No diretório, crie um arquivo de senhas rotulado `passwords.yml`.
@@ -182,7 +182,7 @@ eseries_controller_nvme_ib_port:
 Você pode definir a configuração comum a um grupo de hosts em em `group_vars` um nome de arquivo que corresponde ao grupo. Isso impede a repetição de uma configuração compartilhada em vários locais.
 
 .Sobre esta tarefa
-Os hosts podem estar em mais de um grupo e, em tempo de execução, o Ansible escolhe quais variáveis se aplicam a um host específico com base em suas regras de precedência de variáveis. (Para obter mais informações sobre essas regras, consulte a documentação do Ansible para https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html["Usando variáveis"^].)
+Os hosts podem pertencer a mais de um grupo e, em tempo de execução, o Ansible escolhe quais variáveis se aplicam a um host específico com base em suas regras de precedência de variáveis. (Para obter mais informações sobre essas regras, consulte a documentação do Ansible sobre https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_variables.html["Usando variáveis"^].)
 
 As atribuições de host para grupo são definidas no arquivo de inventário real do Ansible, que é criado no final deste procedimento.
 

@@ -103,7 +103,7 @@ ansible-playbook -i inventory.yml playbook.yml --forks 20
 ....
 +
 
-NOTE: Especialmente para implantações maiores, a substituição do número padrão de bifurcações (5) usando o `forks` parâmetro é recomendada para aumentar o número de hosts que o Ansible configura em paralelo. (Para obter mais informações, https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html["Controlar a execução do manual de estratégia"^]consulte .) A configuração de valor máximo depende da potência de processamento disponível no nó de controle do Ansible. O exemplo acima de 20 foi executado em um nó de controle virtual do Ansible com 4 CPUs (CPU Intel(R) Xeon(R) Gold 6146 com 3,20GHz GB).
+NOTE: Especialmente para implantações maiores, recomenda-se substituir o número padrão de forks (5) usando o parâmetro `forks` para aumentar o número de hosts que o Ansible configura em paralelo. (Para mais informações, consulte https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_strategies.html["Controlar a execução do manual de estratégia"^].) O valor máximo definido depende da capacidade de processamento disponível no nó de controle do Ansible. O exemplo acima de 20 foi executado em um nó de controle virtual do Ansible com 4 CPUs (Intel(R) Xeon(R) Gold 6146 CPU @ 3.20GHz).
 
 +
 Dependendo do tamanho da implantação e da performance de rede entre o nó de controle do Ansible e os nós de bloco e arquivo do BeeGFS, o tempo de implantação pode variar.
