@@ -16,7 +16,7 @@ summary: Para configurar um nó de controle do Ansible, identifique uma máquina
 [role="lead"]
 Para configurar um nó de controle do Ansible, você precisa designar uma máquina virtual ou física com acesso de rede a todos os nós de arquivo e bloco implantados na solução BeeGFS no NetApp.
 
-Consulte link:beegfs-technology-requirements.html#ansible-control-node-requirements["Requisitos técnicos"]a para obter uma lista das versões de pacotes recomendadas. As etapas a seguir foram testadas no Ubuntu 22,04.04. Para obter passos específicos para a distribuição Linux preferida, consulte https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html["Documentação do Ansible"^] .
+Consulte link:beegfs-technology-requirements.html#ansible-control-node-requirements["Requisitos técnicos"] para ver uma lista das versões de pacote recomendadas. As etapas a seguir foram testadas no Ubuntu 22.04. Para ver etapas específicas da sua distribuição Linux preferida, consulte a https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html["Documentação do Ansible"^].
 
 . A partir do nó de controle do Ansible, instale os seguintes pacotes Python e Python Virtual Environment.
 +
